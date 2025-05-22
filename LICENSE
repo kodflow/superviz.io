@@ -1,0 +1,47 @@
+# Superviz.io License
+
+This software is released under the **Superviz.io Non‑Commercial License**.
+
+## 1. Permissions (Non‑Commercial)
+
+You are **granted the right to use, modify and distribute** this software **only** under the following conditions:
+
+* **Purpose** - strictly for **personal, educational, or non‑profit** use.
+* **Attribution** - all copyright notices must be preserved.
+* **Modifications**
+
+  * You may alter the source code.
+  * You **must** publish your modified version in a **public repository** under the **same licence**.
+  * Your fork must clearly state that it is a derivative work.
+* **Warranty**  - the software is provided *"as is"* without any warranty.
+
+## 2. Restrictions
+
+* **Commercial use is forbidden** under this licence.
+* You may **not** sublicense, sell, or include this software in any paid product or service.
+* You may **not** remove or obscure licence headers or attribution notices.
+* You may **not** redistribute the software in a white‑labelled form.
+* You may **not** integrate the software into any paid offering, including but not limited to:
+
+  * SaaS platforms or services billed to third parties;
+  * Managed hosting or deployment services;
+  * Embedded systems that form part of a product sold or licensed commercially.
+* You may **not** bypass, tamper with, or reverse‑engineer licence‑enforcement mechanisms.
+
+## 3. Evaluation Binary (EE Trial)
+
+The public repository may provide an **Enterprise Edition trial binary**. Its use is limited to **evaluation purposes only** for **30 days** and for **up to 5 instances**. Continued or production use requires a commercial licence key.
+
+## 4. Enforcement & Termination
+
+Violation of these terms results in **immediate termination** of your licence rights. Making Codes reserves the right to request takedown of infringing copies or derivatives.
+
+## 5. Transition to Commercial Licence
+
+For any **commercial use** (SaaS, OEM, consulting, internal business operations, etc.) you must obtain a valid **commercial licence**.
+
+See: [`COMMERCIAL-LICENSE.md`](./COMMERCIAL-LICENSE.md)
+
+---
+
+For enquiries, contact: [TODO](mailto:TODO)
