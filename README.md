@@ -1,4 +1,16 @@
-# Superviz.io
+# Superviz.io [![Reference](https://pkg.go.dev/badge/github.com/kodflow/superviz.io.svg)](https://pkg.go.dev/github.com/kodflow/superviz.io) [![Latest Stable Version](https://img.shields.io/github/v/tag/kodflow/superviz.io?label=version)](https://github.com/kodflow/superviz.io/releases/latest) [![CI](https://img.shields.io/github/actions/workflow/status/kodflow/superviz.io/ci.yml?label=CI)](https://github.com/kodflow/superviz.io/actions/workflows/ci.yml)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=kodflow_superviz.io&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=kodflow_superviz.io)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=kodflow_superviz.io&metric=bugs)](https://sonarcloud.io/summary/new_code?id=kodflow_superviz.io)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=kodflow_superviz.io&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=kodflow_superviz.io)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=kodflow_superviz.io&metric=coverage)](https://sonarcloud.io/summary/new_code?id=kodflow_superviz.io)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=kodflow_superviz.io&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=kodflow_superviz.io)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=kodflow_superviz.io&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=kodflow_superviz.io)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=kodflow_superviz.io&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=kodflow_superviz.io)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=kodflow_superviz.io&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=kodflow_superviz.io)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=kodflow_superviz.io&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=kodflow_superviz.io)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=kodflow_superviz.io&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=kodflow_superviz.io)
+
 
 ## 🧠 Project Goal
 
@@ -135,7 +147,7 @@ If you modify the code, you must publish your changes in a public repository und
 * 🔒 [Non-Commercial License](./LICENSE.md)
 * 💼 [Commercial License Terms](./COMMERCIAL-LICENSE.md)
 * 🛡️ [Security Policy](./SECURITY.md)
-📚 [Documentation complète](https://superviz.io/docs)
+* 📚 [Documentation complète](https://superviz.io/docs)
 
 ## 🌐 Contact
 
