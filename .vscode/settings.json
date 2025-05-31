@@ -1,0 +1,13 @@
+{
+  "files.exclude": {
+    ".github": false,
+    "vendor": true,
+    "*.test.go": false,
+    ".vscode": false,
+    "bazel-bin": true,
+    "bazel-out": true,
+    "bazel-superviz.io": true,
+    "bazel-testlogs": true
+  },
+  "cmake.ignoreCMakeListsMissing": true
+}

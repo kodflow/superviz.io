@@ -7,7 +7,6 @@ Thumbs.db
 
 # --- IDE ---
 .idea/
-.vscode/
 *.swp
 *.swo
 .project
@@ -58,7 +57,7 @@ bazel-cache/           # si tu utilises un cache custom
 bazel-workspace/       # si workspace généré temporairement
 
 # --- Build / Release ---
-dist/
+.dist/
 build/
 out/
 

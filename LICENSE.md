@@ -54,10 +54,12 @@ You **shall not**, under any circumstance:
 The Licensor may provide a compiled binary version of the Enterprise Edition ("EE Binary") under the following terms:
 
 You **may**:
+
 - Evaluate the EE Binary for a period of **30 calendar days**;
 - Deploy it on up to **5 non-production systems**.
 
 You **shall not**:
+
 - Use the EE Binary in any **production** or **revenue-generating** environment;
 - Modify or redistribute the EE Binary.
 
@@ -78,6 +80,7 @@ This License is automatically and immediately terminated if You violate any of i
 Upon termination, You must cease all use, distribution, and modification of the Software and delete all copies in Your possession.
 
 Licensor reserves the right to:
+
 - Revoke this License at any time in case of breach;
 - Request the removal of infringing copies from public repositories;
 - Initiate legal proceedings for infringement or breach of contract.
