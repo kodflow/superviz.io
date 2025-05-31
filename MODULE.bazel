@@ -1,0 +1,11 @@
+module(name = "superviz", version = "0.1.0")
+
+bazel_dep(name = "rules_go", version = "0.46.0")
+bazel_dep(name = "gazelle", version = "0.32.0")
+
+use_extension("@gazelle//:extensions.bzl", "gazelle")
+
+# Important : cette ligne crée l'alias `gazelle` utilisé par `use_repo()`
+gazelle_ext = use_extension("@gazelle//:extensions.bzl", "gazelle")
+
+use_repo(gazelle_ext)

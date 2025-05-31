@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   analyze:
-    name: Analyze + Versioning
+    name: Analyze + Versioning + Lint
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.semver.outputs.next }}
@@ -29,7 +29,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: What is next version?
+      - name: Determine next version
         id: semver
         uses: ietf-tools/semver-action@v1
         with:
@@ -91,10 +91,32 @@ jobs:
           name: svz-binaries
           path: dist/
 
+  test:
+    name: Run Unit Tests via Bazel
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bazelisk
+        uses: bazelbuild/setup-bazelisk@v3
+
+      - name: Mount Bazel cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bazel
+          key: bazel-${{ runner.os }}-${{ hashFiles('**/BUILD.bazel') }}
+          restore-keys: |
+            bazel-${{ runner.os }}-
+
+      - name: Run Tests
+        run: bazel test //...
+
   release:
     name: Tag + Publish
     if: github.ref == 'refs/heads/main'
-    needs: [analyze, build]
+    needs: [analyze, build, test]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

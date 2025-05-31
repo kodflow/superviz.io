@@ -1,38 +1,11 @@
-# OS files
+# --- OS ---
 .DS_Store
-.DS_Store?
-._*
 .Spotlight-V100
 .Trashes
 ehthumbs.db
 Thumbs.db
 
-# Node.js
-node_modules/
-npm-debug.log
-yarn-debug.log
-yarn-error.log
-.pnpm-debug.log
-.npm/
-.yarn/
-.pnp.*
-
-# Build directories
-dist/
-build/
-out/
-.next/
-.nuxt/
-.output/
-
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# IDE files
+# --- IDE ---
 .idea/
 .vscode/
 *.swp
@@ -42,18 +15,67 @@ out/
 .settings/
 .history/
 
-# Logs
-logs/
+# --- Logs ---
 *.log
+logs/
 
-# Coverage directories
+# --- Env Files ---
+.env
+.env.*
+
+# --- Node (if any frontend involved) ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+.pnpm-debug.log
+.npm/
+.yarn/
+.pnp.*
+
+# --- Go ---
+*.test
+*.exe
+*.out
+*.a
+vendor/
+cover.*
+*.prof
+*.pb.go
+*.pb.validate.go
+
+# --- Go Modules ---
+go.sum
+# Optionnel : si tu veux clean `go.sum` en permanence, sinon garde-le versionné
+
+# --- Bazel ---
+bazel-bin/
+bazel-out/
+bazel-*/               # bazel-{repo}
+bazel-testlogs/
+.bazelrc.user
+.bazelbuild/
+bazel-cache/           # si tu utilises un cache custom
+bazel-workspace/       # si workspace généré temporairement
+
+# --- Build / Release ---
+dist/
+build/
+out/
+
+# --- Coverage ---
 coverage/
 .nyc_output/
 
-# Misc
+# --- Misc Temp ---
 .cache/
 .temp/
 .tmp/
 *.bak
 *.tmp
 *~
+
+# --- Bazel ---
+bazel-bin/
+bazel-out/
+bazel-*/
+bazel-testlogs/
