@@ -1,0 +1,37 @@
+version: 2
+
+project_name: svz
+dist: dist
+
+builds:
+  - id: svz
+    main: ./cmd/svz
+    binary: bin/svz_{{ .Os }}_{{ .Arch }}
+    no_unique_dist_dir: true
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    env:
+      - CGO_ENABLED=0
+    mod_timestamp: '{{ .CommitTimestamp }}'
+    ldflags:
+      - >-
+        -s -w
+        -X github.com/kodflow/superviz.io/internal/cli.version={{ .Version }}
+        -X github.com/kodflow/superviz.io/internal/cli.commit={{ .ShortCommit }}
+        -X github.com/kodflow/superviz.io/internal/cli.date={{ .Date }}
+        -X github.com/kodflow/superviz.io/internal/cli.builtBy={{ .Env.BUILT_BY }}
+
+archives:
+  - files:
+      - README.md
+      - LICENSE
+    wrap_in_directory: false
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+checksum:
+  name_template: "checksums.txt"
