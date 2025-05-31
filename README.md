@@ -2,7 +2,7 @@
 
 ## 🧠 Project Goal
 
-**Superviz.io** is a universal service manager designed to operate as `PID 1` inside containers or as a complement to `systemd` on traditional hosts. It centralizes provisioning, service launching, observability and logging – whether in Docker, VMs, bare-metal or cloud-init environments.
+**Superviz.io** is a universal service manager designed to operate as `PID 1` inside containers or as a complement to `systemd` on traditional hosts. It centralizes provisioning, service launching, observability and logging - whether in Docker, VMs, bare-metal or cloud-init environments.
 
 ### Key Features
 
@@ -18,6 +18,20 @@
 * Planned: **hot-reload** through configuration diffing and targeted service restarts
 * Advanced health model with **granular service status tracking**
 * Optional agent installation via **SSH** when credentials/key are provided
+* Follows a **desired state model**: continuously evaluates system state and executes actions to converge to the target configuration
+
+### Desired State Provisioning
+
+Superviz.io follows a **desired state model**: you declare the **target state** of services, files, and runtime conditions. At startup and during runtime, Superviz.io continuously evaluates the current state and **executes actions** to reach or restore the desired one.
+
+Examples:
+
+* If a binary is missing, it will be downloaded and verified.
+* If a service is not running but should be, it will be launched.
+* If configuration has drifted, a restart or reload is triggered.
+* If health-checks fail, restart logic or alerts apply depending on thresholds.
+
+This model ensures **idempotency**, **self-healing**, and better **predictability** across environments.
 
 ## 🚠 Typical Use Cases
 
@@ -44,7 +58,7 @@ Activate it with an evaluation key or run without `LICENSE_KEY` for a limited tr
 
 > Production use of EE requires a commercial licence issued by Making Codes.
 
-## 🧩 Community vs Commercial Edition
+## 🥉 Community vs Commercial Edition
 
 | Feature                                      | Community Edition (CE) ✅ | Enterprise Edition (EE) 💼 |
 | -------------------------------------------- | ------------------------ | -------------------------- |
@@ -121,6 +135,7 @@ If you modify the code, you must publish your changes in a public repository und
 * 🔒 [Non-Commercial License](./LICENSE.md)
 * 💼 [Commercial License Terms](./COMMERCIAL-LICENSE.md)
 * 🛡️ [Security Policy](./SECURITY.md)
+📚 [Documentation complète](https://superviz.io/docs)
 
 ## 🌐 Contact
 
