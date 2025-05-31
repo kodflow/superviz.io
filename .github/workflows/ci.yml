@@ -45,26 +45,10 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-  code_review:
-    name: CodeRabbit AI PR Review
-    runs-on: ubuntu-latest
-    needs: analyze
-    if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
-    steps:
-      - name: Run CodeRabbit
-        uses: coderabbitai/ai-pr-reviewer@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OPENAI_API_KEY: ${{ secrets.CODERABBIT_API_KEY }}
-        with:
-          debug: false
-          review_simple_changes: false
-          review_comment_lgtm: false
-
   build:
     name: Build CLI Snapshot
     runs-on: ubuntu-latest
-    needs: [analyze, code_review]
+    needs: [analyze]
     outputs:
       version: ${{ steps.meta.outputs.version }}
     steps:
