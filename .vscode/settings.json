@@ -1,0 +1,9 @@
+{
+  "files.exclude": {
+    ".github": false,
+    "vendor": true,
+    "*.test.go": false,
+    ".vscode": false
+  },
+  "cmake.ignoreCMakeListsMissing": true
+}

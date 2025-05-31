@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches: [main]
-    tags: ['*']
+    tags: ["*"]
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
@@ -38,7 +38,10 @@ jobs:
           skipInvalidTags: true
           noVersionBumpBehavior: patch
           noNewCommitBehavior: current
-          patchList: 'vendor, update, fix, bugfix, perf, refactor, test, tests, chore, ci, docs, improve, style, build, revert, improvement, enhancement, coverage, clean'
+          patchList: "vendor, update, fix, bugfix, perf, refactor, test, tests, chore, ci, docs, improve, style, build, revert, improvement, enhancement, coverage, clean"
+
+      - name: Run unit tests & coverage
+        run: make test
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
@@ -89,7 +92,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: svz-binaries
-          path: dist/
+          path: .dist/
 
   release:
     name: Tag + Publish
@@ -113,14 +116,14 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: svz-binaries
-          path: dist/
+          path: .dist/
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
           name: Superviz.io ${{ needs.analyze.outputs.version }}
           tag: ${{ needs.analyze.outputs.version }}
-          artifacts: dist/bin/**
+          artifacts: .dist/bin/**
           makeLatest: true
           allowUpdates: true
           skipIfReleaseExists: true

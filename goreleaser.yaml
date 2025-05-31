@@ -1,7 +1,7 @@
 version: 2
 
 project_name: svz
-dist: dist
+dist: .dist
 
 builds:
   - id: svz
@@ -17,7 +17,7 @@ builds:
       - arm64
     env:
       - CGO_ENABLED=0
-    mod_timestamp: '{{ .CommitTimestamp }}'
+    mod_timestamp: "{{ .CommitTimestamp }}"
     ldflags:
       - >-
         -s -w
