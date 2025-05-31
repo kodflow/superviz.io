@@ -116,7 +116,7 @@ jobs:
         with:
           name: Superviz.io ${{ needs.analyze.outputs.version }}
           tag: ${{ needs.analyze.outputs.version }}
-          artifacts: dist/*
+          artifacts: dist/bin/*
           makeLatest: true
           allowUpdates: true
           skipIfReleaseExists: true
