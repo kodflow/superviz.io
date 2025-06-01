@@ -40,7 +40,12 @@ jobs:
           noNewCommitBehavior: current
           patchList: "vendor, update, fix, bugfix, perf, refactor, test, tests, chore, ci, docs, improve, style, build, revert, improvement, enhancement, coverage, clean"
 
-      - name: Run unit tests & coverage
+      - name: Install gotestsum
+        run: |
+          go install gotest.tools/gotestsum@latest
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"   # ← rend le binaire visible
+
+      - name: Run all the tests and code checks
         run: make test
 
       - name: SonarQube Scan
