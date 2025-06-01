@@ -25,6 +25,8 @@ builds:
         -X github.com/kodflow/superviz.io/internal/cli.commit={{ .ShortCommit }}
         -X github.com/kodflow/superviz.io/internal/cli.date={{ .Date }}
         -X github.com/kodflow/superviz.io/internal/cli.builtBy={{ .Env.BUILT_BY }}
+        -X github.com/kodflow/superviz.io/internal/cli.goVersion={{ .Env.GOVERSION }}
+        -X github.com/kodflow/superviz.io/internal/cli.osArch={{ .Os }}/{{ .Arch }}
 
 archives:
   - files:

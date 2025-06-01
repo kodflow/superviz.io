@@ -43,7 +43,12 @@ jobs:
       - name: Install gotestsum
         run: |
           go install gotest.tools/gotestsum@latest
-          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"   # ← rend le binaire visible
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+      
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          only-new-issues: true
 
       - name: Run all the tests and code checks
         run: make test
@@ -77,10 +82,13 @@ jobs:
           DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           BUILT_BY="ci"
           VERSION="${{ needs.analyze.outputs.version }}-dev+${COMMIT}"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "commit=$COMMIT" >> "$GITHUB_OUTPUT"
-          echo "date=$DATE" >> "$GITHUB_OUTPUT"
-          echo "builtBy=$BUILT_BY" >> "$GITHUB_OUTPUT"
+          GOVERSION=$(go version | awk '{print $3}')
+
+          echo "version=$VERSION"     >> "$GITHUB_OUTPUT"
+          echo "commit=$COMMIT"       >> "$GITHUB_OUTPUT"
+          echo "date=$DATE"           >> "$GITHUB_OUTPUT"
+          echo "builtBy=$BUILT_BY"    >> "$GITHUB_OUTPUT"
+          echo "goVersion=$GOVERSION" >> "$GITHUB_OUTPUT"
 
       - name: Build with GoReleaser (snapshot)
         uses: goreleaser/goreleaser-action@v6
@@ -92,6 +100,7 @@ jobs:
           COMMIT: ${{ steps.meta.outputs.commit }}
           DATE: ${{ steps.meta.outputs.date }}
           BUILT_BY: ${{ steps.meta.outputs.builtBy }}
+          GOVERSION: ${{ steps.meta.outputs.goVersion }}
 
       - name: Upload binaries
         uses: actions/upload-artifact@v4

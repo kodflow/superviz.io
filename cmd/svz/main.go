@@ -1,7 +1,13 @@
 package main
 
-import "github.com/kodflow/superviz.io/internal/cli"
+import (
+	"os"
+
+	"github.com/kodflow/superviz.io/internal/cli"
+)
 
 func main() {
-	cli.Execute()
+	if err := cli.GetCLICommand().Execute(); err != nil {
+		os.Exit(1)
+	}
 }
