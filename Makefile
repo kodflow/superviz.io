@@ -1,4 +1,4 @@
-.PHONY: help gazelle-update gazelle-format
+.PHONY: help fmt test build
 .SILENT:
 
 .DEFAULT_GOAL = help
