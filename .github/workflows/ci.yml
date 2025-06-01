@@ -98,6 +98,8 @@ jobs:
         with:
           name: svz-binaries
           path: .dist/
+          if-no-files-found: error
+          include-hidden-files: true
 
   release:
     name: Tag + Publish
