@@ -2,6 +2,8 @@
 .SILENT:
 
 .DEFAULT_GOAL = help
+GOVERSION := $(shell go version | awk '{print $$3}')
+BUILT_BY  := local
 ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 $(eval $(ARGS):;@:)
 
@@ -31,9 +33,14 @@ fmt: ## Format all code: Go, Terraform, YAML, Bazel
 	prettier --write "**/*.yml" "**/*.yaml" "**/*.json" "**/*.md"
 
 test: ## Run all tests
+	echo "🧪 Running linter..."
+	golangci-lint run ./...
 	echo "🧪 Running tests..."
 	gotestsum --packages ./... -f github-actions -- -v -coverprofile=./coverage.out -covermode=atomic
 
 build: ## Build the Go application
 	echo "🚀 Building the Go application..."
-	BUILT_BY=local goreleaser build --snapshot --clean
+	BUILT_BY=$(BUILT_BY) GOVERSION=$(GOVERSION) goreleaser build --snapshot --clean
+
+run: ## Run the Go application
+	go run cmd/svz/main.go $(ARGS)

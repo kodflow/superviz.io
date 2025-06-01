@@ -1,0 +1,65 @@
+linters:
+  enable:
+    - revive
+    - godot
+    - godoccheck
+    - misspell
+    - gofmt
+    - goimports
+    - govet
+    - staticcheck
+    - ineffassign
+    - errcheck
+    - lll
+    - gocritic
+    - gosec
+    - errorlint
+    - wrapcheck
+    - bodyclose
+    - sqlclosecheck
+    - prealloc
+    - gocyclo
+    - depguard
+    - dogsled
+
+linters-settings:
+  revive:
+    ignore-generated-header: true
+    severity: error
+    rules:
+      - name: comment
+        arguments: ["require:all"]
+      - name: comment-format
+      - name: godot
+      - name: misspell
+
+  gosec:
+    severity: warning
+
+  gocyclo:
+    min-complexity: 15
+
+  depguard:
+    list-type: blacklist
+    packages:
+      - log
+    packages-with-error-message:
+      log: "use our internal logger package instead of the stdlib log"
+
+  errorlint:
+    errorf: true
+
+  gocritic:
+    enabled-checks:
+      - ifElseChain
+      - paramTypeCombine
+      - sloppyLen
+      - appendAssign
+      - errname
+      - maintainability
+
+  lll:
+    line-length: 120
+    tab-width: 4
+    ignore-comments: true
+    ignore-strings: true
