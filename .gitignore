@@ -18,7 +18,7 @@ yarn-error.log
 .pnp.*
 
 # Build directories
-dist/
+.dist/
 build/
 out/
 .next/
@@ -34,7 +34,6 @@ out/
 
 # IDE files
 .idea/
-.vscode/
 *.swp
 *.swo
 .project
@@ -57,3 +56,5 @@ coverage/
 *.bak
 *.tmp
 *~
+
+coverage.out
