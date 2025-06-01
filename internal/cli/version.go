@@ -26,7 +26,7 @@ type VersionInfo struct {
 	OSArch    string
 }
 
-// getVersionInfo returns the version details as a struct
+// getVersionInfo returns a VersionInfo struct populated with the current build and runtime metadata.
 func getVersionInfo() VersionInfo {
 	return VersionInfo{
 		Version:   version,
@@ -59,7 +59,7 @@ var versionCmd = &cobra.Command{
 	},
 }
 
-// GetVersionCommand returns the version cobra command
+// GetVersionCommand returns a Cobra command that displays version information for the CLI application.
 func GetVersionCommand() *cobra.Command {
 	return versionCmd
 }

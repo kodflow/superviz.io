@@ -25,13 +25,13 @@ var rootCmd = &cobra.Command{
 //
 // Returns:
 //   - *cobra.Command: The root command instance that contains all subcommands
-//     and configuration for the CLI application
+// GetCLICommand returns the root Cobra command for the Superviz CLI application.
 func GetCLICommand() *cobra.Command {
 	return rootCmd
 }
 
 // init registers all subcommands with the root command.
-// This function is automatically called when the package is imported.
+// init registers the version subcommand with the root CLI command when the package is initialized.
 func init() {
 	// Register the version subcommand
 	rootCmd.AddCommand(GetVersionCommand())
