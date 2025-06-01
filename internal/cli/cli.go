@@ -16,7 +16,7 @@ var rootCmd = &cobra.Command{
 	DisableFlagsInUseLine: true, // Cleaner usage line without [flags]
 }
 
-// GetCLIRootCommand returns the root cobra command for the CLI application.
+// GetCLICommand returns the root cobra command for the CLI application.
 // This function provides access to the main command structure that serves as
 // the entry point for all CLI operations.
 //

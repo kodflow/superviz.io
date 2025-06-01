@@ -10,13 +10,16 @@ import (
 )
 
 func TestExecuteCLI(t *testing.T) {
-	// Capture la sortie standard
+	// Capture standard output
 	oldStdout := os.Stdout
-	r, w, _ := os.Pipe()
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Fatalf("Failed to create pipe: %v", err)
+	}
 	os.Stdout = w
 
 	// Exécute la commande CLI
-	err := cli.GetCLICommand().Execute()
+	err = cli.GetCLICommand().Execute()
 	assert.NoError(t, err, "Expected Execute() to run without error")
 
 	// Ferme et récupère la sortie
@@ -27,6 +30,6 @@ func TestExecuteCLI(t *testing.T) {
 
 	output := buf.String()
 	if output == "" {
-		t.Error("Expected output from CLI execution, got empty string")
+		t.Error("Expected help output from CLI execution, got empty string")
 	}
 }
