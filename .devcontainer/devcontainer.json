@@ -1,0 +1,23 @@
+{
+  "name": "Go DevContainer",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "postCreateCommand": "go mod tidy > /dev/null 2>&1",
+  "remoteUser": "vscode",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "golang.go", // LSP + debug/test/autoimport Go
+        "premparihar.gotestexplorer", // UI tests Go (utile mais léger)
+        "github.copilot", // Autocomplétion IA
+        "github.copilot-chat", // Chat Copilot (optionnel mais couplé)
+        "davidanson.vscode-markdownlint", // Lint Markdown
+        "bierner.markdown-mermaid", // Mermaid dans Markdown
+        "eamodio.gitlens", // Historique Git + blame + annotation
+        "steoates.autoimport", // Autoimport JS/TS/Go/…
+        "visualstudioexptteam.vscodeintellicode" // Intellisense améliorée
+      ]
+    }
+  }
+}
