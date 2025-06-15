@@ -5,31 +5,34 @@ import (
 	"os"
 	"testing"
 
-	"github.com/kodflow/superviz.io/internal/cli"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestExecuteCLI(t *testing.T) {
-	// Capture standard output
+func TestMainExecution(t *testing.T) {
+	// Sauvegarde l'état original de os.Stdout
 	oldStdout := os.Stdout
-	r, w, err := os.Pipe()
-	if err != nil {
-		t.Fatalf("Failed to create pipe: %v", err)
-	}
+	r, w, _ := os.Pipe()
 	os.Stdout = w
 
-	// Exécute la commande CLI
-	err = cli.GetCLICommand().Execute()
-	assert.NoError(t, err, "Expected Execute() to run without error")
+	// Simule les arguments d'entrée (ex: aucun, donc help attendu)
+	oldArgs := os.Args
+	defer func() {
+		os.Args = oldArgs
+		os.Stdout = oldStdout
+	}()
+	os.Args = []string{"svz"}
 
-	// Ferme et récupère la sortie
+	// Appelle main()
+	main()
+
+	// Ferme l'écriture et lit la sortie
 	_ = w.Close()
 	var buf bytes.Buffer
 	_, _ = buf.ReadFrom(r)
-	os.Stdout = oldStdout
-
 	output := buf.String()
-	if output == "" {
-		t.Error("Expected help output from CLI execution, got empty string")
-	}
+
+	// Assertions sur la sortie
+	assert.NotEmpty(t, output, "Expected help or CLI output")
+	assert.Contains(t, output, "Superviz - Declarative Process Supervisor", "Expected help text")
+	assert.Contains(t, output, "Available Commands:", "Expected list of commands")
 }
