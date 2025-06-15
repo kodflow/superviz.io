@@ -1,4 +1,12 @@
-FROM mcr.microsoft.com/devcontainers/go:latest
+# --- ARGs disponibles AVANT FROM ---
+ARG GOVERSION=1.24
+
+FROM mcr.microsoft.com/devcontainers/go:${GOVERSION}
+
+# --- Redéfinir les ARGs/ENVs utilisables dans les layers suivants ---
+ARG GOVERSION
+ENV GOVERSION=go${GOVERSION}
+ENV BUILT_BY=devcontainer
 
 # 1. Install system dependencies
 RUN apt-get update && \
@@ -16,19 +24,18 @@ RUN apt-get update && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # 2. Install Go and JS tools
-RUN go install gotest.tools/gotestsum@latest && \
-    curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b /usr/local/bin v1.56.2 && \
-    curl -sSfL https://github.com/goreleaser/goreleaser/releases/latest/download/goreleaser_Linux_x86_64.tar.gz \
-      | tar -xz -C /usr/local/bin goreleaser && \
-    npm install -g npm@latest prettier
+RUN go install gotest.tools/gotestsum@v1.12.2
+RUN go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.6
+RUN go install github.com/goreleaser/goreleaser/v2@v2.10.2
+RUN npm install -g npm prettier
 
-# 3. Setup Go module cache in user space to avoid permission issues
+# 3. Setup Go module cache
 ENV GOPATH=/home/vscode/go
 ENV GOMODCACHE=/home/vscode/go/pkg/mod
 RUN mkdir -p /home/vscode/go/pkg/mod && \
     chown -R vscode:vscode /home/vscode/go
 
-# 4. Install Oh My Zsh (no prompt)
+# 4. Install Oh My Zsh
 RUN rm -rf /home/vscode/.oh-my-zsh && \
     curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -o /tmp/install-oh-my-zsh.sh && \
     chmod +x /tmp/install-oh-my-zsh.sh && \
@@ -37,7 +44,7 @@ RUN rm -rf /home/vscode/.oh-my-zsh && \
     chown -R vscode:vscode /home/vscode/.oh-my-zsh && \
     rm -f /tmp/install-oh-my-zsh.sh
 
-# 5. Install Powerlevel10k theme
+# 5. Install Powerlevel10k
 RUN rm -rf /home/vscode/.oh-my-zsh/custom/themes/powerlevel10k && \
     git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \
       /home/vscode/.oh-my-zsh/custom/themes/powerlevel10k && \
@@ -48,7 +55,7 @@ COPY ./zshrc /home/vscode/.zshrc
 COPY ./.p10k.zsh /home/vscode/.p10k.zsh
 RUN chown vscode:vscode /home/vscode/.zshrc /home/vscode/.p10k.zsh
 
-# 7. Set zsh as default shell
+# 7. Final Zsh config
 SHELL ["/usr/bin/zsh", "-c"]
 ENV ZSH="/home/vscode/.oh-my-zsh"
 ENV SHELL="/usr/bin/zsh"
