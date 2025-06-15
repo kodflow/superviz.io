@@ -5,18 +5,23 @@
   },
   "postCreateCommand": "go mod tidy > /dev/null 2>&1",
   "remoteUser": "vscode",
+  "mounts": [
+    "source=go-mod-cache,target=/go/pkg/mod,type=volume",
+    "source=go-build-cache,target=/root/.cache/go-build,type=volume"
+  ],
   "customizations": {
     "vscode": {
       "extensions": [
-        "golang.go", // LSP + debug/test/autoimport Go
-        "premparihar.gotestexplorer", // UI tests Go (utile mais léger)
-        "github.copilot", // Autocomplétion IA
-        "github.copilot-chat", // Chat Copilot (optionnel mais couplé)
-        "davidanson.vscode-markdownlint", // Lint Markdown
-        "bierner.markdown-mermaid", // Mermaid dans Markdown
-        "eamodio.gitlens", // Historique Git + blame + annotation
-        "steoates.autoimport", // Autoimport JS/TS/Go/…
-        "visualstudioexptteam.vscodeintellicode" // Intellisense améliorée
+        "golang.go",
+        "premparihar.gotestexplorer",
+        "github.copilot",
+        "github.copilot-chat",
+        "davidanson.vscode-markdownlint",
+        "bierner.markdown-mermaid",
+        "eamodio.gitlens",
+        "steoates.autoimport",
+        "visualstudioexptteam.vscodeintellicode",
+        "ms-azuretools.vscode-containers"
       ]
     }
   }
