@@ -1776,7 +1776,7 @@
   # POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS. It displays an icon and yellow text on red background
   # greeting the user.
   #
-  # Type `p10k help segment` for documentation and a more sophisticated example.
+  # ```
   function prompt_example() {
     p10k segment -b 1 -f 3 -i '⭐' -t 'hello, %n'
   }
@@ -1792,7 +1792,9 @@
   # rule is not observed, the content of instant prompt will be incorrect.
   #
   # Usually, you should either not define instant_prompt_* or simply call prompt_* from it. If
-  # instant_prompt_* is not defined for a segment, the segment won't be shown in instant prompt.
+  # Renders the 'example' prompt segment for the instant prompt in Powerlevel10k.
+  #
+  # This function ensures that the custom 'example' segment appears consistently in both the instant and regular prompts by invoking `prompt_example`.
   function instant_prompt_example() {
     # Since prompt_example always makes the same `p10k segment` calls, we can call it from
     # instant_prompt_example. This will give us the same `example` prompt segment in the instant

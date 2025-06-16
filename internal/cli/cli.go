@@ -26,7 +26,7 @@ var rootCmd = &cobra.Command{
 // Returns:
 //   - *cobra.Command: The root command instance that contains all subcommands
 //
-// GetCLICommand returns the root Cobra command for the Superviz CLI application.
+// GetCLICommand returns the root Cobra command for the Superviz CLI application. Use this to access or extend the main CLI command structure.
 func GetCLICommand() *cobra.Command {
 	return rootCmd
 }
