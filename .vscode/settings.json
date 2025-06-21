@@ -1,4 +1,7 @@
 {
+  "[go]": {
+    "editor.formatOnSave": false
+  },
   "terminal.integrated.fontFamily": "MesloLGS NF",
   "files.exclude": {
     ".github": false,
