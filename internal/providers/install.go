@@ -7,19 +7,21 @@ import (
 
 // InstallConfig contains configuration for installation operations.
 type InstallConfig struct {
-	Host    string
-	User    string
-	Port    int
-	KeyPath string
-	Timeout time.Duration
-	Force   bool
-	Target  string // parsed from user@host
+	Host             string
+	User             string
+	Port             int
+	KeyPath          string
+	Timeout          time.Duration
+	Force            bool
+	Target           string // parsed from user@host
+	SkipHostKeyCheck bool   // Skip host key verification (development only)
 }
 
 // InstallInfo contains metadata about installation operations.
 type InstallInfo struct {
 	RepositoryURL string
 	PackageName   string
+	GPGKeyID      string
 	Version       string
 	Target        string
 }
@@ -34,6 +36,7 @@ func initInstallInfo() {
 	cachedInstallInfo = InstallInfo{
 		RepositoryURL: "https://repo.superviz.io",
 		PackageName:   "superviz",
+		GPGKeyID:      "A1B2C3D4E5F6789A", // Replace with actual GPG key ID
 		Version:       "latest",
 	}
 }
@@ -43,6 +46,7 @@ type InstallProvider interface {
 	GetInstallInfo() InstallInfo
 	GetRepositoryURL() string
 	GetPackageName() string
+	GetGPGKeyID() string
 }
 
 // installProvider is the concrete provider for installation data.
@@ -64,6 +68,12 @@ func (p *installProvider) GetRepositoryURL() string {
 func (p *installProvider) GetPackageName() string {
 	installOnce.Do(initInstallInfo)
 	return cachedInstallInfo.PackageName
+}
+
+// GetGPGKeyID returns the GPG key ID for package verification.
+func (p *installProvider) GetGPGKeyID() string {
+	installOnce.Do(initInstallInfo)
+	return cachedInstallInfo.GPGKeyID
 }
 
 // DefaultInstallProvider returns the singleton instance of the default install provider.

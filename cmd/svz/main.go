@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"os"
 
 	"github.com/kodflow/superviz.io/internal/cli"
@@ -14,7 +14,7 @@ import (
 func run(cmd *cobra.Command, args []string) int {
 	cmd.SetArgs(args)
 	if err := cmd.Execute(); err != nil {
-		log.Println("Error:", err)
+		fmt.Fprintln(os.Stderr, "Error:", err)
 		return 1
 	}
 	return 0

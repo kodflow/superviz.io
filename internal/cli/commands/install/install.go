@@ -45,9 +45,10 @@ func NewInstallCommand(service *services.InstallService) *cobra.Command {
 // createInstallCommand creates the cobra command with all flags and validation
 func createInstallCommand(service *services.InstallService) *cobra.Command {
 	opts := &providers.InstallConfig{
-		Port:    22,
-		Timeout: 300 * time.Second,
-		User:    "root",
+		Port:             22,
+		Timeout:          300 * time.Second,
+		User:             "root",
+		SkipHostKeyCheck: false, // Default to secure
 	}
 
 	cmd := &cobra.Command{
@@ -56,7 +57,7 @@ func createInstallCommand(service *services.InstallService) *cobra.Command {
 		Long:  "Setup superviz.io package repository on the remote system so you can install superviz.io using the system package manager (apt, apk, yum, etc.).",
 		Args:  utils.RequireOneTarget,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
-			return service.ValidateAndPrepareConfig(opts, args, cmd.ErrOrStderr())
+			return service.ValidateAndPrepareConfig(opts, args)
 		},
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			return service.Install(cmd.Context(), cmd.OutOrStdout(), opts)
@@ -69,6 +70,7 @@ func createInstallCommand(service *services.InstallService) *cobra.Command {
 	cmd.Flags().IntVarP(&opts.Port, "ssh-port", "p", 22, "SSH port")
 	cmd.Flags().DurationVarP(&opts.Timeout, "timeout", "t", 300*time.Second, "Connection timeout (e.g. 30s, 5m)")
 	cmd.Flags().BoolVarP(&opts.Force, "force", "f", false, "Force installation even if components already exist")
+	cmd.Flags().BoolVar(&opts.SkipHostKeyCheck, "skip-host-key-check", false, "Skip host key verification (development only)")
 
 	return cmd
 }

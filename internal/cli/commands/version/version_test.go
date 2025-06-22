@@ -196,18 +196,29 @@ func TestVersionCommand_DefaultValues(t *testing.T) {
 	output := buf.String()
 
 	expected := map[string]string{
-		"Version:":    "dev",
-		"Commit:":     "none",
-		"Built at:":   "unknown",
-		"Built by:":   "unknown",
-		"Go version:": "go", // allow dynamic go version like go1.21.X
-		"OS/Arch:":    "/",  // expect something like linux/amd64
+		"Version:":  "dev",
+		"Commit:":   "none",
+		"Built at:": "unknown",
+		"Built by:": "unknown",
+		// Go version and OS/Arch will be validated separately with regex
 	}
 
+	// Check for basic field presence and expected static values
 	for field, expect := range expected {
 		require.Contains(t, output, field, "missing field: %q", field)
 		require.Contains(t, output, expect, "field %q should contain %q", field, expect)
 	}
+
+	// Validate dynamic fields with proper format checks
+	require.Regexp(t, `Go version:\s+go\d+\.\d+(?:\.\d+)?`, output,
+		"Go version should match format 'go1.21.0' or 'go1.21'")
+
+	require.Regexp(t, `OS/Arch:\s+\w+/\w+`, output,
+		"OS/Arch should match format 'linux/amd64'")
+
+	// Optional: More specific OS/Arch validation
+	require.Regexp(t, `OS/Arch:\s+(linux|darwin|windows|freebsd)/(amd64|arm64|386|arm)`, output,
+		"OS/Arch should be a valid OS and architecture combination")
 }
 
 func TestVersionCommand_ValidFormat(t *testing.T) {
