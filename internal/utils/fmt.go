@@ -37,56 +37,55 @@ func MustFprintln(w io.Writer, args ...any) {
 // writeArgs writes a slice of values with minimal allocation.
 // It handles only basic types efficiently (strings, ints, bools, etc.).
 func writeArgs(w io.Writer, args []any) {
+	var builder strings.Builder
 	for _, arg := range args {
 		switch v := arg.(type) {
 		case string:
-			_, _ = w.Write([]byte(v))
+			builder.WriteString(v)
 		case []byte:
-			_, _ = w.Write(v)
+			builder.Write(v)
 		case int:
-			_, _ = w.Write([]byte(strconv.Itoa(v)))
+			builder.WriteString(strconv.Itoa(v))
 		case int64:
-			_, _ = w.Write([]byte(strconv.FormatInt(v, 10)))
+			builder.WriteString(strconv.FormatInt(v, 10))
 		case bool:
-			_, _ = w.Write([]byte(strconv.FormatBool(v)))
+			builder.WriteString(strconv.FormatBool(v))
 		case rune:
-			_, _ = w.Write([]byte(string(v)))
+			builder.WriteRune(v)
 		case byte:
-			_, _ = w.Write([]byte{v})
+			builder.WriteByte(v)
 		default:
-			// fallback (not zero-alloc)
-			_, _ = w.Write([]byte(toString(v)))
+			builder.WriteString(toString(v))
 		}
 	}
+	_, _ = w.Write([]byte(builder.String()))
 }
 
 // writeArgsChecked is same as writeArgs but returns error (used in Must*)
 func writeArgsChecked(w io.Writer, args []any) error {
+	var builder strings.Builder
 	for _, arg := range args {
-		var err error
 		switch v := arg.(type) {
 		case string:
-			_, err = w.Write([]byte(v))
+			builder.WriteString(v)
 		case []byte:
-			_, err = w.Write(v)
+			builder.Write(v)
 		case int:
-			_, err = w.Write([]byte(strconv.Itoa(v)))
+			builder.WriteString(strconv.Itoa(v))
 		case int64:
-			_, err = w.Write([]byte(strconv.FormatInt(v, 10)))
+			builder.WriteString(strconv.FormatInt(v, 10))
 		case bool:
-			_, err = w.Write([]byte(strconv.FormatBool(v)))
+			builder.WriteString(strconv.FormatBool(v))
 		case rune:
-			_, err = w.Write([]byte(string(v)))
+			builder.WriteRune(v)
 		case byte:
-			_, err = w.Write([]byte{v})
+			builder.WriteByte(v)
 		default:
-			_, err = w.Write([]byte(toString(v)))
-		}
-		if err != nil {
-			return err
+			builder.WriteString(toString(v))
 		}
 	}
-	return nil
+	_, err := w.Write([]byte(builder.String()))
+	return err
 }
 
 // toString is the fallback converter using the fmt logic.
