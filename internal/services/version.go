@@ -14,7 +14,7 @@ type VersionService struct {
 // NewVersionService creates a new version service with the given provider.
 func NewVersionService(provider providers.VersionProvider) *VersionService {
 	if provider == nil {
-		provider = providers.DefaultVersionProvider() // Utilise le singleton
+		provider = providers.DefaultVersionProvider() // Uses the singleton
 	}
 	return &VersionService{
 		provider: provider,
