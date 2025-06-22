@@ -34,8 +34,8 @@ func (d *detector) Detect(ctx context.Context) (string, error) {
 			"ubuntu": "grep -q 'ID=ubuntu' /etc/os-release",
 			"debian": "grep -q 'ID=debian' /etc/os-release",
 			"alpine": "grep -q 'ID=alpine' /etc/os-release",
-			"centos": "grep -q 'ID.*centos' /etc/os-release",
-			"rhel":   "grep -q 'ID.*rhel' /etc/os-release",
+			"centos": "grep -q '^ID=\"\\?centos' /etc/os-release",
+			"rhel":   "grep -q '^ID=\"\\?rhel' /etc/os-release",
 			"fedora": "grep -q 'ID=fedora' /etc/os-release",
 			"arch":   "grep -q 'ID=arch' /etc/os-release",
 		}

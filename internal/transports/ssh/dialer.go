@@ -85,13 +85,15 @@ func (d *defaultDialer) DialContext(ctx context.Context, network, addr string, c
 		// Perform SSH handshake
 		sshConn, chans, reqs, err := ssh.NewClientConn(conn, addr, config)
 		if err != nil {
-			conn.Close()
+			if cerr := conn.Close(); cerr != nil {
+				fmt.Fprintf(os.Stderr, "warning: failed to close connection after handshake failure: %v\n", cerr)
+			}
 			resultCh <- dialResult{err: err}
 			return
 		}
 
 		client := ssh.NewClient(sshConn, chans, reqs)
-		resultCh <- dialResult{client: client, err: err}
+		resultCh <- dialResult{client: client, err: nil}
 	}()
 
 	// Wait for connection or context cancellation

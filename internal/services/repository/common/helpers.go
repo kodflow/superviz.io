@@ -69,8 +69,41 @@ func (s *SudoHelper) AddPrefix(commands []string, needSudo bool) []string {
 func (s *SudoHelper) commandNeedsSudo(cmd string) bool {
 	// Commands that typically need root access
 	rootCommands := []string{
-		"apt update", "apt install", "apk update", "apk add",
-		"yum", "dnf", "rpm --import", "pacman", "pacman-key",
+		// APT (Debian/Ubuntu)
+		"apt update",
+		"apt install",
+		"apt-get update",
+		"apt-get install",
+
+		// APK (Alpine)
+		"apk update",
+		"apk add",
+		"apk upgrade",
+
+		// YUM / DNF (RHEL, CentOS, Fedora)
+		"yum",
+		"yum install",
+		"yum update",
+		"dnf",
+		"dnf install",
+		"dnf update",
+
+		// RPM
+		"rpm --import",
+		"rpm -i",
+
+		// Pacman (Arch)
+		"pacman",
+		"pacman -S",
+		"pacman -Sy",
+		"pacman-key",
+
+		// Zypper (openSUSE)
+		"zypper install",
+		"zypper update",
+
+		// Portage (Gentoo)
+		"emerge",
 	}
 
 	// Commands that write to system directories

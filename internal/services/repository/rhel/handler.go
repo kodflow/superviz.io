@@ -59,7 +59,7 @@ gpgkey=https://repo.superviz.io/rpm/RPM-GPG-KEY-superviz`
 		"rpm --import https://repo.superviz.io/rpm/RPM-GPG-KEY-superviz",
 
 		// Update package cache
-		"yum clean all || dnf clean all",
+		"if command -v dnf >/dev/null 2>&1; then dnf clean all; elif command -v yum >/dev/null 2>&1; then yum clean all; fi",
 	}
 
 	// Apply sudo prefix where needed
