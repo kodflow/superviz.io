@@ -1,220 +1,218 @@
+// internal/transports/ssh/client.go - Main SSH client implementation
 package ssh
 
 import (
 	"context"
 	"fmt"
-	"log"
-	"os"
-	"path/filepath"
-	"syscall"
+	"net"
 	"time"
 
 	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/knownhosts"
-	"golang.org/x/term"
 )
 
-// Config contains SSH connection configuration.
+// Config contains SSH connection configuration
 type Config struct {
 	Host             string
 	User             string
 	Port             int
-	KeyPath          string // Path to private key (optional)
+	KeyPath          string        // Path to private key (optional)
 	Timeout          time.Duration
-	SkipHostKeyCheck bool // Skip host key verification (development only)
+	SkipHostKeyCheck bool          // Skip host key verification (development only)
+	AcceptNewHostKey bool          // Auto-accept new host keys (development only)
 }
 
-// Client defines the interface for SSH operations.
-type Client interface {
-	Connect(ctx context.Context, config *Config) error
-	Execute(ctx context.Context, command string) error
-	Disconnect() error
-}
-
-// client implements the SSH client.
-type client struct {
-	conn   *ssh.Client
-	config *Config
-}
-
-// NewClient creates a new SSH client.
-func NewClient() Client {
-	return &client{}
-}
-
-// Connect establishes an SSH connection.
-func (c *client) Connect(ctx context.Context, config *Config) error {
-	if config == nil {
-		return fmt.Errorf("config cannot be nil")
+// DefaultConfig returns a configuration with sensible defaults
+func DefaultConfig() *Config {
+	return &Config{
+		Port:    22,
+		Timeout: 30 * time.Second,
 	}
+}
 
+// Validate ensures the configuration is valid
+func (c *Config) Validate() error {
+	if c.Host == "" {
+		return ErrInvalidConfig.WithMessage("host cannot be empty")
+	}
+	if c.User == "" {
+		return ErrInvalidConfig.WithMessage("user cannot be empty")
+	}
+	if c.Port < 1 || c.Port > 65535 {
+		return ErrInvalidConfig.WithMessage("port must be between 1 and 65535")
+	}
+	if c.Timeout <= 0 {
+		return ErrInvalidConfig.WithMessage("timeout must be positive")
+	}
+	return nil
+}
+
+// Address returns the formatted network address
+func (c *Config) Address() string {
+	return net.JoinHostPort(c.Host, fmt.Sprintf("%d", c.Port))
+}
+
+// HostKeyCallback is an alias for ssh.HostKeyCallback for better abstraction
+type HostKeyCallback = ssh.HostKeyCallback
+
+// Authenticator handles SSH authentication
+type Authenticator interface {
+	// GetAuthMethods returns the authentication methods based on config
+	GetAuthMethods(ctx context.Context, config *Config) ([]ssh.AuthMethod, error)
+}
+
+// HostKeyManager handles host key verification
+type HostKeyManager interface {
+	// GetHostKeyCallback returns the appropriate host key callback
+	GetHostKeyCallback(ctx context.Context, config *Config) (HostKeyCallback, error)
+}
+
+// Session represents an SSH session
+type Session interface {
+	// Run executes a command and waits for it to complete
+	Run(cmd string) error
+	// Close closes the session
+	Close() error
+}
+
+// Connection represents an SSH connection
+type Connection interface {
+	// NewSession creates a new session
+	NewSession() (Session, error)
+	// Close closes the connection
+	Close() error
+}
+
+// Dialer establishes SSH connections
+type Dialer interface {
+	// DialContext establishes an SSH connection with context
+	DialContext(ctx context.Context, network, addr string, config *ssh.ClientConfig) (Connection, error)
+}
+
+// Client provides SSH operations
+type Client interface {
+	// Connect establishes an SSH connection
+	Connect(ctx context.Context, config *Config) error
+	// Execute runs a command on the remote host
+	Execute(ctx context.Context, command string) error
+	// Close closes the SSH connection
+	Close() error
+}
+
+// client implements the SSH client
+type client struct {
+	conn           Connection
+	config         *Config
+	authenticator  Authenticator
+	hostKeyManager HostKeyManager
+	dialer         Dialer
+}
+
+// ClientOptions contains options for creating a new client
+type ClientOptions struct {
+	Authenticator  Authenticator
+	HostKeyManager HostKeyManager
+	Dialer         Dialer
+}
+
+// NewClient creates a new SSH client with the given options
+func NewClient(opts *ClientOptions) Client {
+	if opts == nil {
+		opts = &ClientOptions{}
+	}
+	
+	// Use default implementations if not provided
+	if opts.Authenticator == nil {
+		opts.Authenticator = NewDefaultAuthenticator()
+	}
+	if opts.HostKeyManager == nil {
+		opts.HostKeyManager = NewDefaultHostKeyManager()
+	}
+	if opts.Dialer == nil {
+		opts.Dialer = NewDefaultDialer()
+	}
+	
+	return &client{
+		authenticator:  opts.Authenticator,
+		hostKeyManager: opts.HostKeyManager,
+		dialer:         opts.Dialer,
+	}
+}
+
+// Connect establishes an SSH connection
+func (c *client) Connect(ctx context.Context, config *Config) error {
+	// Validate configuration
+	if err := config.Validate(); err != nil {
+		return err
+	}
+	
 	c.config = config
-
-	// Create SSH client config with secure host key checking
+	
+	// Get host key callback
+	hostKeyCallback, err := c.hostKeyManager.GetHostKeyCallback(ctx, config)
+	if err != nil {
+		return ErrHostKeyRejected.Wrap(err)
+	}
+	
+	// Get authentication methods
+	authMethods, err := c.authenticator.GetAuthMethods(ctx, config)
+	if err != nil {
+		return ErrAuthFailed.Wrap(err)
+	}
+	
+	// Create SSH client configuration
 	sshConfig := &ssh.ClientConfig{
 		User:            config.User,
+		Auth:            authMethods,
+		HostKeyCallback: hostKeyCallback,
 		Timeout:         config.Timeout,
-		HostKeyCallback: c.getHostKeyCallback(),
 	}
-
-	// Set up authentication: try key first, then password
-	var authMethods []ssh.AuthMethod
-
-	// 1. Try SSH key authentication if provided
-	if config.KeyPath != "" {
-		if auth, err := c.loadPrivateKey(config.KeyPath); err == nil {
-			authMethods = append(authMethods, auth)
-		} else {
-			fmt.Printf("Warning: failed to load SSH key %s: %v\n", config.KeyPath, err)
-		}
-	}
-
-	// 2. Try default SSH keys if no explicit key provided
-	if config.KeyPath == "" {
-		if auth := c.tryDefaultKeys(); auth != nil {
-			authMethods = append(authMethods, auth)
-		}
-	}
-
-	// 3. Add password authentication as fallback
-	if len(authMethods) == 0 {
-		// No keys worked, prompt for password
-		password, err := c.promptPassword()
-		if err != nil {
-			return fmt.Errorf("failed to read password: %w", err)
-		}
-		authMethods = append(authMethods, ssh.Password(password))
-	} else {
-		// Keys available, but add password as fallback in case keys fail
-		authMethods = append(authMethods, ssh.PasswordCallback(func() (string, error) {
-			return c.promptPassword()
-		}))
-	}
-
-	sshConfig.Auth = authMethods
-
-	// Connect to the remote host
-	address := fmt.Sprintf("%s:%d", config.Host, config.Port)
-	conn, err := ssh.Dial("tcp", address, sshConfig)
+	
+	// Establish connection
+	conn, err := c.dialer.DialContext(ctx, "tcp", config.Address(), sshConfig)
 	if err != nil {
-		return fmt.Errorf("failed to connect to %s: %w", address, err)
+		return ErrConnectionFailed.Wrap(err)
 	}
-
+	
 	c.conn = conn
 	return nil
 }
 
-// getHostKeyCallback returns a secure host key callback using known_hosts.
-func (c *client) getHostKeyCallback() ssh.HostKeyCallback {
-	// Development mode: skip host key checking
-	if c.config.SkipHostKeyCheck {
-		fmt.Println("WARNING: Host key verification disabled (development mode)")
-		return ssh.InsecureIgnoreHostKey()
-	}
-
-	// Try to load known_hosts file
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		fmt.Println("Warning: Cannot determine home directory, skipping host key verification")
-		return ssh.InsecureIgnoreHostKey()
-	}
-
-	knownHostsFile := filepath.Join(homeDir, ".ssh", "known_hosts")
-
-	// Try to create host key callback from known_hosts
-	if _, err := os.Stat(knownHostsFile); err == nil {
-		if callback, err := knownhosts.New(knownHostsFile); err == nil {
-			return callback
-		}
-	}
-
-	// If no known_hosts, use InsecureIgnoreHostKey with warning
-	fmt.Printf("Warning: No known_hosts file found at %s. Host key verification disabled.\n", knownHostsFile)
-	fmt.Println("This makes the connection vulnerable to man-in-the-middle attacks.")
-	return ssh.InsecureIgnoreHostKey()
-}
-
-// loadPrivateKey loads a private key from file.
-func (c *client) loadPrivateKey(keyPath string) (ssh.AuthMethod, error) {
-	key, err := os.ReadFile(keyPath)
-	if err != nil {
-		return nil, fmt.Errorf("unable to read private key: %w", err)
-	}
-
-	signer, err := ssh.ParsePrivateKey(key)
-	if err != nil {
-		return nil, fmt.Errorf("unable to parse private key: %w", err)
-	}
-
-	return ssh.PublicKeys(signer), nil
-}
-
-// tryDefaultKeys tries to load default SSH keys.
-func (c *client) tryDefaultKeys() ssh.AuthMethod {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return nil
-	}
-
-	// Try common key files in order of preference
-	keyFiles := []string{
-		filepath.Join(homeDir, ".ssh", "id_ed25519"),
-		filepath.Join(homeDir, ".ssh", "id_rsa"),
-		filepath.Join(homeDir, ".ssh", "id_ecdsa"),
-		filepath.Join(homeDir, ".ssh", "id_dsa"),
-	}
-
-	for _, keyFile := range keyFiles {
-		if _, err := os.Stat(keyFile); err == nil {
-			if auth, err := c.loadPrivateKey(keyFile); err == nil {
-				return auth
-			}
-		}
-	}
-
-	return nil
-}
-
-// promptPassword prompts the user for a password securely.
-func (c *client) promptPassword() (string, error) {
-	fmt.Printf("Password for %s@%s: ", c.config.User, c.config.Host)
-
-	// Read password without echoing to terminal
-	password, err := term.ReadPassword(int(syscall.Stdin))
-	if err != nil {
-		return "", fmt.Errorf("failed to read password: %w", err)
-	}
-
-	fmt.Println() // Add newline after password input
-	return string(password), nil
-}
-
-// Execute runs a command on the remote host.
+// Execute runs a command on the remote host
 func (c *client) Execute(ctx context.Context, command string) error {
 	if c.conn == nil {
-		return fmt.Errorf("not connected")
+		return ErrNotConnected
 	}
-
+	
+	// Create new session
 	session, err := c.conn.NewSession()
 	if err != nil {
-		return fmt.Errorf("failed to create session: %w", err)
+		return ErrSessionCreation.Wrap(err)
 	}
-	defer func() {
-		if err := session.Close(); err != nil {
-			log.Printf("Warning: failed to close SSH session: %v", err)
-		}
+	defer session.Close()
+	
+	// Execute command with context
+	type result struct {
+		err error
+	}
+	done := make(chan result, 1)
+	
+	go func() {
+		done <- result{err: session.Run(command)}
 	}()
-
-	// Execute the command
-	if err := session.Run(command); err != nil {
-		return fmt.Errorf("command failed: %w", err)
+	
+	select {
+	case <-ctx.Done():
+		return ErrCommandTimeout.Wrap(ctx.Err())
+	case res := <-done:
+		if res.err != nil {
+			return ErrCommandFailed.Wrap(res.err)
+		}
+		return nil
 	}
-
-	return nil
 }
 
-// Disconnect closes the SSH connection.
-func (c *client) Disconnect() error {
+// Close closes the SSH connection
+func (c *client) Close() error {
 	if c.conn != nil {
 		return c.conn.Close()
 	}
