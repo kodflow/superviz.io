@@ -80,7 +80,6 @@ func (m *defaultHostKeyManager) GetHostKeyCallback(ctx context.Context, config *
 
 	// Handle unknown host key
 	if config.AcceptNewHostKey {
-		// Auto-accept mode
 		m.displayHostKeyInfo(config, hostKey)
 		if err := m.store.Add(hostname, hostKey); err != nil {
 			return nil, err

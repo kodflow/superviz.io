@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strings"
 	"time"
 
 	"golang.org/x/crypto/ssh"
@@ -71,7 +72,25 @@ func (d *defaultDialer) DialContext(ctx context.Context, network, addr string, c
 	resultCh := make(chan dialResult, 1)
 
 	go func() {
-		client, err := ssh.Dial(network, addr, config)
+		// Create a connection that can be cancelled
+		dialer := &net.Dialer{
+			Timeout: config.Timeout,
+		}
+		conn, err := dialer.DialContext(ctx, network, addr)
+		if err != nil {
+			resultCh <- dialResult{err: err}
+			return
+		}
+
+		// Perform SSH handshake
+		sshConn, chans, reqs, err := ssh.NewClientConn(conn, addr, config)
+		if err != nil {
+			conn.Close()
+			resultCh <- dialResult{err: err}
+			return
+		}
+
+		client := ssh.NewClient(sshConn, chans, reqs)
 		resultCh <- dialResult{client: client, err: err}
 	}()
 
@@ -168,42 +187,12 @@ func (s *sshSession) Close() error {
 	return s.session.Close()
 }
 
-// contains checks if a string contains any of the given substrings
 func contains(s string, substrs ...string) bool {
+	lowerS := strings.ToLower(s)
 	for _, substr := range substrs {
-		if len(s) >= len(substr) && containsSubstring(s, substr) {
+		if strings.Contains(lowerS, strings.ToLower(substr)) {
 			return true
 		}
 	}
 	return false
-}
-
-// containsSubstring checks if s contains substr (case-insensitive)
-func containsSubstring(s, substr string) bool {
-	// Simple case-insensitive contains without strings package
-	if len(substr) > len(s) {
-		return false
-	}
-
-	for i := 0; i <= len(s)-len(substr); i++ {
-		match := true
-		for j := 0; j < len(substr); j++ {
-			if toLower(s[i+j]) != toLower(substr[j]) {
-				match = false
-				break
-			}
-		}
-		if match {
-			return true
-		}
-	}
-	return false
-}
-
-// toLower converts a byte to lowercase
-func toLower(b byte) byte {
-	if b >= 'A' && b <= 'Z' {
-		return b + 32
-	}
-	return b
 }

@@ -188,7 +188,10 @@ func (c *client) Execute(ctx context.Context, command string) error {
 	if err != nil {
 		return ErrSessionCreation.Wrap(err)
 	}
-
+	if cerr := session.Close(); cerr != nil {
+		// Logue l'erreur si la fermeture échoue
+		fmt.Fprintf(os.Stderr, "warning: failed to close SSH session: %v\n", cerr)
+	}
 	type result struct {
 		err error
 	}
@@ -196,10 +199,6 @@ func (c *client) Execute(ctx context.Context, command string) error {
 
 	go func() {
 		err := session.Run(command)
-		if cerr := session.Close(); cerr != nil {
-			// Logue l'erreur si la fermeture échoue
-			fmt.Fprintf(os.Stderr, "warning: failed to close SSH session: %v\n", cerr)
-		}
 		done <- result{err: err}
 	}()
 
