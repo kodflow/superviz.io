@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"os"
 	"time"
 
 	"golang.org/x/crypto/ssh"
@@ -15,10 +16,10 @@ type Config struct {
 	Host             string
 	User             string
 	Port             int
-	KeyPath          string        // Path to private key (optional)
+	KeyPath          string // Path to private key (optional)
 	Timeout          time.Duration
-	SkipHostKeyCheck bool          // Skip host key verification (development only)
-	AcceptNewHostKey bool          // Auto-accept new host keys (development only)
+	SkipHostKeyCheck bool // Skip host key verification (development only)
+	AcceptNewHostKey bool // Auto-accept new host keys (development only)
 }
 
 // DefaultConfig returns a configuration with sensible defaults
@@ -119,7 +120,7 @@ func NewClient(opts *ClientOptions) Client {
 	if opts == nil {
 		opts = &ClientOptions{}
 	}
-	
+
 	// Use default implementations if not provided
 	if opts.Authenticator == nil {
 		opts.Authenticator = NewDefaultAuthenticator()
@@ -130,7 +131,7 @@ func NewClient(opts *ClientOptions) Client {
 	if opts.Dialer == nil {
 		opts.Dialer = NewDefaultDialer()
 	}
-	
+
 	return &client{
 		authenticator:  opts.Authenticator,
 		hostKeyManager: opts.HostKeyManager,
@@ -144,21 +145,21 @@ func (c *client) Connect(ctx context.Context, config *Config) error {
 	if err := config.Validate(); err != nil {
 		return err
 	}
-	
+
 	c.config = config
-	
+
 	// Get host key callback
 	hostKeyCallback, err := c.hostKeyManager.GetHostKeyCallback(ctx, config)
 	if err != nil {
 		return ErrHostKeyRejected.Wrap(err)
 	}
-	
+
 	// Get authentication methods
 	authMethods, err := c.authenticator.GetAuthMethods(ctx, config)
 	if err != nil {
 		return ErrAuthFailed.Wrap(err)
 	}
-	
+
 	// Create SSH client configuration
 	sshConfig := &ssh.ClientConfig{
 		User:            config.User,
@@ -166,13 +167,13 @@ func (c *client) Connect(ctx context.Context, config *Config) error {
 		HostKeyCallback: hostKeyCallback,
 		Timeout:         config.Timeout,
 	}
-	
+
 	// Establish connection
 	conn, err := c.dialer.DialContext(ctx, "tcp", config.Address(), sshConfig)
 	if err != nil {
 		return ErrConnectionFailed.Wrap(err)
 	}
-	
+
 	c.conn = conn
 	return nil
 }
@@ -182,24 +183,26 @@ func (c *client) Execute(ctx context.Context, command string) error {
 	if c.conn == nil {
 		return ErrNotConnected
 	}
-	
-	// Create new session
+
 	session, err := c.conn.NewSession()
 	if err != nil {
 		return ErrSessionCreation.Wrap(err)
 	}
-	defer session.Close()
-	
-	// Execute command with context
+
 	type result struct {
 		err error
 	}
 	done := make(chan result, 1)
-	
+
 	go func() {
-		done <- result{err: session.Run(command)}
+		err := session.Run(command)
+		if cerr := session.Close(); cerr != nil {
+			// Logue l'erreur si la fermeture échoue
+			fmt.Fprintf(os.Stderr, "warning: failed to close SSH session: %v\n", cerr)
+		}
+		done <- result{err: err}
 	}()
-	
+
 	select {
 	case <-ctx.Done():
 		return ErrCommandTimeout.Wrap(ctx.Err())

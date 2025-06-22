@@ -59,25 +59,25 @@ func (m *defaultHostKeyManager) GetHostKeyCallback(ctx context.Context, config *
 		fmt.Println("WARNING: Host key verification disabled (development mode)")
 		return ssh.InsecureIgnoreHostKey(), nil
 	}
-	
+
 	// Get the server's host key for verification
 	hostKey, err := m.getServerHostKey(ctx, config)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Create remote address
 	remote := &net.TCPAddr{
 		IP:   net.ParseIP(config.Host),
 		Port: config.Port,
 	}
-	
+
 	// Check if key is already known
 	hostname := formatHostPort(config.Host, config.Port)
 	if m.store.IsKnown(hostname, remote, hostKey) {
 		return m.store.GetCallback(), nil
 	}
-	
+
 	// Handle unknown host key
 	if config.AcceptNewHostKey {
 		// Auto-accept mode
@@ -88,33 +88,33 @@ func (m *defaultHostKeyManager) GetHostKeyCallback(ctx context.Context, config *
 		fmt.Printf("Warning: Permanently added '%s' to the list of known hosts.\n", hostname)
 		return m.store.GetCallback(), nil
 	}
-	
+
 	// Interactive mode - prompt user
 	m.displayHostKeyInfo(config, hostKey)
-	
+
 	prompt := "Are you sure you want to continue connecting (yes/no/[fingerprint])? "
 	accepted, err := m.prompter.PromptYesNo(prompt)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	if !accepted {
 		return nil, ErrHostKeyRejected.WithMessage("user rejected host key")
 	}
-	
+
 	// Save the accepted key
 	if err := m.store.Add(hostname, hostKey); err != nil {
 		return nil, err
 	}
 	fmt.Printf("Warning: Permanently added '%s' to the list of known hosts.\n", hostname)
-	
+
 	return m.store.GetCallback(), nil
 }
 
 // getServerHostKey retrieves the host key from the server
 func (m *defaultHostKeyManager) getServerHostKey(ctx context.Context, config *Config) (ssh.PublicKey, error) {
 	var capturedKey ssh.PublicKey
-	
+
 	// Create a temporary config to capture the host key
 	tempConfig := &ssh.ClientConfig{
 		User:    config.User,
@@ -130,34 +130,37 @@ func (m *defaultHostKeyManager) getServerHostKey(ctx context.Context, config *Co
 			}),
 		},
 	}
-	
+
 	// Try to connect just to capture the key
 	type result struct {
 		key ssh.PublicKey
 		err error
 	}
-	
+
 	resultCh := make(chan result, 1)
-	
+
 	go func() {
 		conn, err := ssh.Dial("tcp", config.Address(), tempConfig)
 		if conn != nil {
-			conn.Close()
+			if cerr := conn.Close(); cerr != nil {
+				// On logue l'erreur de fermeture sans remplacer l'erreur principale
+				fmt.Fprintf(os.Stderr, "warning: failed to close SSH connection: %v\n", cerr)
+			}
 		}
-		
+
 		if capturedKey != nil {
 			resultCh <- result{key: capturedKey, err: nil}
 			return
 		}
-		
+
 		if err != nil && strings.Contains(err.Error(), "key captured") {
 			resultCh <- result{key: capturedKey, err: nil}
 			return
 		}
-		
+
 		resultCh <- result{err: fmt.Errorf("failed to capture host key: %w", err)}
 	}()
-	
+
 	select {
 	case <-ctx.Done():
 		return nil, ErrConnectionFailed.Wrap(ctx.Err()).WithMessage("host key retrieval cancelled")
@@ -174,7 +177,7 @@ func (m *defaultHostKeyManager) displayHostKeyInfo(config *Config, key ssh.Publi
 	hostname := formatHostPort(config.Host, config.Port)
 	keyType := getKeyTypeDisplay(key.Type())
 	fingerprint := ssh.FingerprintSHA256(key)
-	
+
 	fmt.Printf("The authenticity of host '%s (%s)' can't be established.\n", hostname, hostname)
 	fmt.Printf("%s key fingerprint is %s.\n", keyType, fingerprint)
 	fmt.Println("This key is not known by any other names.")
@@ -191,52 +194,56 @@ func (s *fileHostKeyStore) IsKnown(hostname string, remote net.Addr, key ssh.Pub
 	if callback == nil {
 		return false
 	}
-	
+
 	err := callback(hostname, remote, key)
 	return err == nil
 }
 
 // Add adds a new host key to the store
-func (s *fileHostKeyStore) Add(hostname string, key ssh.PublicKey) error {
+func (s *fileHostKeyStore) Add(hostname string, key ssh.PublicKey) (err error) {
 	knownHostsPath := s.getKnownHostsPath()
-	
+
 	// Ensure .ssh directory exists
 	sshDir := filepath.Dir(knownHostsPath)
-	if err := os.MkdirAll(sshDir, 0700); err != nil {
+	if err = os.MkdirAll(sshDir, 0700); err != nil {
 		return fmt.Errorf("failed to create .ssh directory: %w", err)
 	}
-	
+
 	// Open or create known_hosts file
 	file, err := os.OpenFile(knownHostsPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return fmt.Errorf("failed to open known_hosts file: %w", err)
 	}
-	defer file.Close()
-	
+	defer func() {
+		if cerr := file.Close(); cerr != nil && err == nil {
+			err = fmt.Errorf("failed to close known_hosts file: %w", cerr)
+		}
+	}()
+
 	// Format and write the host key entry
 	line := knownhosts.Line([]string{hostname}, key)
-	if _, err := fmt.Fprintln(file, line); err != nil {
+	if _, err = fmt.Fprintln(file, line); err != nil {
 		return fmt.Errorf("failed to write host key: %w", err)
 	}
-	
+
 	return nil
 }
 
 // GetCallback returns an ssh.HostKeyCallback for verification
 func (s *fileHostKeyStore) GetCallback() ssh.HostKeyCallback {
 	knownHostsPath := s.getKnownHostsPath()
-	
+
 	// Check if known_hosts file exists
 	if _, err := os.Stat(knownHostsPath); err != nil {
 		return nil
 	}
-	
+
 	// Create callback from known_hosts file
 	callback, err := knownhosts.New(knownHostsPath)
 	if err != nil {
 		return nil
 	}
-	
+
 	return callback
 }
 
@@ -245,12 +252,12 @@ func (s *fileHostKeyStore) getKnownHostsPath() string {
 	if s.knownHostsPath != "" {
 		return s.knownHostsPath
 	}
-	
+
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return ""
 	}
-	
+
 	return filepath.Join(homeDir, ".ssh", "known_hosts")
 }
 
@@ -260,13 +267,13 @@ type terminalPrompter struct{}
 // PromptYesNo prompts the user with a yes/no question
 func (p *terminalPrompter) PromptYesNo(message string) (bool, error) {
 	fmt.Print(message)
-	
+
 	reader := bufio.NewReader(os.Stdin)
 	response, err := reader.ReadString('\n')
 	if err != nil {
 		return false, fmt.Errorf("failed to read user input: %w", err)
 	}
-	
+
 	response = strings.TrimSpace(strings.ToLower(response))
 	return response == "yes" || response == "y", nil
 }

@@ -10,25 +10,25 @@ import (
 var (
 	// ErrInvalidConfig indicates invalid configuration
 	ErrInvalidConfig = &ErrorType{name: "invalid_config"}
-	
+
 	// ErrNotConnected indicates no active connection
 	ErrNotConnected = &ErrorType{name: "not_connected"}
-	
+
 	// ErrSessionCreation indicates session creation failure
 	ErrSessionCreation = &ErrorType{name: "session_creation_failed"}
-	
+
 	// ErrCommandFailed indicates command execution failure
 	ErrCommandFailed = &ErrorType{name: "command_failed"}
-	
+
 	// ErrCommandTimeout indicates command execution timeout
 	ErrCommandTimeout = &ErrorType{name: "command_timeout"}
-	
+
 	// ErrHostKeyRejected indicates host key verification failure
 	ErrHostKeyRejected = &ErrorType{name: "host_key_rejected"}
-	
+
 	// ErrAuthFailed indicates authentication failure
 	ErrAuthFailed = &ErrorType{name: "auth_failed"}
-	
+
 	// ErrConnectionFailed indicates connection failure
 	ErrConnectionFailed = &ErrorType{name: "connection_failed"}
 )
@@ -72,8 +72,8 @@ type SSHError struct {
 
 // Error implements the error interface
 func (e *SSHError) Error() string {
-	if e.context != nil && len(e.context) > 0 {
-		return fmt.Sprintf("%s: %s (context: %v)", e.Type.name, e.Message, e.context)
+	if len(e.context) > 0 {
+		return fmt.Sprintf("%s: %s (context: %+v)", e.Type.name, e.Message, e.context)
 	}
 	return fmt.Sprintf("%s: %s", e.Type.name, e.Message)
 }
@@ -89,12 +89,12 @@ func (e *SSHError) Is(target error) bool {
 	if errType, ok := target.(*ErrorType); ok {
 		return e.Type == errType
 	}
-	
+
 	// Check if target is an SSHError with the same type
 	if sshErr, ok := target.(*SSHError); ok {
 		return e.Type == sshErr.Type
 	}
-	
+
 	// Check wrapped error
 	return errors.Is(e.Cause, target)
 }
@@ -157,10 +157,10 @@ func NewSSHError(errType *ErrorType, format string, args ...interface{}) *SSHErr
 			args = args[:len(args)-1]
 		}
 	}
-	
+
 	// Format message
 	message := fmt.Sprintf(format, args...)
-	
+
 	// Create error
 	err := &SSHError{
 		Type:    errType,
@@ -168,6 +168,6 @@ func NewSSHError(errType *ErrorType, format string, args ...interface{}) *SSHErr
 		Cause:   cause,
 		context: make(map[string]interface{}),
 	}
-	
+
 	return err
 }

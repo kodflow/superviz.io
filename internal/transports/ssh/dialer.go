@@ -3,7 +3,9 @@ package ssh
 
 import (
 	"context"
+	"fmt"
 	"net"
+	"os"
 	"time"
 
 	"golang.org/x/crypto/ssh"
@@ -37,39 +39,42 @@ func (d *defaultDialer) DialContext(ctx context.Context, network, addr string, c
 	// Use custom dialer if provided, otherwise use ssh.Dial
 	var conn net.Conn
 	var err error
-	
+
 	if d.netDialer != nil {
 		// Use context-aware dialing with custom dialer
 		conn, err = d.netDialer.DialContext(ctx, network, addr)
 		if err != nil {
 			return nil, d.enhanceError(err, addr)
 		}
-		
+
 		// Perform SSH handshake
 		sshConn, chans, reqs, err := ssh.NewClientConn(conn, addr, config)
 		if err != nil {
-			conn.Close()
+			if cerr := conn.Close(); cerr != nil {
+				fmt.Fprintf(os.Stderr, "warning: failed to close underlying TCP connection: %v\n", cerr)
+			}
+
 			return nil, d.enhanceError(err, addr)
 		}
-		
+
 		// Create SSH client
 		client := ssh.NewClient(sshConn, chans, reqs)
 		return &sshConnection{client: client}, nil
 	}
-	
+
 	// Use standard SSH dial with context support
 	type dialResult struct {
 		client *ssh.Client
 		err    error
 	}
-	
+
 	resultCh := make(chan dialResult, 1)
-	
+
 	go func() {
 		client, err := ssh.Dial(network, addr, config)
 		resultCh <- dialResult{client: client, err: err}
 	}()
-	
+
 	// Wait for connection or context cancellation
 	select {
 	case <-ctx.Done():
@@ -87,7 +92,7 @@ func (d *defaultDialer) enhanceError(err error, addr string) error {
 	if err == nil {
 		return nil
 	}
-	
+
 	// Context errors
 	if err == context.Canceled {
 		return ErrConnectionFailed.Wrap(err).WithMessage("connection cancelled")
@@ -95,7 +100,7 @@ func (d *defaultDialer) enhanceError(err error, addr string) error {
 	if err == context.DeadlineExceeded {
 		return ErrConnectionFailed.Wrap(err).WithMessage("connection timeout")
 	}
-	
+
 	// Network errors
 	if netErr, ok := err.(net.Error); ok {
 		if netErr.Timeout() {
@@ -104,7 +109,7 @@ func (d *defaultDialer) enhanceError(err error, addr string) error {
 				WithContext("address", addr)
 		}
 	}
-	
+
 	// SSH-specific errors
 	errStr := err.Error()
 	switch {
@@ -179,7 +184,7 @@ func containsSubstring(s, substr string) bool {
 	if len(substr) > len(s) {
 		return false
 	}
-	
+
 	for i := 0; i <= len(s)-len(substr); i++ {
 		match := true
 		for j := 0; j < len(substr); j++ {

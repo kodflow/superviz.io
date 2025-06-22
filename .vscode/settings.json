@@ -1,6 +1,6 @@
 {
   "[go]": {
-    "editor.formatOnSave": false
+    "editor.formatOnSave": true
   },
   "terminal.integrated.fontFamily": "MesloLGS NF",
   "files.exclude": {
