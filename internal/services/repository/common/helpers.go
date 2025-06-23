@@ -7,7 +7,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/kodflow/superviz.io/internal/transports/ssh"
+	"github.com/kodflow/superviz.io/internal/infrastructure/transports/ssh"
 )
 
 // SudoHelper helps with sudo detection and command prefixing.

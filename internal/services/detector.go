@@ -1,11 +1,11 @@
-// internal/services/distro/detector.go
-package distro
+// internal/services/detector.go
+package services
 
 import (
 	"context"
 	"fmt"
 
-	"github.com/kodflow/superviz.io/internal/transports/ssh"
+	"github.com/kodflow/superviz.io/internal/infrastructure/transports/ssh"
 )
 
 // Detector defines the interface for detecting Linux distributions.

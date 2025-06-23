@@ -3,30 +3,37 @@ package utils
 import (
 	"io"
 	"strconv"
+	"strings"
+	"sync"
 )
 
-// FprintIgnoreErr writes all values to the writer using their default format.
-// It avoids fmt.Fprint to prevent allocations on formatting and interface wrapping.
-func FprintIgnoreErr(w io.Writer, args ...any) {
-	writeArgs(w, args)
+var builderPool = sync.Pool{
+	New: func() any {
+		return new(strings.Builder)
+	},
 }
 
-// FprintlnIgnoreErr writes all values followed by a newline.
+// FprintIgnoreErr writes all values to the writer, ignoring errors.
+func FprintIgnoreErr(w io.Writer, args ...any) {
+	_, _ = writeArgs(w, args)
+}
+
+// FprintlnIgnoreErr writes all values followed by a newline, ignoring errors.
 func FprintlnIgnoreErr(w io.Writer, args ...any) {
-	writeArgs(w, args)
+	_, _ = writeArgs(w, args)
 	_, _ = w.Write([]byte("\n"))
 }
 
 // MustFprint writes all values or panics on error.
 func MustFprint(w io.Writer, args ...any) {
-	if err := writeArgsChecked(w, args); err != nil {
+	if _, err := writeArgs(w, args); err != nil {
 		panic("Fprint failed: " + err.Error())
 	}
 }
 
 // MustFprintln writes all values with newline or panics on error.
 func MustFprintln(w io.Writer, args ...any) {
-	if err := writeArgsChecked(w, args); err != nil {
+	if _, err := writeArgs(w, args); err != nil {
 		panic("Fprintln failed: " + err.Error())
 	}
 	if _, err := w.Write([]byte("\n")); err != nil {
@@ -34,10 +41,14 @@ func MustFprintln(w io.Writer, args ...any) {
 	}
 }
 
-// writeArgs writes a slice of values with minimal allocation.
-// It handles only basic types efficiently (strings, ints, bools, etc.).
-func writeArgs(w io.Writer, args []any) {
-	var builder strings.Builder
+// writeArgs efficiently writes arguments to the writer.
+func writeArgs(w io.Writer, args []any) (int64, error) {
+	builder := builderPool.Get().(*strings.Builder)
+	builder.Reset()
+	defer builderPool.Put(builder)
+
+	builder.Grow(estimatedSize(len(args)))
+
 	for _, arg := range args {
 		switch v := arg.(type) {
 		case string:
@@ -58,39 +69,18 @@ func writeArgs(w io.Writer, args []any) {
 			builder.WriteString(toString(v))
 		}
 	}
-	_, _ = w.Write([]byte(builder.String()))
+
+	// Écriture finale du contenu
+	n, err := io.WriteString(w, builder.String())
+	return int64(n), err
 }
 
-// writeArgsChecked is same as writeArgs but returns error (used in Must*)
-func writeArgsChecked(w io.Writer, args []any) error {
-	var builder strings.Builder
-	for _, arg := range args {
-		switch v := arg.(type) {
-		case string:
-			builder.WriteString(v)
-		case []byte:
-			builder.Write(v)
-		case int:
-			builder.WriteString(strconv.Itoa(v))
-		case int64:
-			builder.WriteString(strconv.FormatInt(v, 10))
-		case bool:
-			builder.WriteString(strconv.FormatBool(v))
-		case rune:
-			builder.WriteRune(v)
-		case byte:
-			builder.WriteByte(v)
-		default:
-			builder.WriteString(toString(v))
-		}
-	}
-	_, err := w.Write([]byte(builder.String()))
-	return err
+func estimatedSize(n int) int {
+	return n * 16
 }
 
-// toString is the fallback converter using the fmt logic.
+// toString is the fallback converter for unsupported types.
 func toString(v any) string {
-	// not using fmt.Sprintf to avoid importing fmt
 	switch val := v.(type) {
 	case error:
 		return val.Error()

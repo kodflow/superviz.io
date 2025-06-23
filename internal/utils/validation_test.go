@@ -41,12 +41,19 @@ func TestRequireOneTarget(t *testing.T) {
 		{
 			name:    "empty string argument",
 			args:    []string{""},
-			wantErr: false,
+			wantErr: true,
+			errMsg:  "target must be in format user@host",
 		},
 		{
-			name:    "malformed target format",
+			name:    "malformed target format (no @)",
 			args:    []string{"not-a-target"},
-			wantErr: false,
+			wantErr: true,
+			errMsg:  "target must be in format user@host",
+		},
+		{
+			name:    "multiple @ symbols",
+			args:    []string{"user@host@extra"},
+			wantErr: false, // selon implémentation actuelle (vérifie juste présence de @)
 		},
 	}
 

@@ -6,12 +6,12 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/kodflow/superviz.io/internal/infrastructure/transports/ssh"
 	"github.com/kodflow/superviz.io/internal/providers"
 	"github.com/kodflow/superviz.io/internal/services/repository/alpine"
 	"github.com/kodflow/superviz.io/internal/services/repository/arch"
 	"github.com/kodflow/superviz.io/internal/services/repository/debian"
 	"github.com/kodflow/superviz.io/internal/services/repository/rhel"
-	"github.com/kodflow/superviz.io/internal/transports/ssh"
 )
 
 // Setup defines the interface for repository setup operations.

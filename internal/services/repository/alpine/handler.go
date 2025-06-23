@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/kodflow/superviz.io/internal/infrastructure/transports/ssh"
 	"github.com/kodflow/superviz.io/internal/services/repository/common"
-	"github.com/kodflow/superviz.io/internal/transports/ssh"
 )
 
 // Handler handles Alpine repository setup.

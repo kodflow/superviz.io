@@ -3,7 +3,7 @@ package utils_test
 import (
 	"bytes"
 	"errors"
-	"strings"
+	"fmt"
 	"testing"
 
 	"github.com/kodflow/superviz.io/internal/utils"
@@ -205,7 +205,7 @@ func BenchmarkFprintIgnoreErrVsStdFmt(b *testing.B) {
 	b.Run("fmt.Fprint", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
 			buf.Reset()
-			_, _ = strings.NewReplacer().WriteString(&buf, "prefix: 12345 suffix: true end")
+			_, _ = fmt.Fprint(&buf, args...)
 		}
 	})
 }

@@ -2,9 +2,11 @@ package cli_test
 
 import (
 	"bytes"
+	"strings"
 	"testing"
 
 	"github.com/kodflow/superviz.io/internal/cli"
+	"github.com/kodflow/superviz.io/internal/cli/commands/install"
 	"github.com/kodflow/superviz.io/internal/cli/commands/version"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
@@ -34,7 +36,7 @@ func TestExecuteRootCommand(t *testing.T) {
 }
 
 func TestRootCommandStructureAndSubcommands(t *testing.T) {
-	cmd := cli.NewRootCommand(version.GetCommand())
+	cmd := cli.NewRootCommand(version.GetCommand(), install.GetCommand())
 
 	assert.Equal(t, "svz", cmd.Use)
 	assert.Equal(t, "Superviz - Declarative Process Supervisor", cmd.Short)
@@ -44,14 +46,16 @@ func TestRootCommandStructureAndSubcommands(t *testing.T) {
 	sub := cmd.Commands()
 	assert.NotEmpty(t, sub, "Expected subcommands to be registered")
 
-	var hasVersion bool
+	var hasVersion, hasInstall bool
 	for _, c := range sub {
 		if c.Use == "version" {
 			hasVersion = true
-			break
+		} else if strings.HasPrefix(c.Use, "install") {
+			hasInstall = true
 		}
 	}
 	assert.True(t, hasVersion, "Expected 'version' subcommand to be registered")
+	assert.True(t, hasInstall, "Expected 'install' subcommand to be registered")
 }
 
 func TestRootCommandHelpOutput(t *testing.T) {

@@ -12,18 +12,6 @@ import (
 	"golang.org/x/term"
 )
 
-// PasswordReader reads passwords from the user
-type PasswordReader interface {
-	// ReadPassword reads a password from the user
-	ReadPassword(prompt string) (string, error)
-}
-
-// KeyLoader loads SSH private keys
-type KeyLoader interface {
-	// LoadKey loads a private key from the given path
-	LoadKey(path string) (ssh.Signer, error)
-}
-
 // defaultAuthenticator implements the Authenticator interface
 type defaultAuthenticator struct {
 	passwordReader PasswordReader
@@ -49,43 +37,32 @@ func NewAuthenticator(passwordReader PasswordReader, keyLoader KeyLoader) Authen
 
 // GetAuthMethods returns the authentication methods based on config
 func (a *defaultAuthenticator) GetAuthMethods(ctx context.Context, config *Config) ([]ssh.AuthMethod, error) {
-	// Use SSH key if path is provided
+	// Fast path: SSH key authentication
 	if config.KeyPath != "" {
-		signer, err := a.loadKeyWithCache(config.KeyPath)
-		if err != nil {
-			return nil, ErrAuthFailed.Wrap(err).WithContext("key_path", config.KeyPath)
+		// Check cache first
+		if cached, ok := a.keyCache.Load(config.KeyPath); ok {
+			return []ssh.AuthMethod{ssh.PublicKeys(cached.(ssh.Signer))}, nil
 		}
+
+		// Load and cache key
+		signer, err := a.keyLoader.LoadKey(config.KeyPath)
+		if err != nil {
+			return nil, NewError(ErrAuthFailed, err.Error()).
+				WithContext("key_path", config.KeyPath)
+		}
+
+		a.keyCache.Store(config.KeyPath, signer)
 		return []ssh.AuthMethod{ssh.PublicKeys(signer)}, nil
 	}
 
-	// Otherwise use password authentication
-	prompt := fmt.Sprintf("Password for %s@%s: ", config.User, config.Host)
-	password, err := a.passwordReader.ReadPassword(prompt)
+	// Fallback: password authentication
+	password, err := a.passwordReader.ReadPassword(
+		fmt.Sprintf("Password for %s@%s: ", config.User, config.Host))
 	if err != nil {
-		return nil, ErrAuthFailed.Wrap(err).WithMessage("failed to read password")
+		return nil, WrapError(ErrAuthFailed, err)
 	}
 
 	return []ssh.AuthMethod{ssh.Password(password)}, nil
-}
-
-// loadKeyWithCache loads a key with caching for performance
-func (a *defaultAuthenticator) loadKeyWithCache(keyPath string) (ssh.Signer, error) {
-	// Check cache first
-	if cached, ok := a.keyCache.Load(keyPath); ok {
-		if signer, ok := cached.(ssh.Signer); ok {
-			return signer, nil
-		}
-	}
-
-	// Load key
-	signer, err := a.keyLoader.LoadKey(keyPath)
-	if err != nil {
-		return nil, err
-	}
-
-	// Cache the signer
-	a.keyCache.Store(keyPath, signer)
-	return signer, nil
 }
 
 // terminalPasswordReader reads passwords from terminal
@@ -98,14 +75,16 @@ func (t *terminalPasswordReader) ReadPassword(prompt string) (string, error) {
 	// Read password securely
 	password, err := term.ReadPassword(int(syscall.Stdin))
 	if err != nil {
-		return "", fmt.Errorf("failed to read password: %w", err)
+		return "", err
 	}
 
 	fmt.Println() // Add newline after password input
 
-	// Convert to string and clear the byte slice
+	// Convert and clear in one step
 	result := string(password)
-	clearBytes(password)
+	for i := range password {
+		password[i] = 0
+	}
 
 	return result, nil
 }
@@ -118,24 +97,20 @@ func (f *fileKeyLoader) LoadKey(path string) (ssh.Signer, error) {
 	// Read key file
 	keyData, err := os.ReadFile(path)
 	if err != nil {
-		return nil, fmt.Errorf("unable to read private key file: %w", err)
+		return nil, fmt.Errorf("unable to read private key: %w", err)
 	}
-
-	// Clear key data after parsing
-	defer clearBytes(keyData)
 
 	// Parse private key
 	signer, err := ssh.ParsePrivateKey(keyData)
+
+	// Clear key data immediately
+	for i := range keyData {
+		keyData[i] = 0
+	}
+
 	if err != nil {
 		return nil, fmt.Errorf("unable to parse private key: %w", err)
 	}
 
 	return signer, nil
-}
-
-// clearBytes securely clears a byte slice
-func clearBytes(b []byte) {
-	for i := range b {
-		b[i] = 0
-	}
 }
