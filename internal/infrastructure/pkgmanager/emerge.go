@@ -97,8 +97,8 @@ func (m *EMERGE) Remove(ctx context.Context, pkgs ...string) (string, error) {
 //   - Chaîne de commande shell
 //   - Erreur si le nom du paquet est vide
 func (m *EMERGE) IsInstalled(ctx context.Context, pkg string) (string, error) {
-	if strings.TrimSpace(pkg) == "" {
-		return "", fmt.Errorf("package name required")
+	if err := utils.ValidatePackageNames(pkg); err != nil {
+		return "", err
 	}
 	return fmt.Sprintf("equery list %s", pkg), nil
 }
@@ -114,8 +114,8 @@ func (m *EMERGE) IsInstalled(ctx context.Context, pkg string) (string, error) {
 //   - Commande pour version disponible
 //   - Erreur si le nom du paquet est vide
 func (m *EMERGE) VersionCheck(ctx context.Context, pkg string) (string, string, error) {
-	if strings.TrimSpace(pkg) == "" {
-		return "", "", fmt.Errorf("package name required")
+	if err := utils.ValidatePackageNames(pkg); err != nil {
+		return "", "", err
 	}
 	installed := fmt.Sprintf("equery list %s | awk '{print $2}'", pkg)
 	available := fmt.Sprintf("emerge -p %s | grep '\\[ebuild' | awk '{print $4}'", pkg)

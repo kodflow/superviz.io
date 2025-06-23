@@ -11,14 +11,26 @@ import (
 	"golang.org/x/term"
 )
 
-// defaultAuthenticator implements the Authenticator interface
+// defaultAuthenticator implements the Authenticator interface with caching support.
+//
+// defaultAuthenticator provides SSH authentication using either SSH keys or passwords,
+// with private key caching for improved performance on repeated connections.
 type defaultAuthenticator struct {
+	// passwordReader handles secure password input from users
 	passwordReader PasswordReader
-	keyLoader      KeyLoader
-	keyCache       sync.Map // Cache for loaded private keys
+	// keyLoader handles loading SSH private keys from files
+	keyLoader KeyLoader
+	// keyCache stores loaded private keys to avoid repeated file I/O
+	keyCache sync.Map // Cache for loaded private keys
 }
 
-// NewDefaultAuthenticator creates a new default authenticator
+// NewDefaultAuthenticator creates a new default authenticator with standard implementations.
+//
+// NewDefaultAuthenticator initializes an authenticator with terminal-based password reading
+// and file-based key loading capabilities.
+//
+// Returns:
+//   - Authenticator instance ready for use
 func NewDefaultAuthenticator() Authenticator {
 	return &defaultAuthenticator{
 		passwordReader: &terminalPasswordReader{},
@@ -26,7 +38,17 @@ func NewDefaultAuthenticator() Authenticator {
 	}
 }
 
-// NewAuthenticator creates a new authenticator with custom implementations
+// NewAuthenticator creates a new authenticator with custom implementations.
+//
+// NewAuthenticator allows injection of custom password readers and key loaders
+// for testing or alternative authentication methods.
+//
+// Parameters:
+//   - passwordReader: Custom implementation for password input
+//   - keyLoader: Custom implementation for key loading
+//
+// Returns:
+//   - Authenticator instance with injected dependencies
 func NewAuthenticator(passwordReader PasswordReader, keyLoader KeyLoader) Authenticator {
 	return &defaultAuthenticator{
 		passwordReader: passwordReader,
@@ -34,7 +56,19 @@ func NewAuthenticator(passwordReader PasswordReader, keyLoader KeyLoader) Authen
 	}
 }
 
-// GetAuthMethods returns the authentication methods based on config
+// GetAuthMethods returns the authentication methods based on configuration.
+//
+// GetAuthMethods prioritizes SSH key authentication when a key path is provided,
+// falling back to password authentication. Private keys are cached to improve
+// performance on subsequent connections.
+//
+// Parameters:
+//   - ctx: Context for timeout and cancellation
+//   - config: SSH configuration containing authentication details
+//
+// Returns:
+//   - Slice of SSH authentication methods
+//   - Error if authentication setup fails
 func (a *defaultAuthenticator) GetAuthMethods(ctx context.Context, config *Config) ([]ssh.AuthMethod, error) {
 	// Fast path: SSH key authentication
 	if config.KeyPath != "" {
@@ -64,10 +98,23 @@ func (a *defaultAuthenticator) GetAuthMethods(ctx context.Context, config *Confi
 	return []ssh.AuthMethod{ssh.Password(password)}, nil
 }
 
-// terminalPasswordReader reads passwords from terminal
+// terminalPasswordReader reads passwords from terminal input securely.
+//
+// terminalPasswordReader implements the PasswordReader interface using
+// the system terminal for secure password input without echo.
 type terminalPasswordReader struct{}
 
-// ReadPassword reads a password from the terminal
+// ReadPassword reads a password from the terminal without displaying it.
+//
+// ReadPassword prompts the user with the given message and securely reads
+// the password input, ensuring the password is not echoed to the terminal.
+//
+// Parameters:
+//   - prompt: Text to display to prompt the user
+//
+// Returns:
+//   - Password string entered by the user
+//   - Error if password reading fails
 func (t *terminalPasswordReader) ReadPassword(prompt string) (string, error) {
 	fmt.Print(prompt)
 
@@ -88,10 +135,23 @@ func (t *terminalPasswordReader) ReadPassword(prompt string) (string, error) {
 	return result, nil
 }
 
-// fileKeyLoader loads keys from files
+// fileKeyLoader loads SSH private keys from the filesystem.
+//
+// fileKeyLoader implements the KeyLoader interface for loading SSH private keys
+// from files, with secure memory handling to clear key data after parsing.
 type fileKeyLoader struct{}
 
-// LoadKey loads a private key from file
+// LoadKey loads a private key from the specified file path.
+//
+// LoadKey reads an SSH private key file, parses it into a usable signer,
+// and securely clears the key data from memory after parsing.
+//
+// Parameters:
+//   - path: File system path to the SSH private key
+//
+// Returns:
+//   - SSH signer instance for the loaded key
+//   - Error if key loading or parsing fails
 func (f *fileKeyLoader) LoadKey(path string) (ssh.Signer, error) {
 	// Read key file
 	keyData, err := os.ReadFile(path)

@@ -1,3 +1,4 @@
+// Package providers contains version information providers for superviz.io
 package providers
 
 import (
@@ -5,31 +6,55 @@ import (
 	"sync"
 )
 
+// Build-time variables injected by the build system.
+//
+// These variables are set during compilation via ldflags and contain
+// information about the build version, commit, and build environment.
 var (
-	version   = "dev"
-	commit    = "none"
-	date      = "unknown"
-	builtBy   = "unknown"
+	// version contains the application version (set via ldflags)
+	version = "dev"
+	// commit contains the git commit hash (set via ldflags)
+	commit = "none"
+	// date contains the build timestamp (set via ldflags)
+	date = "unknown"
+	// builtBy contains the build system identifier (set via ldflags)
+	builtBy = "unknown"
+	// goVersion contains the Go compiler version used for the build
 	goVersion = runtime.Version()
-	osArch    = runtime.GOOS + "/" + runtime.GOARCH
+	// osArch contains the target operating system and architecture
+	osArch = runtime.GOOS + "/" + runtime.GOARCH
 )
 
 // VersionInfo contains metadata about the compiled binary.
+//
+// VersionInfo provides structured access to build-time information
+// including version numbers, build details, and runtime environment.
 type VersionInfo struct {
-	Version   string
-	Commit    string
-	BuiltAt   string
-	BuiltBy   string
+	// Version is the application version string
+	Version string
+	// Commit is the git commit hash of the build
+	Commit string
+	// BuiltAt is the timestamp when the binary was built
+	BuiltAt string
+	// BuiltBy identifies the build system or user who created the binary
+	BuiltBy string
+	// GoVersion is the Go compiler version used for the build
 	GoVersion string
-	OSArch    string
+	// OSArch is the target operating system and architecture
+	OSArch string
 }
 
 var (
+	// cachedVersionInfo holds the cached version information
 	cachedVersionInfo VersionInfo
-	once              sync.Once
+	// once ensures version info is initialized only once
+	once sync.Once
 )
 
-// initVersionInfo initializes the cached version info once
+// initVersionInfo initializes the cached version info with current build values.
+//
+// initVersionInfo is called once via sync.Once to populate the cached
+// version information with values from the build-time variables.
 func initVersionInfo() {
 	cachedVersionInfo = VersionInfo{
 		Version:   version,
@@ -41,7 +66,13 @@ func initVersionInfo() {
 	}
 }
 
-// Format returns a formatted string for CLI display.
+// Format returns a formatted string representation for CLI display.
+//
+// Format creates a human-readable, multi-line string containing all
+// version information suitable for command-line output.
+//
+// Returns:
+//   - Formatted version information string
 func (vi VersionInfo) Format() string {
 	return "Version:       " + vi.Version +
 		"\nCommit:        " + vi.Commit +
@@ -52,31 +83,61 @@ func (vi VersionInfo) Format() string {
 }
 
 // VersionProvider defines the interface for providing version data.
+//
+// VersionProvider abstracts access to version information, enabling
+// dependency injection and testing of version-related functionality.
 type VersionProvider interface {
+	// GetVersionInfo returns complete version information.
+	//
+	// Returns:
+	//   - VersionInfo containing all build and version metadata
 	GetVersionInfo() VersionInfo
 }
 
 // versionProvider is the concrete provider for version data.
+//
+// versionProvider implements the VersionProvider interface using cached
+// version information initialized once at startup.
 type versionProvider struct{}
 
 // GetVersionInfo returns the cached version information.
+//
+// GetVersionInfo ensures the version info is initialized and returns
+// the complete metadata about the current build.
+//
+// Returns:
+//   - VersionInfo containing all build and version metadata
 func (p *versionProvider) GetVersionInfo() VersionInfo {
 	once.Do(initVersionInfo)
 	return cachedVersionInfo
 }
 
 // DefaultVersionProvider returns the singleton instance of the default version provider.
+//
+// DefaultVersionProvider provides access to the standard version provider
+// instance for use throughout the application.
+//
+// Returns:
+//   - VersionProvider instance with default configuration
 func DefaultVersionProvider() VersionProvider {
 	return NewVersionProvider()
 }
 
 // NewVersionProvider creates a new default version data provider.
+//
+// NewVersionProvider initializes a new instance of the version provider.
 // Note: Returns the same singleton instance for better performance.
+//
+// Returns:
+//   - VersionProvider instance ready for use
 func NewVersionProvider() VersionProvider {
 	return &versionProvider{}
 }
 
 // Reset resets the singleton state for testing purposes.
+//
+// Reset clears the cached version information and resets the initialization
+// state, allowing fresh initialization in test scenarios.
 // WARNING: This should ONLY be used in tests!
 func Reset() {
 	once = sync.Once{}

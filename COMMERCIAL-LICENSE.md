@@ -43,7 +43,6 @@ You agree to:
 - Mention Superviz.io in credits or legal product disclosures when applicable;
 - Accept that updates, patches, and technical support are reserved for active licensees;
 - Accept that premium tiers may include a Service Level Agreement (SLA), including:
-
   - 3-business-day maximum response time for P1 issues;
   - Priority access to security updates.
 

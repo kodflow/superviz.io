@@ -97,8 +97,8 @@ func (m *APK) Remove(ctx context.Context, pkgs ...string) (string, error) {
 //   - Chaîne de commande shell
 //   - Erreur si le nom du paquet est vide
 func (m *APK) IsInstalled(ctx context.Context, pkg string) (string, error) {
-	if strings.TrimSpace(pkg) == "" {
-		return "", fmt.Errorf("package name required")
+	if err := utils.ValidatePackageNames(pkg); err != nil {
+		return "", err
 	}
 	return fmt.Sprintf("apk info -e %s", pkg), nil
 }
@@ -114,8 +114,8 @@ func (m *APK) IsInstalled(ctx context.Context, pkg string) (string, error) {
 //   - Commande pour version disponible
 //   - Erreur si le nom du paquet est vide
 func (m *APK) VersionCheck(ctx context.Context, pkg string) (string, string, error) {
-	if strings.TrimSpace(pkg) == "" {
-		return "", "", fmt.Errorf("package name required")
+	if err := utils.ValidatePackageNames(pkg); err != nil {
+		return "", "", err
 	}
 	installed := fmt.Sprintf("apk info -v %s | cut -d'-' -f2-", pkg)
 	available := fmt.Sprintf("apk search -v %s | grep %s | cut -d'-' -f2-", pkg, pkg)

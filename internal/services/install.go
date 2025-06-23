@@ -1,4 +1,4 @@
-// internal/services/install.go
+// Package services provides business logic for superviz.io installation operations
 package services
 
 import (
@@ -13,7 +13,10 @@ import (
 	"github.com/kodflow/superviz.io/internal/services/repository"
 )
 
-// Pre-compiled install commands for performance
+// Pre-compiled install commands for performance optimization.
+//
+// installCommands contains distribution-specific installation commands
+// for superviz.io, reducing string construction overhead during installation.
 var installCommands = map[string]string{
 	"ubuntu": "  sudo apt update && sudo apt install superviz\n",
 	"debian": "  sudo apt update && sudo apt install superviz\n",
@@ -26,13 +29,28 @@ var installCommands = map[string]string{
 	"gentoo": "  sudo emerge superviz\n",
 }
 
-// bufferedWriter wraps a writer with buffering and error tracking
+// bufferedWriter wraps a writer with buffering and error tracking.
+//
+// bufferedWriter provides efficient buffered writing with automatic
+// error propagation and formatted output capabilities.
 type bufferedWriter struct {
+	// Writer provides the underlying buffered writing functionality
 	*bufio.Writer
+	// err tracks any accumulated error during writing operations
 	err error
 }
 
-// Write implements io.Writer with error tracking
+// Write implements io.Writer interface with error tracking.
+//
+// Write performs buffered writing while tracking any errors that occur,
+// ensuring that subsequent operations are aware of previous failures.
+//
+// Parameters:
+//   - p: Byte slice to write
+//
+// Returns:
+//   - Number of bytes written
+//   - Error if writing fails or previous error exists
 func (bw *bufferedWriter) Write(p []byte) (n int, err error) {
 	if bw.err != nil {
 		return 0, bw.err
@@ -44,7 +62,14 @@ func (bw *bufferedWriter) Write(p []byte) (n int, err error) {
 	return n, err
 }
 
-// Printf writes formatted output
+// Printf writes formatted output to the buffered writer.
+//
+// Printf provides convenient formatted output while respecting
+// any previous error state and tracking new errors.
+//
+// Parameters:
+//   - format: Format string for output
+//   - args: Arguments for format string
 func (bw *bufferedWriter) Printf(format string, args ...interface{}) {
 	if bw.err != nil {
 		return
@@ -52,7 +77,13 @@ func (bw *bufferedWriter) Printf(format string, args ...interface{}) {
 	_, bw.err = fmt.Fprintf(bw.Writer, format, args...)
 }
 
-// Error returns any accumulated error
+// Error returns any accumulated error from writing operations.
+//
+// Error checks for both accumulated errors and ensures the buffer
+// is properly flushed before returning the final error state.
+//
+// Returns:
+//   - Any accumulated error or flush error
 func (bw *bufferedWriter) Error() error {
 	if bw.err != nil {
 		return bw.err

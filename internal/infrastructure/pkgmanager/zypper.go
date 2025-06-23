@@ -97,8 +97,8 @@ func (m *ZYPPER) Remove(ctx context.Context, pkgs ...string) (string, error) {
 //   - Chaîne de commande shell
 //   - Erreur si le nom du paquet est vide
 func (m *ZYPPER) IsInstalled(ctx context.Context, pkg string) (string, error) {
-	if strings.TrimSpace(pkg) == "" {
-		return "", fmt.Errorf("package name required")
+	if err := utils.ValidatePackageNames(pkg); err != nil {
+		return "", err
 	}
 	return fmt.Sprintf("zypper se --installed-only %s", pkg), nil
 }
@@ -114,8 +114,8 @@ func (m *ZYPPER) IsInstalled(ctx context.Context, pkg string) (string, error) {
 //   - Commande pour version disponible
 //   - Erreur si le nom du paquet est vide
 func (m *ZYPPER) VersionCheck(ctx context.Context, pkg string) (string, string, error) {
-	if strings.TrimSpace(pkg) == "" {
-		return "", "", fmt.Errorf("package name required")
+	if err := utils.ValidatePackageNames(pkg); err != nil {
+		return "", "", err
 	}
 	installed := fmt.Sprintf("zypper info %s | grep Version | head -1 | awk '{print $3}'", pkg)
 	available := fmt.Sprintf("zypper info %s | grep Version | tail -1 | awk '{print $3}'", pkg)

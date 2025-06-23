@@ -97,8 +97,8 @@ func (m *PACMAN) Remove(ctx context.Context, pkgs ...string) (string, error) {
 //   - Chaîne de commande shell
 //   - Erreur si le nom du paquet est vide
 func (m *PACMAN) IsInstalled(ctx context.Context, pkg string) (string, error) {
-	if strings.TrimSpace(pkg) == "" {
-		return "", fmt.Errorf("package name required")
+	if err := utils.ValidatePackageNames(pkg); err != nil {
+		return "", err
 	}
 	return fmt.Sprintf("pacman -Qi %s", pkg), nil
 }
@@ -114,8 +114,8 @@ func (m *PACMAN) IsInstalled(ctx context.Context, pkg string) (string, error) {
 //   - Commande pour version disponible
 //   - Erreur si le nom du paquet est vide
 func (m *PACMAN) VersionCheck(ctx context.Context, pkg string) (string, string, error) {
-	if strings.TrimSpace(pkg) == "" {
-		return "", "", fmt.Errorf("package name required")
+	if err := utils.ValidatePackageNames(pkg); err != nil {
+		return "", "", err
 	}
 	installed := fmt.Sprintf("pacman -Qi %s | grep Version | awk '{print $3}'", pkg)
 	available := fmt.Sprintf("pacman -Si %s | grep Version | awk '{print $3}'", pkg)
