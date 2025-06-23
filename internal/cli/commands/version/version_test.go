@@ -20,7 +20,6 @@ func newVersionCmdWithBuffer(buf *bytes.Buffer) *cobra.Command {
 }
 
 func TestGetCommand_Singleton(t *testing.T) {
-	t.Parallel()
 
 	cmd1 := version.GetCommand()
 	cmd2 := version.GetCommand()
@@ -30,7 +29,6 @@ func TestGetCommand_Singleton(t *testing.T) {
 }
 
 func TestGetCommand_Basic(t *testing.T) {
-	t.Parallel()
 
 	cmd := version.GetCommand()
 
@@ -40,7 +38,6 @@ func TestGetCommand_Basic(t *testing.T) {
 }
 
 func TestGetCommandWithService_NilService(t *testing.T) {
-	t.Parallel()
 
 	cmd1 := version.GetCommandWithService(nil)
 	cmd2 := version.GetCommand()
@@ -50,7 +47,6 @@ func TestGetCommandWithService_NilService(t *testing.T) {
 }
 
 func TestGetCommandWithService_CustomService(t *testing.T) {
-	t.Parallel()
 
 	// Reset singleton state for this test
 	providers.Reset()
@@ -105,7 +101,6 @@ func TestGetCommandWithService_CustomService(t *testing.T) {
 
 // Add this test to verify the mock provider works correctly
 func TestMockVersionProvider(t *testing.T) {
-	t.Parallel()
 
 	mockProvider := &mockVersionProvider{
 		info: providers.VersionInfo{
@@ -129,7 +124,6 @@ func TestMockVersionProvider(t *testing.T) {
 
 // Fix the NewVersionCommand test to handle nil service properly
 func TestNewVersionCommand(t *testing.T) {
-	t.Parallel()
 
 	// Test with non-nil service
 	customService := services.NewVersionService(nil)
@@ -157,7 +151,6 @@ func TestNewVersionCommand(t *testing.T) {
 }
 
 func TestVersionCommand_ContainsAllFields(t *testing.T) {
-	t.Parallel()
 
 	var buf bytes.Buffer
 	cmd := newVersionCmdWithBuffer(&buf)
@@ -184,7 +177,6 @@ func TestVersionCommand_ContainsAllFields(t *testing.T) {
 }
 
 func TestVersionCommand_DefaultValues(t *testing.T) {
-	t.Parallel()
 
 	var buf bytes.Buffer
 	cmd := newVersionCmdWithBuffer(&buf)
@@ -222,7 +214,6 @@ func TestVersionCommand_DefaultValues(t *testing.T) {
 }
 
 func TestVersionCommand_ValidFormat(t *testing.T) {
-	t.Parallel()
 
 	var buf bytes.Buffer
 	cmd := newVersionCmdWithBuffer(&buf)
@@ -248,7 +239,6 @@ func TestVersionCommand_ValidFormat(t *testing.T) {
 }
 
 func TestVersionCommand_Performance(t *testing.T) {
-	t.Parallel()
 
 	// Test that multiple calls to GetCommand return the same cached instance
 	commands := make([]*cobra.Command, 100)
@@ -263,7 +253,6 @@ func TestVersionCommand_Performance(t *testing.T) {
 }
 
 func TestVersionCommand_ThreadSafety(t *testing.T) {
-	t.Parallel()
 
 	// Test concurrent access to GetCommand
 	done := make(chan *cobra.Command, 10)

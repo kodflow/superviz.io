@@ -17,6 +17,7 @@ func NewRootCommand(subcommands ...*cobra.Command) *cobra.Command {
 		Short:                 "Superviz - Declarative Process Supervisor",
 		DisableAutoGenTag:     true,
 		DisableFlagsInUseLine: true,
+		SilenceErrors:         true,
 	}
 
 	// Hide default help command

@@ -31,7 +31,6 @@ func newMockProvider() *mockVersionProvider {
 }
 
 func TestNewVersionService_WithProvider(t *testing.T) {
-	t.Parallel()
 
 	mockProvider := newMockProvider()
 	service := services.NewVersionService(mockProvider)
@@ -44,7 +43,6 @@ func TestNewVersionService_WithProvider(t *testing.T) {
 }
 
 func TestNewVersionService_WithNilProvider(t *testing.T) {
-	t.Parallel()
 
 	service := services.NewVersionService(nil)
 
@@ -56,7 +54,6 @@ func TestNewVersionService_WithNilProvider(t *testing.T) {
 }
 
 func TestVersionService_GetVersionInfo(t *testing.T) {
-	t.Parallel()
 
 	mockProvider := newMockProvider()
 	service := services.NewVersionService(mockProvider)
@@ -72,7 +69,6 @@ func TestVersionService_GetVersionInfo(t *testing.T) {
 }
 
 func TestVersionService_DisplayVersion_Success(t *testing.T) {
-	t.Parallel()
 
 	mockProvider := newMockProvider()
 	service := services.NewVersionService(mockProvider)
@@ -90,7 +86,6 @@ func TestVersionService_DisplayVersion_Success(t *testing.T) {
 }
 
 func TestVersionService_DisplayVersion_NilWriter(t *testing.T) {
-	t.Parallel()
 
 	service := services.NewVersionService(nil)
 
@@ -101,7 +96,6 @@ func TestVersionService_DisplayVersion_NilWriter(t *testing.T) {
 }
 
 func TestVersionService_DisplayVersionString(t *testing.T) {
-	t.Parallel()
 
 	mockProvider := newMockProvider()
 	service := services.NewVersionService(mockProvider)
@@ -116,7 +110,6 @@ func TestVersionService_DisplayVersionString(t *testing.T) {
 }
 
 func TestVersionService_Performance(t *testing.T) {
-	t.Parallel()
 
 	service := services.NewVersionService(nil)
 

@@ -103,6 +103,7 @@ func (c *client) Execute(ctx context.Context, command string) error {
 	if err != nil {
 		return WrapError(ErrSessionCreation, err)
 	}
+
 	defer func() {
 		if cerr := session.Close(); cerr != nil {
 			fmt.Fprintf(os.Stderr, "warning: failed to close SSH session: %v\n", cerr)

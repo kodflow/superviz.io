@@ -5,11 +5,11 @@ import (
 
 	"github.com/kodflow/superviz.io/internal/utils"
 	"github.com/spf13/cobra"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestRequireOneTarget(t *testing.T) {
-	tests := []struct {
+	cases := []struct {
 		name    string
 		args    []string
 		wantErr bool
@@ -27,13 +27,13 @@ func TestRequireOneTarget(t *testing.T) {
 			errMsg:  "you must specify the target as user@host",
 		},
 		{
-			name:    "multiple arguments",
+			name:    "multiple arguments (two)",
 			args:    []string{"user@host1", "user@host2"},
 			wantErr: true,
 			errMsg:  "you must specify the target as user@host",
 		},
 		{
-			name:    "three arguments",
+			name:    "multiple arguments (three)",
 			args:    []string{"user@host1", "user@host2", "user@host3"},
 			wantErr: true,
 			errMsg:  "you must specify the target as user@host",
@@ -53,20 +53,34 @@ func TestRequireOneTarget(t *testing.T) {
 		{
 			name:    "multiple @ symbols",
 			args:    []string{"user@host@extra"},
-			wantErr: false, // selon implémentation actuelle (vérifie juste présence de @)
+			wantErr: true,
+			errMsg:  "target must be in format user@host",
+		},
+		{
+			name:    "missing user",
+			args:    []string{"@host"},
+			wantErr: true,
+			errMsg:  "target must be in format user@host",
+		},
+		{
+			name:    "missing host",
+			args:    []string{"user@"},
+			wantErr: true,
+			errMsg:  "target must be in format user@host",
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for _, tc := range cases {
+		tc := tc // capture range variable
+		t.Run(tc.name, func(t *testing.T) {
 			cmd := &cobra.Command{}
-			err := utils.RequireOneTarget(cmd, tt.args)
+			err := utils.RequireOneTarget(cmd, tc.args)
 
-			if tt.wantErr {
-				assert.Error(t, err)
-				assert.Equal(t, tt.errMsg, err.Error())
+			if tc.wantErr {
+				require.Error(t, err)
+				require.Equal(t, tc.errMsg, err.Error())
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 		})
 	}

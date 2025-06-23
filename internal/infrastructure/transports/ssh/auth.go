@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"sync"
-	"syscall"
 
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/term"
@@ -73,7 +72,7 @@ func (t *terminalPasswordReader) ReadPassword(prompt string) (string, error) {
 	fmt.Print(prompt)
 
 	// Read password securely
-	password, err := term.ReadPassword(int(syscall.Stdin))
+	password, err := term.ReadPassword(int(os.Stdin.Fd()))
 	if err != nil {
 		return "", err
 	}

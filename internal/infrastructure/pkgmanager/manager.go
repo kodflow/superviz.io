@@ -23,6 +23,8 @@ var distroToPkgManager = map[string]string{
 }
 
 // Manager définit l'interface pour tous les gestionnaires de paquets détectés.
+//
+// Chaque implémentation doit fournir des méthodes pour les opérations courantes sur les paquets.
 type Manager interface {
 	// Name retourne le nom du gestionnaire (ex: apt, apk...)
 	Name() string
@@ -42,11 +44,15 @@ type Manager interface {
 
 // Detect retourne le gestionnaire de paquets approprié en se basant sur /etc/os-release,
 // avec un fallback sur les binaires présents dans le PATH.
+//
+// Returns:
+//   - Instance de Manager correspondant à la distribution
+//   - Erreur si aucun gestionnaire n'est détecté
 func Detect() (Manager, error) {
 	const osRelease = "/etc/os-release"
 
 	if file, err := os.Open(osRelease); err == nil {
-		defer file.Close()
+		defer file.Close() // nolint: errcheck
 
 		scanner := bufio.NewScanner(file)
 		for scanner.Scan() {
@@ -71,6 +77,14 @@ func Detect() (Manager, error) {
 	return nil, fmt.Errorf("unable to detect package manager")
 }
 
+// detectFromBin retourne une instance de Manager selon le nom du binaire.
+//
+// Parameters:
+//   - bin: Nom du binaire à détecter (ex: "apt", "yum")
+//
+// Returns:
+//   - Instance de Manager
+//   - Erreur si le binaire n'est pas supporté
 func detectFromBin(bin string) (Manager, error) {
 	switch bin {
 	case "apt":

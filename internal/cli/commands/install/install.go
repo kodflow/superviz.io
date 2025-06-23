@@ -45,10 +45,8 @@ func NewInstallCommand(service *services.InstallService) *cobra.Command {
 // createInstallCommand creates the cobra command with all flags and validation
 func createInstallCommand(service *services.InstallService) *cobra.Command {
 	opts := &providers.InstallConfig{
-		Port:             22,
-		Timeout:          300 * time.Second,
-		User:             "root",
-		SkipHostKeyCheck: false, // Default to secure
+		Port:    22,
+		Timeout: 300 * time.Second,
 	}
 
 	cmd := &cobra.Command{
@@ -62,7 +60,6 @@ func createInstallCommand(service *services.InstallService) *cobra.Command {
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			return service.Install(cmd.Context(), cmd.OutOrStdout(), opts)
 		},
-		SilenceUsage: true, // Don't show usage on execution errors
 	}
 
 	// Flags

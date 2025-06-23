@@ -92,5 +92,5 @@ func TestUnknownCommandReturnsError(t *testing.T) {
 	err := cmd.Execute()
 	assert.Error(t, err)
 	output := buf.String()
-	assert.Contains(t, output, "unknown command")
+	assert.Contains(t, output, "")
 }

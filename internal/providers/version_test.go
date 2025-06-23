@@ -9,7 +9,6 @@ import (
 )
 
 func TestVersionProvider_GetVersionInfo(t *testing.T) {
-	t.Parallel()
 
 	provider := providers.NewVersionProvider()
 	info := provider.GetVersionInfo()
@@ -23,7 +22,6 @@ func TestVersionProvider_GetVersionInfo(t *testing.T) {
 }
 
 func TestVersionProvider_Singleton(t *testing.T) {
-	t.Parallel()
 
 	provider1 := providers.DefaultVersionProvider()
 	provider2 := providers.DefaultVersionProvider()
@@ -35,7 +33,6 @@ func TestVersionProvider_Singleton(t *testing.T) {
 }
 
 func TestVersionProvider_Cache(t *testing.T) {
-	t.Parallel()
 
 	provider := providers.NewVersionProvider()
 
@@ -53,7 +50,6 @@ func TestVersionProvider_Cache(t *testing.T) {
 }
 
 func TestVersionInfo_Format(t *testing.T) {
-	t.Parallel()
 
 	provider := providers.NewVersionProvider()
 	info := provider.GetVersionInfo()
@@ -76,7 +72,6 @@ func TestVersionInfo_Format(t *testing.T) {
 }
 
 func TestVersionInfo_FormatCache(t *testing.T) {
-	t.Parallel()
 
 	provider := providers.NewVersionProvider()
 	info := provider.GetVersionInfo()
