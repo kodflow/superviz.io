@@ -34,6 +34,23 @@ func TestDNF_Install(t *testing.T) {
 
 	_, err = m.Install(context.Background())
 	assert.Error(t, err)
+
+	// Test security validation - dangerous package names should be rejected
+	_, err = m.Install(context.Background(), "package; rm -rf /")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "contains invalid characters")
+
+	_, err = m.Install(context.Background(), "package && malicious_command")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "contains invalid characters")
+
+	_, err = m.Install(context.Background(), "package`command`")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "contains invalid characters")
+
+	_, err = m.Install(context.Background(), "package$(command)")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "contains invalid characters")
 }
 
 func TestDNF_Remove(t *testing.T) {
@@ -45,6 +62,23 @@ func TestDNF_Remove(t *testing.T) {
 
 	_, err = m.Remove(context.Background())
 	assert.Error(t, err)
+
+	// Test security validation - dangerous package names should be rejected
+	_, err = m.Remove(context.Background(), "package; rm -rf /")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "contains invalid characters")
+
+	_, err = m.Remove(context.Background(), "package && malicious_command")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "contains invalid characters")
+
+	_, err = m.Remove(context.Background(), "package`command`")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "contains invalid characters")
+
+	_, err = m.Remove(context.Background(), "package$(command)")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "contains invalid characters")
 }
 
 func TestDNF_IsInstalled(t *testing.T) {
@@ -56,6 +90,23 @@ func TestDNF_IsInstalled(t *testing.T) {
 
 	_, err = m.IsInstalled(context.Background(), "")
 	assert.Error(t, err)
+
+	// Test security validation - dangerous package names should be rejected
+	_, err = m.IsInstalled(context.Background(), "package; rm -rf /")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "contains invalid characters")
+
+	_, err = m.IsInstalled(context.Background(), "package && malicious_command")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "contains invalid characters")
+
+	_, err = m.IsInstalled(context.Background(), "package`command`")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "contains invalid characters")
+
+	_, err = m.IsInstalled(context.Background(), "package$(command)")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "contains invalid characters")
 }
 
 func TestDNF_VersionCheck(t *testing.T) {
@@ -68,4 +119,21 @@ func TestDNF_VersionCheck(t *testing.T) {
 
 	_, _, err = m.VersionCheck(context.Background(), "")
 	assert.Error(t, err)
+
+	// Test security validation - dangerous package names should be rejected
+	_, _, err = m.VersionCheck(context.Background(), "package; rm -rf /")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "contains invalid characters")
+
+	_, _, err = m.VersionCheck(context.Background(), "package && malicious_command")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "contains invalid characters")
+
+	_, _, err = m.VersionCheck(context.Background(), "package`command`")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "contains invalid characters")
+
+	_, _, err = m.VersionCheck(context.Background(), "package$(command)")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "contains invalid characters")
 }

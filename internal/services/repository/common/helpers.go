@@ -108,7 +108,7 @@ func (s *SudoHelper) commandNeedsSudo(cmd string) bool {
 
 	// Commands that write to system directories
 	systemPaths := []string{
-		"/etc/", "/usr/share/keyrings/", "/etc/yum.repos.d/",
+		"/etc/", "/usr/", "/usr/share/keyrings/", "/etc/yum.repos.d/",
 		"/etc/apk/", "/etc/pacman.conf",
 	}
 

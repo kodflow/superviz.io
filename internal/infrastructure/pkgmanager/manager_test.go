@@ -22,3 +22,48 @@ func TestDetect_LiveEnvironment(t *testing.T) {
 	assert.Nil(t, mgr)
 	t.Logf("No package manager detected: %v", err)
 }
+
+func TestDetectFromBin_AllSupportedBinaries(t *testing.T) {
+	testCases := []struct {
+		bin      string
+		expected string
+	}{
+		{"apt", "apt"},
+		{"apk", "apk"},
+		{"dnf", "dnf"},
+		{"yum", "yum"},
+		{"pacman", "pacman"},
+		{"zypper", "zypper"},
+		{"emerge", "emerge"},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.bin, func(t *testing.T) {
+			mgr, err := pkgmanager.DetectFromBin(tc.bin)
+			assert.NoError(t, err)
+			assert.NotNil(t, mgr)
+			assert.Equal(t, tc.expected, mgr.Name())
+		})
+	}
+}
+
+func TestDetectFromBin_UnsupportedBinary(t *testing.T) {
+	unsupportedBins := []string{
+		"unsupported",
+		"invalid",
+		"unknown",
+		"",
+		"homebrew",
+		"pip",
+		"npm",
+	}
+
+	for _, bin := range unsupportedBins {
+		t.Run(bin, func(t *testing.T) {
+			mgr, err := pkgmanager.DetectFromBin(bin)
+			assert.Error(t, err)
+			assert.Nil(t, mgr)
+			assert.Contains(t, err.Error(), "unsupported binary")
+		})
+	}
+}

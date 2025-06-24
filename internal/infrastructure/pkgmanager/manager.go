@@ -60,7 +60,7 @@ func Detect() (Manager, error) {
 			if strings.HasPrefix(line, "ID=") {
 				distro := strings.Trim(strings.TrimPrefix(line, "ID="), `"`)
 				if bin, ok := distroToPkgManager[distro]; ok {
-					return detectFromBin(bin)
+					return DetectFromBin(bin)
 				}
 				break
 			}
@@ -70,14 +70,14 @@ func Detect() (Manager, error) {
 	// Fallback : inspecter les binaires dans le PATH
 	for _, bin := range []string{"apt", "apk", "dnf", "yum", "pacman", "zypper", "emerge"} {
 		if _, err := exec.LookPath(bin); err == nil {
-			return detectFromBin(bin)
+			return DetectFromBin(bin)
 		}
 	}
 
 	return nil, fmt.Errorf("unable to detect package manager")
 }
 
-// detectFromBin retourne une instance de Manager selon le nom du binaire.
+// DetectFromBin retourne une instance de Manager selon le nom du binaire.
 //
 // Parameters:
 //   - bin: Nom du binaire à détecter (ex: "apt", "yum")
@@ -85,7 +85,7 @@ func Detect() (Manager, error) {
 // Returns:
 //   - Instance de Manager
 //   - Erreur si le binaire n'est pas supporté
-func detectFromBin(bin string) (Manager, error) {
+func DetectFromBin(bin string) (Manager, error) {
 	switch bin {
 	case "apt":
 		return NewAPT(), nil

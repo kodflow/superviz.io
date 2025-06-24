@@ -91,6 +91,19 @@ func (bw *bufferedWriter) Error() error {
 	return bw.Flush()
 }
 
+// Flush flushes the underlying buffered writer.
+//
+// Flush ensures all buffered data is written to the underlying writer.
+//
+// Returns:
+//   - Error if flushing fails
+func (bw *bufferedWriter) Flush() error {
+	if bw.err != nil {
+		return bw.err
+	}
+	return bw.Writer.Flush()
+}
+
 // InstallService handles installation operations
 type InstallService struct {
 	provider  providers.InstallProvider

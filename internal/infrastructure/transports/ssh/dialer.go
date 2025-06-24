@@ -59,9 +59,11 @@ func (d *defaultDialer) wrapError(err error, addr string) error {
 	// Fast path for context errors
 	switch err {
 	case context.Canceled:
-		return NewError(ErrConnectionFailed, "connection cancelled")
+		return NewError(ErrConnectionFailed, "connection cancelled").
+			WithContext("address", addr)
 	case context.DeadlineExceeded:
-		return NewError(ErrConnectionFailed, "connection timeout")
+		return NewError(ErrConnectionFailed, "connection timeout").
+			WithContext("address", addr)
 	}
 
 	// Check network errors
