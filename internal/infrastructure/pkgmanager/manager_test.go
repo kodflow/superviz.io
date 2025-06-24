@@ -10,7 +10,7 @@ import (
 func TestDetect_LiveEnvironment(t *testing.T) {
 	mgr, err := pkgmanager.Detect()
 
-	// soit on a détecté un gestionnaire valide
+	// either we detected a valid manager
 	if err == nil {
 		assert.NotNil(t, mgr)
 		assert.NotEmpty(t, mgr.Name())
@@ -18,7 +18,7 @@ func TestDetect_LiveEnvironment(t *testing.T) {
 		return
 	}
 
-	// soit on est dans un environnement trop épuré (e.g. scratch)
+	// or we are in a too minimal environment (e.g. scratch)
 	assert.Nil(t, mgr)
 	t.Logf("No package manager detected: %v", err)
 }

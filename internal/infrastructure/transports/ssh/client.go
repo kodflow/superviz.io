@@ -85,7 +85,7 @@ func NewClient(opts *ClientOptions) Client {
 // then establishes the SSH connection. The connection remains active until Close is called.
 //
 // Parameters:
-//   - ctx: Context for timeout and cancellation
+//   - ctx: context.Context for timeout and cancellation
 //   - config: SSH configuration for the connection
 //
 // Returns:
@@ -134,7 +134,7 @@ func (c *client) Connect(ctx context.Context, config *Config) error {
 // for timeout and cancellation.
 //
 // Parameters:
-//   - ctx: Context for timeout and cancellation
+//   - ctx: context.Context for timeout and cancellation
 //   - command: Command string to execute on the remote server
 //
 // Returns:

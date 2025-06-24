@@ -91,7 +91,7 @@ func MustFprintln(w io.Writer, args ...any) {
 //
 // Returns:
 //   - Number of bytes written
-//   - Error if any write operation fails
+//   - err: error if any write operation fails
 func writeArgs(w io.Writer, args []any) (int64, error) {
 	builder := builderPool.Get().(*strings.Builder)
 	builder.Reset()
@@ -120,7 +120,7 @@ func writeArgs(w io.Writer, args []any) (int64, error) {
 		}
 	}
 
-	// Écriture finale du contenu
+	// Final write of content
 	n, err := io.WriteString(w, builder.String())
 	return int64(n), err
 }

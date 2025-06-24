@@ -8,56 +8,81 @@ import (
 	"github.com/kodflow/superviz.io/internal/utils"
 )
 
-// EMERGE implémente le gestionnaire de paquets pour Gentoo.
+// EMERGE implements the package manager for Gentoo.
 type EMERGE struct{}
 
-// NewEMERGE crée une nouvelle instance de gestionnaire EMERGE.
+// NewEMERGE creates a new instance of EMERGE manager.
+//
+//	mgr := NewEMERGE()
+//	fmt.Println(mgr.Name())
+//
+// Parameters:
+//   - None
 //
 // Returns:
-//   - Pointeur vers une structure EMERGE
+//   - mgr: *EMERGE pointer to an EMERGE structure
 func NewEMERGE() *EMERGE {
 	return &EMERGE{}
 }
 
-// Name retourne le nom du gestionnaire de paquets.
+// Name returns the package manager name.
 //
-// Returns:
-//   - Nom du gestionnaire ("emerge")
-func (m *EMERGE) Name() string { return "emerge" }
-
-// Update retourne la commande shell pour synchroniser l'index des paquets.
+//	mgr := NewEMERGE()
+//	name := mgr.Name()
+//	fmt.Println(name) // "emerge"
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
+//   - None
 //
 // Returns:
-//   - Chaîne de commande shell
-//   - Erreur éventuelle
+//   - name: string package manager name ("emerge")
+func (m *EMERGE) Name() string { return "emerge" }
+
+// Update returns the shell command to synchronize the package index.
+//
+//	mgr := NewEMERGE()
+//	cmd, err := mgr.Update(ctx)
+//	fmt.Println(cmd) // "sudo emerge --sync"
+//
+// Parameters:
+//   - ctx: context.Context for timeout and cancellation
+//
+// Returns:
+//   - cmd: string shell command string
+//   - err: error if any
 func (m *EMERGE) Update(ctx context.Context) (string, error) {
 	return "sudo emerge --sync", nil
 }
 
-// Upgrade retourne la commande shell pour mettre à jour tous les paquets installés.
+// Upgrade returns the shell command to update all installed packages.
+//
+//	mgr := NewEMERGE()
+//	cmd, err := mgr.Upgrade(ctx)
+//	fmt.Println(cmd) // "sudo emerge -uDN @world"
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
+//   - ctx: context.Context for timeout and cancellation
 //
 // Returns:
-//   - Chaîne de commande shell
-//   - Erreur éventuelle
+//   - cmd: string shell command string
+//   - err: error if any
 func (m *EMERGE) Upgrade(ctx context.Context) (string, error) {
 	return "sudo emerge -uDN @world", nil
 }
 
-// Install retourne la commande shell pour installer un ou plusieurs paquets.
+// Install returns the shell command to install one or more packages.
+//
+//	mgr := NewEMERGE()
+//	cmd, err := mgr.Install(ctx, "vim", "git")
+//	fmt.Println(cmd) // "sudo emerge vim git"
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
-//   - pkgs: Liste des paquets à installer
+//   - ctx: context.Context for timeout and cancellation
+//   - pkgs: ...string list of packages to install
 //
 // Returns:
-//   - Chaîne de commande shell
-//   - Erreur si aucun paquet n'est spécifié
+//   - cmd: string shell command string
+//   - err: error if no package is specified
 func (m *EMERGE) Install(ctx context.Context, pkgs ...string) (string, error) {
 	if len(pkgs) == 0 {
 		return "", fmt.Errorf("no package specified for install")
@@ -68,15 +93,19 @@ func (m *EMERGE) Install(ctx context.Context, pkgs ...string) (string, error) {
 	return fmt.Sprintf("sudo emerge %s", strings.Join(pkgs, " ")), nil
 }
 
-// Remove retourne la commande shell pour désinstaller un ou plusieurs paquets.
+// Remove returns the shell command to uninstall one or more packages.
+//
+//	mgr := NewEMERGE()
+//	cmd, err := mgr.Remove(ctx, "vim", "git")
+//	fmt.Println(cmd) // "sudo emerge -C vim git"
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
-//   - pkgs: Liste des paquets à désinstaller
+//   - ctx: context.Context for timeout and cancellation
+//   - pkgs: ...string list of packages to uninstall
 //
 // Returns:
-//   - Chaîne de commande shell
-//   - Erreur si aucun paquet n'est spécifié
+//   - cmd: string shell command string
+//   - err: error if no package is specified
 func (m *EMERGE) Remove(ctx context.Context, pkgs ...string) (string, error) {
 	if len(pkgs) == 0 {
 		return "", fmt.Errorf("no package specified for removal")
@@ -87,15 +116,19 @@ func (m *EMERGE) Remove(ctx context.Context, pkgs ...string) (string, error) {
 	return fmt.Sprintf("sudo emerge -C %s", strings.Join(pkgs, " ")), nil
 }
 
-// IsInstalled retourne la commande shell pour vérifier si un paquet est installé.
+// IsInstalled returns the shell command to check if a package is installed.
+//
+//	mgr := NewEMERGE()
+//	cmd, err := mgr.IsInstalled(ctx, "vim")
+//	fmt.Println(cmd) // "equery list vim"
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
-//   - pkg: Nom du paquet à vérifier
+//   - ctx: context.Context for timeout and cancellation
+//   - pkg: string package name to check
 //
 // Returns:
-//   - Chaîne de commande shell
-//   - Erreur si le nom du paquet est vide
+//   - cmd: string shell command string
+//   - err: error if package name is empty
 func (m *EMERGE) IsInstalled(ctx context.Context, pkg string) (string, error) {
 	if err := utils.ValidatePackageNames(pkg); err != nil {
 		return "", err
@@ -103,16 +136,21 @@ func (m *EMERGE) IsInstalled(ctx context.Context, pkg string) (string, error) {
 	return fmt.Sprintf("equery list %s", pkg), nil
 }
 
-// VersionCheck retourne les commandes shell pour obtenir la version installée et disponible d'un paquet.
+// VersionCheck returns the shell commands to get installed and available version of a package.
+//
+//	mgr := NewEMERGE()
+//	inst, avail, err := mgr.VersionCheck(ctx, "vim")
+//	fmt.Println(inst)  // "equery list vim | awk '{print $2}'"
+//	fmt.Println(avail) // "emerge -p vim | grep '\\[ebuild' | awk '{print $4}'"
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
-//   - pkg: Nom du paquet à vérifier
+//   - ctx: context.Context for timeout and cancellation
+//   - pkg: string package name to check
 //
 // Returns:
-//   - Commande pour version installée
-//   - Commande pour version disponible
-//   - Erreur si le nom du paquet est vide
+//   - installed: string shell command for installed version
+//   - available: string shell command for available version
+//   - err: error if package name is empty
 func (m *EMERGE) VersionCheck(ctx context.Context, pkg string) (string, string, error) {
 	if err := utils.ValidatePackageNames(pkg); err != nil {
 		return "", "", err

@@ -63,7 +63,7 @@ func NewAuthenticator(passwordReader PasswordReader, keyLoader KeyLoader) Authen
 // performance on subsequent connections.
 //
 // Parameters:
-//   - ctx: Context for timeout and cancellation
+//   - ctx: context.Context for timeout and cancellation
 //   - config: SSH configuration containing authentication details
 //
 // Returns:

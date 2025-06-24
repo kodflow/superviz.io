@@ -29,25 +29,25 @@ func RequireOneTarget(_ *cobra.Command, args []string) error {
 	return nil
 }
 
-// ValidatePackageNames vérifie que chaque nom de paquet est non vide et ne contient aucun caractère dangereux.
+// ValidatePackageNames validates that each package name is non-empty and contains no dangerous characters.
 //
-// Cette fonction assure la sécurité en empêchant l'injection de commandes via les noms de paquets.
-// Elle vérifie les caractères suivants comme potentiellement dangereux :
-// - Caractères de contrôle de commande : ; | & $ ` ( ) [ ] { } < > * ? \ / ' "
-// - Caractères d'espacement : espaces, tabs, newlines, carriage returns
-// - Caractères de contrôle ASCII (0x00-0x1F, 0x7F)
+// This function ensures security by preventing command injection via package names.
+// It checks for the following potentially dangerous characters:
+// - Command control characters: ; | & $ ` ( ) [ ] { } < > * ? \ / ' "
+// - Whitespace characters: spaces, tabs, newlines, carriage returns
+// - ASCII control characters (0x00-0x1F, 0x7F)
 //
 // Parameters:
-//   - pkgs: Liste des noms de paquets à valider
+//   - pkgs: List of package names to validate
 //
 // Returns:
-//   - error: nil si tous les noms sont valides, sinon une erreur descriptive
+//   - error: nil if all names are valid, otherwise a descriptive error
 func ValidatePackageNames(pkgs ...string) error {
 	if len(pkgs) == 0 {
 		return fmt.Errorf("no package names provided")
 	}
 
-	// Caractères dangereux pour l'injection de commandes
+	// Dangerous characters for command injection
 	dangerousChars := ";|&$`()[]{}*?<>\\/'\" \t\n\r"
 
 	for _, pkg := range pkgs {
@@ -56,12 +56,12 @@ func ValidatePackageNames(pkgs ...string) error {
 			return fmt.Errorf("package name cannot be empty")
 		}
 
-		// Vérifier les caractères dangereux
+		// Check for dangerous characters
 		if strings.ContainsAny(pkg, dangerousChars) {
 			return fmt.Errorf("package name '%s' contains invalid characters", pkg)
 		}
 
-		// Vérifier les caractères de contrôle ASCII
+		// Check for ASCII control characters
 		for _, r := range pkg {
 			if r <= 0x1F || r == 0x7F {
 				return fmt.Errorf("package name '%s' contains invalid characters", pkg)

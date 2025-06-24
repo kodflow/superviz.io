@@ -47,7 +47,7 @@ func DefaultConfig() *Config {
 // and pre-computes the network address for efficiency.
 //
 // Returns:
-//   - Error if any configuration parameter is invalid
+//   - err: error if any configuration parameter is invalid
 func (c *Config) Validate() error {
 	// Single pass validation with early returns
 	if c.Host == "" {

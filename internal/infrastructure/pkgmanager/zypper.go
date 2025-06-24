@@ -8,56 +8,56 @@ import (
 	"github.com/kodflow/superviz.io/internal/utils"
 )
 
-// ZYPPER implémente le gestionnaire de paquets pour openSUSE et SLES.
+// ZYPPER implements the package manager for openSUSE and SLES.
 type ZYPPER struct{}
 
-// NewZYPPER crée une nouvelle instance de gestionnaire ZYPPER.
+// NewZYPPER creates a new instance of ZYPPER manager.
 //
 // Returns:
-//   - Pointeur vers une structure ZYPPER
+//   - Pointer to a ZYPPER structure
 func NewZYPPER() *ZYPPER {
 	return &ZYPPER{}
 }
 
-// Name retourne le nom du gestionnaire de paquets.
+// Name returns the package manager name.
 //
 // Returns:
-//   - Nom du gestionnaire ("zypper")
+//   - name: string package manager name ("zypper")
 func (m *ZYPPER) Name() string { return "zypper" }
 
-// Update retourne la commande shell pour rafraîchir l'index des paquets.
+// Update returns the shell command to refresh the package index.
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
+//   - ctx: context.Context for timeout and cancellation
 //
 // Returns:
-//   - Chaîne de commande shell
-//   - Erreur éventuelle
+//   - cmd: string shell command string
+//   - error if any
 func (m *ZYPPER) Update(ctx context.Context) (string, error) {
 	return "sudo zypper refresh", nil
 }
 
-// Upgrade retourne la commande shell pour mettre à jour tous les paquets installés.
+// Upgrade returns the shell command to update all installed packages.
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
+//   - ctx: context.Context for timeout and cancellation
 //
 // Returns:
-//   - Chaîne de commande shell
-//   - Erreur éventuelle
+//   - cmd: string shell command string
+//   - error if any
 func (m *ZYPPER) Upgrade(ctx context.Context) (string, error) {
 	return "sudo zypper update -y", nil
 }
 
-// Install retourne la commande shell pour installer un ou plusieurs paquets.
+// Install returns the shell command to install one or more packages.
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
-//   - pkgs: Liste des paquets à installer
+//   - ctx: context.Context for timeout and cancellation
+//   - pkgs: ...string list of packages to install
 //
 // Returns:
-//   - Chaîne de commande shell
-//   - Erreur si aucun paquet n'est spécifié
+//   - cmd: string shell command string
+//   - err: error if no package is specified
 func (m *ZYPPER) Install(ctx context.Context, pkgs ...string) (string, error) {
 	if len(pkgs) == 0 {
 		return "", fmt.Errorf("no package specified for install")
@@ -68,15 +68,15 @@ func (m *ZYPPER) Install(ctx context.Context, pkgs ...string) (string, error) {
 	return fmt.Sprintf("sudo zypper install -y %s", strings.Join(pkgs, " ")), nil
 }
 
-// Remove retourne la commande shell pour désinstaller un ou plusieurs paquets.
+// Remove returns the shell command to uninstall one or more packages.
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
-//   - pkgs: Liste des paquets à désinstaller
+//   - ctx: context.Context for timeout and cancellation
+//   - pkgs: ...string list of packages to uninstall
 //
 // Returns:
-//   - Chaîne de commande shell
-//   - Erreur si aucun paquet n'est spécifié
+//   - cmd: string shell command string
+//   - err: error if no package is specified
 func (m *ZYPPER) Remove(ctx context.Context, pkgs ...string) (string, error) {
 	if len(pkgs) == 0 {
 		return "", fmt.Errorf("no package specified for removal")
@@ -87,15 +87,15 @@ func (m *ZYPPER) Remove(ctx context.Context, pkgs ...string) (string, error) {
 	return fmt.Sprintf("sudo zypper remove -y %s", strings.Join(pkgs, " ")), nil
 }
 
-// IsInstalled retourne la commande shell pour vérifier si un paquet est installé.
+// IsInstalled returns the shell command to check if a package is installed.
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
-//   - pkg: Nom du paquet à vérifier
+//   - ctx: context.Context for timeout and cancellation
+//   - pkg: string package name to check
 //
 // Returns:
-//   - Chaîne de commande shell
-//   - Erreur si le nom du paquet est vide
+//   - cmd: string shell command string
+//   - err: error if package name is empty
 func (m *ZYPPER) IsInstalled(ctx context.Context, pkg string) (string, error) {
 	if err := utils.ValidatePackageNames(pkg); err != nil {
 		return "", err
@@ -103,16 +103,16 @@ func (m *ZYPPER) IsInstalled(ctx context.Context, pkg string) (string, error) {
 	return fmt.Sprintf("zypper se --installed-only %s", pkg), nil
 }
 
-// VersionCheck retourne les commandes shell pour obtenir la version installée et disponible d'un paquet.
+// VersionCheck returns the shell commands to get installed and available version of a package.
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
-//   - pkg: Nom du paquet à vérifier
+//   - ctx: context.Context for timeout and cancellation
+//   - pkg: string package name to check
 //
 // Returns:
-//   - Commande pour version installée
-//   - Commande pour version disponible
-//   - Erreur si le nom du paquet est vide
+//   - installed: string shell command for installed version
+//   - available: string shell command for available version
+//   - err: error if package name is empty
 func (m *ZYPPER) VersionCheck(ctx context.Context, pkg string) (string, string, error) {
 	if err := utils.ValidatePackageNames(pkg); err != nil {
 		return "", "", err

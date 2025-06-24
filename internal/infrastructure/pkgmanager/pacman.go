@@ -8,56 +8,56 @@ import (
 	"github.com/kodflow/superviz.io/internal/utils"
 )
 
-// PACMAN implémente le gestionnaire de paquets pour Arch Linux et dérivés.
+// PACMAN implements the package manager for Arch Linux and derivatives.
 type PACMAN struct{}
 
-// NewPACMAN crée une nouvelle instance de gestionnaire PACMAN.
+// NewPACMAN creates a new instance of PACMAN manager.
 //
 // Returns:
-//   - Pointeur vers une structure PACMAN
+//   - Pointer to a PACMAN structure
 func NewPACMAN() *PACMAN {
 	return &PACMAN{}
 }
 
-// Name retourne le nom du gestionnaire de paquets.
+// Name returns the package manager name.
 //
 // Returns:
-//   - Nom du gestionnaire ("pacman")
+//   - name: string package manager name ("pacman")
 func (m *PACMAN) Name() string { return "pacman" }
 
-// Update retourne la commande shell pour mettre à jour l'index des paquets.
+// Update returns the shell command to update the package index.
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
+//   - ctx: context.Context for timeout and cancellation
 //
 // Returns:
-//   - Chaîne de commande shell
-//   - Erreur éventuelle
+//   - cmd: string shell command string
+//   - error if any
 func (m *PACMAN) Update(ctx context.Context) (string, error) {
 	return "sudo pacman -Sy", nil
 }
 
-// Upgrade retourne la commande shell pour mettre à jour tous les paquets installés.
+// Upgrade returns the shell command to update all installed packages.
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
+//   - ctx: context.Context for timeout and cancellation
 //
 // Returns:
-//   - Chaîne de commande shell
-//   - Erreur éventuelle
+//   - cmd: string shell command string
+//   - error if any
 func (m *PACMAN) Upgrade(ctx context.Context) (string, error) {
 	return "sudo pacman -Su --noconfirm", nil
 }
 
-// Install retourne la commande shell pour installer un ou plusieurs paquets.
+// Install returns the shell command to install one or more packages.
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
-//   - pkgs: Liste des paquets à installer
+//   - ctx: context.Context for timeout and cancellation
+//   - pkgs: ...string list of packages to install
 //
 // Returns:
-//   - Chaîne de commande shell
-//   - Erreur si aucun paquet n'est spécifié
+//   - cmd: string shell command string
+//   - err: error if no package is specified
 func (m *PACMAN) Install(ctx context.Context, pkgs ...string) (string, error) {
 	if len(pkgs) == 0 {
 		return "", fmt.Errorf("no package specified for install")
@@ -68,15 +68,15 @@ func (m *PACMAN) Install(ctx context.Context, pkgs ...string) (string, error) {
 	return fmt.Sprintf("sudo pacman -S --noconfirm %s", strings.Join(pkgs, " ")), nil
 }
 
-// Remove retourne la commande shell pour désinstaller un ou plusieurs paquets.
+// Remove returns the shell command to uninstall one or more packages.
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
-//   - pkgs: Liste des paquets à désinstaller
+//   - ctx: context.Context for timeout and cancellation
+//   - pkgs: ...string list of packages to uninstall
 //
 // Returns:
-//   - Chaîne de commande shell
-//   - Erreur si aucun paquet n'est spécifié
+//   - cmd: string shell command string
+//   - err: error if no package is specified
 func (m *PACMAN) Remove(ctx context.Context, pkgs ...string) (string, error) {
 	if len(pkgs) == 0 {
 		return "", fmt.Errorf("no package specified for removal")
@@ -87,15 +87,15 @@ func (m *PACMAN) Remove(ctx context.Context, pkgs ...string) (string, error) {
 	return fmt.Sprintf("sudo pacman -Rns --noconfirm %s", strings.Join(pkgs, " ")), nil
 }
 
-// IsInstalled retourne la commande shell pour vérifier si un paquet est installé.
+// IsInstalled returns the shell command to check if a package is installed.
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
-//   - pkg: Nom du paquet à vérifier
+//   - ctx: context.Context for timeout and cancellation
+//   - pkg: string package name to check
 //
 // Returns:
-//   - Chaîne de commande shell
-//   - Erreur si le nom du paquet est vide
+//   - cmd: string shell command string
+//   - err: error if package name is empty
 func (m *PACMAN) IsInstalled(ctx context.Context, pkg string) (string, error) {
 	if err := utils.ValidatePackageNames(pkg); err != nil {
 		return "", err
@@ -103,16 +103,16 @@ func (m *PACMAN) IsInstalled(ctx context.Context, pkg string) (string, error) {
 	return fmt.Sprintf("pacman -Qi %s", pkg), nil
 }
 
-// VersionCheck retourne les commandes shell pour obtenir la version installée et disponible d'un paquet.
+// VersionCheck returns the shell commands to get installed and available version of a package.
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
-//   - pkg: Nom du paquet à vérifier
+//   - ctx: context.Context for timeout and cancellation
+//   - pkg: string package name to check
 //
 // Returns:
-//   - Commande pour version installée
-//   - Commande pour version disponible
-//   - Erreur si le nom du paquet est vide
+//   - installed: string shell command for installed version
+//   - available: string shell command for available version
+//   - err: error if package name is empty
 func (m *PACMAN) VersionCheck(ctx context.Context, pkg string) (string, string, error) {
 	if err := utils.ValidatePackageNames(pkg); err != nil {
 		return "", "", err

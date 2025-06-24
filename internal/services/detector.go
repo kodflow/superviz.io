@@ -19,7 +19,7 @@ type Detector interface {
 	// using various detection methods including /etc/os-release and package managers.
 	//
 	// Parameters:
-	//   - ctx: Context for timeout and cancellation
+	//   - ctx: context.Context for timeout and cancellation
 	//
 	// Returns:
 	//   - String identifier for the detected distribution
@@ -60,7 +60,7 @@ func NewDetector(client ssh.Client) Detector {
 // 3. Finally, it falls back to detecting package managers
 //
 // Parameters:
-//   - ctx: Context for timeout and cancellation
+//   - ctx: context.Context for timeout and cancellation
 //
 // Returns:
 //   - String identifier for the detected distribution (ubuntu, debian, alpine, centos, rhel, fedora, arch)

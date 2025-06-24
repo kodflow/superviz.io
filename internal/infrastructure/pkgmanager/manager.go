@@ -22,32 +22,32 @@ var distroToPkgManager = map[string]string{
 	"gentoo":   "emerge",
 }
 
-// Manager définit l'interface pour tous les gestionnaires de paquets détectés.
+// Manager defines the interface for all detected package managers.
 //
-// Chaque implémentation doit fournir des méthodes pour les opérations courantes sur les paquets.
+// Each implementation must provide methods for common package operations.
 type Manager interface {
-	// Name retourne le nom du gestionnaire (ex: apt, apk...)
+	// Name returns the name of the package manager (e.g. apt, apk...)
 	Name() string
-	// Update retourne la commande à exécuter pour faire un update.
+	// Update returns the command to execute for updating the package index.
 	Update(ctx context.Context) (string, error)
-	// Install retourne la commande pour installer un ou plusieurs paquets.
+	// Install returns the command to install one or more packages.
 	Install(ctx context.Context, pkgs ...string) (string, error)
-	// Remove retourne la commande pour désinstaller un ou plusieurs paquets.
+	// Remove returns the command to uninstall one or more packages.
 	Remove(ctx context.Context, pkgs ...string) (string, error)
-	// Upgrade retourne la commande pour faire un upgrade global.
+	// Upgrade returns the command to perform a global upgrade.
 	Upgrade(ctx context.Context) (string, error)
-	// IsInstalled retourne la commande pour vérifier si un paquet est installé et sa version actuelle.
+	// IsInstalled returns the command to check if a package is installed and its current version.
 	IsInstalled(ctx context.Context, pkg string) (string, error)
-	// VersionCheck retourne la commande pour comparer la version installée et la version du dépôt.
+	// VersionCheck returns the command to compare installed version and repository version.
 	VersionCheck(ctx context.Context, pkg string) (installedVersion string, availableVersion string, err error)
 }
 
-// Detect retourne le gestionnaire de paquets approprié en se basant sur /etc/os-release,
-// avec un fallback sur les binaires présents dans le PATH.
+// Detect returns the appropriate package manager based on /etc/os-release,
+// with a fallback to binaries present in PATH.
 //
 // Returns:
-//   - Instance de Manager correspondant à la distribution
-//   - Erreur si aucun gestionnaire n'est détecté
+//   - Manager instance corresponding to the distribution
+//   - Error if no manager is detected
 func Detect() (Manager, error) {
 	const osRelease = "/etc/os-release"
 
@@ -77,14 +77,14 @@ func Detect() (Manager, error) {
 	return nil, fmt.Errorf("unable to detect package manager")
 }
 
-// DetectFromBin retourne une instance de Manager selon le nom du binaire.
+// DetectFromBin returns a Manager instance based on the binary name.
 //
 // Parameters:
-//   - bin: Nom du binaire à détecter (ex: "apt", "yum")
+//   - bin: Binary name to detect (e.g. "apt", "yum")
 //
 // Returns:
-//   - Instance de Manager
-//   - Erreur si le binaire n'est pas supporté
+//   - Manager instance
+//   - Error if the binary is not supported
 func DetectFromBin(bin string) (Manager, error) {
 	switch bin {
 	case "apt":

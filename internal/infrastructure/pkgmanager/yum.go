@@ -8,56 +8,81 @@ import (
 	"github.com/kodflow/superviz.io/internal/utils"
 )
 
-// YUM implémente le gestionnaire de paquets pour CentOS, RHEL et dérivés.
+// YUM implements the package manager for CentOS, RHEL and derivatives.
 type YUM struct{}
 
-// NewYUM crée une nouvelle instance de gestionnaire YUM.
+// NewYUM creates a new instance of YUM manager.
+//
+//	mgr := NewYUM()
+//	fmt.Println(mgr.Name())
+//
+// Parameters:
+//   - None
 //
 // Returns:
-//   - Pointeur vers une structure YUM
+//   - mgr: *YUM pointer to a YUM structure
 func NewYUM() *YUM {
 	return &YUM{}
 }
 
-// Name retourne le nom du gestionnaire de paquets.
+// Name returns the package manager name.
 //
-// Returns:
-//   - Nom du gestionnaire ("yum")
-func (m *YUM) Name() string { return "yum" }
-
-// Update retourne la commande shell pour mettre à jour l'index des paquets.
+//	mgr := NewYUM()
+//	name := mgr.Name()
+//	fmt.Println(name) // "yum"
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
+//   - None
 //
 // Returns:
-//   - Chaîne de commande shell
-//   - Erreur éventuelle
+//   - name: string package manager name ("yum")
+func (m *YUM) Name() string { return "yum" }
+
+// Update returns the shell command to update the package index.
+//
+//	mgr := NewYUM()
+//	cmd, err := mgr.Update(ctx)
+//	fmt.Println(cmd) // "sudo yum check-update"
+//
+// Parameters:
+//   - ctx: context.Context for timeout and cancellation
+//
+// Returns:
+//   - cmd: string shell command string
+//   - err: error if any
 func (m *YUM) Update(ctx context.Context) (string, error) {
 	return "sudo yum check-update", nil
 }
 
-// Upgrade retourne la commande shell pour mettre à jour tous les paquets installés.
+// Upgrade returns the shell command to update all installed packages.
+//
+//	mgr := NewYUM()
+//	cmd, err := mgr.Upgrade(ctx)
+//	fmt.Println(cmd) // "sudo yum upgrade -y"
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
+//   - ctx: context.Context for timeout and cancellation
 //
 // Returns:
-//   - Chaîne de commande shell
-//   - Erreur éventuelle
+//   - cmd: string shell command string
+//   - err: error if any
 func (m *YUM) Upgrade(ctx context.Context) (string, error) {
 	return "sudo yum upgrade -y", nil
 }
 
-// Install retourne la commande shell pour installer un ou plusieurs paquets.
+// Install returns the shell command to install one or more packages.
+//
+//	mgr := NewYUM()
+//	cmd, err := mgr.Install(ctx, "vim", "git")
+//	fmt.Println(cmd) // "sudo yum install -y vim git"
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
-//   - pkgs: Liste des paquets à installer
+//   - ctx: context.Context for timeout and cancellation
+//   - pkgs: ...string list of packages to install
 //
 // Returns:
-//   - Chaîne de commande shell
-//   - Erreur si aucun paquet n'est spécifié
+//   - cmd: string shell command string
+//   - err: error if no package is specified
 func (m *YUM) Install(ctx context.Context, pkgs ...string) (string, error) {
 	if len(pkgs) == 0 {
 		return "", fmt.Errorf("no package specified for install")
@@ -68,15 +93,15 @@ func (m *YUM) Install(ctx context.Context, pkgs ...string) (string, error) {
 	return fmt.Sprintf("sudo yum install -y %s", strings.Join(pkgs, " ")), nil
 }
 
-// Remove retourne la commande shell pour désinstaller un ou plusieurs paquets.
+// Remove returns the shell command to uninstall one or more packages.
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
-//   - pkgs: Liste des paquets à désinstaller
+//   - ctx: context.Context for timeout and cancellation
+//   - pkgs: ...string list of packages to uninstall
 //
 // Returns:
-//   - Chaîne de commande shell
-//   - Erreur si aucun paquet n'est spécifié
+//   - cmd: string shell command string
+//   - err: error if no package is specified
 func (m *YUM) Remove(ctx context.Context, pkgs ...string) (string, error) {
 	if len(pkgs) == 0 {
 		return "", fmt.Errorf("no package specified for removal")
@@ -87,15 +112,15 @@ func (m *YUM) Remove(ctx context.Context, pkgs ...string) (string, error) {
 	return fmt.Sprintf("sudo yum remove -y %s", strings.Join(pkgs, " ")), nil
 }
 
-// IsInstalled retourne la commande shell pour vérifier si un paquet est installé.
+// IsInstalled returns the shell command to check if a package is installed.
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
-//   - pkg: Nom du paquet à vérifier
+//   - ctx: context.Context for timeout and cancellation
+//   - pkg: string package name to check
 //
 // Returns:
-//   - Chaîne de commande shell
-//   - Erreur si le nom du paquet est vide
+//   - cmd: string shell command string
+//   - err: error if package name is empty
 func (m *YUM) IsInstalled(ctx context.Context, pkg string) (string, error) {
 	if err := utils.ValidatePackageNames(pkg); err != nil {
 		return "", err
@@ -103,16 +128,16 @@ func (m *YUM) IsInstalled(ctx context.Context, pkg string) (string, error) {
 	return fmt.Sprintf("yum list installed %s", pkg), nil
 }
 
-// VersionCheck retourne les commandes shell pour obtenir la version installée et disponible d'un paquet.
+// VersionCheck returns the shell commands to get installed and available version of a package.
 //
 // Parameters:
-//   - ctx: Context pour timeout et annulation
-//   - pkg: Nom du paquet à vérifier
+//   - ctx: context.Context for timeout and cancellation
+//   - pkg: string package name to check
 //
 // Returns:
-//   - Commande pour version installée
-//   - Commande pour version disponible
-//   - Erreur si le nom du paquet est vide
+//   - installed: string shell command for installed version
+//   - available: string shell command for available version
+//   - err: error if package name is empty
 func (m *YUM) VersionCheck(ctx context.Context, pkg string) (string, string, error) {
 	if err := utils.ValidatePackageNames(pkg); err != nil {
 		return "", "", err

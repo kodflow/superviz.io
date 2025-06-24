@@ -55,7 +55,7 @@ type Dialer interface {
 	// DialContext establishes an SSH connection with context support.
 	//
 	// Parameters:
-	//   - ctx: Context for timeout and cancellation
+	//   - ctx: context.Context for timeout and cancellation
 	//   - network: Network type (typically "tcp")
 	//   - addr: Remote address to connect to
 	//   - config: SSH client configuration
@@ -73,7 +73,7 @@ type Authenticator interface {
 	// GetAuthMethods returns SSH authentication methods for the given configuration.
 	//
 	// Parameters:
-	//   - ctx: Context for timeout and cancellation
+	//   - ctx: context.Context for timeout and cancellation
 	//   - config: SSH configuration containing authentication details
 	//
 	// Returns:
@@ -89,7 +89,7 @@ type HostKeyManager interface {
 	// GetHostKeyCallback returns a callback function for host key verification.
 	//
 	// Parameters:
-	//   - ctx: Context for timeout and cancellation
+	//   - ctx: context.Context for timeout and cancellation
 	//   - config: SSH configuration containing host key settings
 	//
 	// Returns:
@@ -182,7 +182,7 @@ type Client interface {
 	// Connect establishes an SSH connection using the provided configuration.
 	//
 	// Parameters:
-	//   - ctx: Context for timeout and cancellation
+	//   - ctx: context.Context for timeout and cancellation
 	//   - config: SSH configuration for the connection
 	//
 	// Returns:
@@ -192,7 +192,7 @@ type Client interface {
 	// Execute runs a command on the connected SSH server.
 	//
 	// Parameters:
-	//   - ctx: Context for timeout and cancellation
+	//   - ctx: context.Context for timeout and cancellation
 	//   - command: Command string to execute
 	//
 	// Returns:

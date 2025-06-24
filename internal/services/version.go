@@ -62,7 +62,7 @@ func (s *VersionService) DisplayVersion(w io.Writer) error {
 	}
 
 	info := s.provider.GetVersionInfo()
-	_, err := w.Write([]byte(info.Format())) // Plus efficace que fmt.Fprint
+	_, err := w.Write([]byte(info.Format())) // More efficient than fmt.Fprint
 	return err
 }
 

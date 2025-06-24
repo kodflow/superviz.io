@@ -33,7 +33,7 @@ type InstallServiceInterface interface {
 	// configuration, writing progress and status information to the writer.
 	//
 	// Parameters:
-	//   - ctx: Context for timeout and cancellation
+	//   - ctx: context.Context for timeout and cancellation
 	//   - writer: Output writer for installation progress and messages
 	//   - config: Validated installation configuration
 	//
@@ -63,7 +63,7 @@ type DistroDetector interface {
 	// files and commands.
 	//
 	// Parameters:
-	//   - ctx: Context for timeout and cancellation
+	//   - ctx: context.Context for timeout and cancellation
 	//
 	// Returns:
 	//   - String identifier for the detected distribution
@@ -83,7 +83,7 @@ type RepositorySetup interface {
 	// to the provided writer.
 	//
 	// Parameters:
-	//   - ctx: Context for timeout and cancellation
+	//   - ctx: context.Context for timeout and cancellation
 	//   - distro: Linux distribution identifier
 	//   - writer: Output writer for setup progress and messages
 	//
