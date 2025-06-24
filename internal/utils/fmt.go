@@ -167,17 +167,6 @@ func writeArgs(w io.Writer, args []any) (int64, error) {
 	return int64(n), err
 }
 
-// estimatedSize calculates an estimated buffer size for the given number of arguments.
-//
-// estimatedSize provides a heuristic for pre-allocating string builder capacity
-// to reduce memory reallocations during string building operations.
-//
-// Parameters:
-//   - n: Number of arguments to estimate size for
-//
-// Returns:
-//   - Estimated size in bytes
-//
 // estimatedSize calculates the estimated buffer size needed for string conversion.
 //
 // estimatedSize provides a heuristic for pre-allocating string builder capacity
