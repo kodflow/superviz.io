@@ -10,30 +10,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Mock net.Dialer for testing
-type mockNetDialer struct {
-	conn net.Conn
-	err  error
-}
-
-func (m *mockNetDialer) DialContext(ctx context.Context, network, address string) (net.Conn, error) {
-	return m.conn, m.err
-}
-
-// Mock net.Conn for testing
-type mockNetConn struct {
-	closeErr error
-}
-
-func (m *mockNetConn) Read(b []byte) (n int, err error)   { return 0, nil }
-func (m *mockNetConn) Write(b []byte) (n int, err error) { return len(b), nil }
-func (m *mockNetConn) Close() error                      { return m.closeErr }
-func (m *mockNetConn) LocalAddr() net.Addr              { return &net.TCPAddr{} }
-func (m *mockNetConn) RemoteAddr() net.Addr             { return &net.TCPAddr{} }
-func (m *mockNetConn) SetDeadline(t time.Time) error    { return nil }
-func (m *mockNetConn) SetReadDeadline(t time.Time) error  { return nil }
-func (m *mockNetConn) SetWriteDeadline(t time.Time) error { return nil }
-
 func TestNewDefaultDialer(t *testing.T) {
 	dialer := NewDefaultDialer()
 	require.NotNil(t, dialer)

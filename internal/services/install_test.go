@@ -152,16 +152,16 @@ func TestBufferedWriter_WriteError(t *testing.T) {
 	// Create a buffered writer with an existing error
 	var buf bytes.Buffer
 	bw := &bufferedWriter{Writer: bufio.NewWriter(&buf)}
-	
+
 	// Simulate a write error by setting an existing error
 	bw.err = errors.New("write failed")
-	
+
 	// Write should return the existing error without writing
 	n, err := bw.Write([]byte("test"))
 	assert.Equal(t, 0, n)
 	assert.Error(t, err)
 	assert.Equal(t, "write failed", err.Error())
-	
+
 	// Buffer should remain empty
 	assert.Equal(t, "", buf.String())
 }
@@ -169,10 +169,10 @@ func TestBufferedWriter_WriteError(t *testing.T) {
 func TestBufferedWriter_FlushError(t *testing.T) {
 	var buf bytes.Buffer
 	bw := &bufferedWriter{Writer: bufio.NewWriter(&buf)}
-	
+
 	// Set an error state
 	bw.err = errors.New("flush error")
-	
+
 	// Flush should return the existing error
 	err := bw.Flush()
 	assert.Error(t, err)
@@ -194,18 +194,18 @@ func (fw *failingWriter) Write(p []byte) (n int, err error) {
 func TestBufferedWriter_WriteFailure(t *testing.T) {
 	failingWriter := &failingWriter{shouldFail: true}
 	bw := &bufferedWriter{Writer: bufio.NewWriter(failingWriter)}
-	
+
 	// Write a large amount of data to trigger flush
 	largeData := make([]byte, 5000) // Larger than default buffer size
 	for i := range largeData {
 		largeData[i] = 'A'
 	}
-	
+
 	// Write should fail during flush
 	_, err := bw.Write(largeData)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "write operation failed")
-	
+
 	// Subsequent writes should return the stored error
 	n2, err2 := bw.Write([]byte("test2"))
 	assert.Equal(t, 0, n2)
@@ -259,9 +259,9 @@ func TestNewInstallService_WithPartialOptions(t *testing.T) {
 
 	require.NotNil(t, service)
 	assert.Equal(t, provider, service.provider)
-	assert.NotNil(t, service.client)     // Should get default
-	assert.NotNil(t, service.detector)   // Should get default
-	assert.NotNil(t, service.repoSetup)  // Should get default
+	assert.NotNil(t, service.client)    // Should get default
+	assert.NotNil(t, service.detector)  // Should get default
+	assert.NotNil(t, service.repoSetup) // Should get default
 }
 
 func TestInstallService_ValidateAndPrepareConfig_Valid(t *testing.T) {
@@ -642,38 +642,38 @@ func TestInstallService_Install_CloseErrorLogging(t *testing.T) {
 	detector := &mockDistroDetector{}
 	repoSetup := &mockRepoSetup{}
 	provider := &mockInstallProvider{}
-	
+
 	opts := &InstallServiceOptions{
 		Provider:       provider,
 		SSHClient:      sshClient,
 		DistroDetector: detector,
 		RepoSetup:      repoSetup,
 	}
-	
+
 	service := NewInstallService(opts)
-	
+
 	config := &providers.InstallConfig{
 		Target: "user@host.com",
 		User:   "user",
 		Host:   "host.com",
 	}
-	
+
 	var output bytes.Buffer
-	
+
 	// Mock operations - Close() will return an error
 	sshClient.On("Connect", mock.Anything, mock.Anything).Return(nil)
 	sshClient.On("Close").Return(errors.New("close failed"))
 	detector.On("Detect", mock.Anything).Return("ubuntu", nil)
 	repoSetup.On("Setup", mock.Anything, "ubuntu", mock.Anything).Return(nil)
-	
+
 	err := service.Install(context.Background(), &output, config)
-	
+
 	// Should succeed even with close error (best effort)
 	assert.NoError(t, err)
-	
+
 	// Should contain successful installation output
 	assert.Contains(t, output.String(), "Repository setup completed successfully")
-	
+
 	// Verify mocks - most importantly that Close was called
 	sshClient.AssertExpectations(t)
 	detector.AssertExpectations(t)

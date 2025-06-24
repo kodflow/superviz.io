@@ -77,13 +77,13 @@ func TestNewHandler(t *testing.T) {
 func TestHandler_Setup_Success_NoSudoNeeded(t *testing.T) {
 	client := &MockSSHClient{}
 	provider := &MockInstallProvider{}
-	
+
 	// Mock system directory write test - first one succeeds (no sudo needed)
 	client.On("Execute", mock.Anything, "test -w /etc/apt/sources.list.d/").Return(nil)
-	
+
 	// Mock provider to return a GPG key ID
 	provider.On("GetGPGKeyID").Return("ABC123")
-	
+
 	// Mock repository setup commands without sudo
 	expectedCommands := []string{
 		"cat >> /tmp/superviz-pacman.conf << 'EOF'\n\n[superviz]\nServer = https://repo.superviz.io/arch/$arch\nEOF",
@@ -93,7 +93,7 @@ func TestHandler_Setup_Success_NoSudoNeeded(t *testing.T) {
 		"pacman-key --lsign-key ABC123",
 		"pacman -Sy",
 	}
-	
+
 	for _, cmd := range expectedCommands {
 		client.On("Execute", mock.Anything, cmd).Return(nil)
 	}
@@ -113,19 +113,19 @@ func TestHandler_Setup_Success_NoSudoNeeded(t *testing.T) {
 func TestHandler_Setup_Success_WithSudo(t *testing.T) {
 	client := &MockSSHClient{}
 	provider := &MockInstallProvider{}
-	
+
 	// Mock system directory write tests - all fail (need sudo)
 	client.On("Execute", mock.Anything, "test -w /etc/apt/sources.list.d/").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/apk/repositories").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/yum.repos.d/").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/pacman.conf").Return(errors.New("not writable"))
-	
+
 	// Mock sudo check - sudo available
 	client.On("Execute", mock.Anything, "command -v sudo >/dev/null 2>&1").Return(nil)
-	
+
 	// Mock provider to return a GPG key ID
 	provider.On("GetGPGKeyID").Return("DEF456")
-	
+
 	// Mock repository setup commands with sudo prefix
 	expectedCommands := []string{
 		"cat >> /tmp/superviz-pacman.conf << 'EOF'\n\n[superviz]\nServer = https://repo.superviz.io/arch/$arch\nEOF",
@@ -135,7 +135,7 @@ func TestHandler_Setup_Success_WithSudo(t *testing.T) {
 		"sudo pacman-key --lsign-key DEF456",
 		"sudo pacman -Sy",
 	}
-	
+
 	for _, cmd := range expectedCommands {
 		client.On("Execute", mock.Anything, cmd).Return(nil)
 	}
@@ -155,16 +155,16 @@ func TestHandler_Setup_Success_WithSudo(t *testing.T) {
 func TestHandler_Setup_Success_SudoNotAvailable(t *testing.T) {
 	client := &MockSSHClient{}
 	provider := &MockInstallProvider{}
-	
+
 	// Mock system directory write tests - all fail (need sudo)
 	client.On("Execute", mock.Anything, "test -w /etc/apt/sources.list.d/").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/apk/repositories").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/yum.repos.d/").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/pacman.conf").Return(errors.New("not writable"))
-	
+
 	// Mock sudo check - sudo not found
 	client.On("Execute", mock.Anything, "command -v sudo >/dev/null 2>&1").Return(errors.New("sudo not found"))
-	
+
 	handler := NewHandler(client, provider)
 	var output bytes.Buffer
 
@@ -179,7 +179,7 @@ func TestHandler_Setup_Success_SudoNotAvailable(t *testing.T) {
 func TestHandler_Setup_SudoDetectionError(t *testing.T) {
 	client := &MockSSHClient{}
 	provider := &MockInstallProvider{}
-	
+
 	// Mock all Execute calls to return connection error
 	client.On("Execute", mock.Anything, mock.AnythingOfType("string")).Return(errors.New("connection failed"))
 
@@ -210,13 +210,13 @@ func TestHandler_Setup_WriteError(t *testing.T) {
 func TestHandler_Setup_CommandExecutionError(t *testing.T) {
 	client := &MockSSHClient{}
 	provider := &MockInstallProvider{}
-	
+
 	// Mock system directory write test - first one succeeds (no sudo needed)
 	client.On("Execute", mock.Anything, "test -w /etc/apt/sources.list.d/").Return(nil)
-	
+
 	// Mock provider to return a GPG key ID
 	provider.On("GetGPGKeyID").Return("GHI789")
-	
+
 	// Mock first command to fail
 	client.On("Execute", mock.Anything, "cat >> /tmp/superviz-pacman.conf << 'EOF'\n\n[superviz]\nServer = https://repo.superviz.io/arch/$arch\nEOF").Return(errors.New("command failed"))
 
@@ -234,13 +234,13 @@ func TestHandler_Setup_CommandExecutionError(t *testing.T) {
 func TestHandler_Setup_SudoWriteError(t *testing.T) {
 	client := &MockSSHClient{}
 	provider := &MockInstallProvider{}
-	
+
 	// Mock system directory write tests - all fail (need sudo)
 	client.On("Execute", mock.Anything, "test -w /etc/apt/sources.list.d/").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/apk/repositories").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/yum.repos.d/").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/pacman.conf").Return(errors.New("not writable"))
-	
+
 	// Mock sudo check - sudo available
 	client.On("Execute", mock.Anything, "command -v sudo >/dev/null 2>&1").Return(nil)
 

@@ -44,7 +44,7 @@ func TestNewSudoHelper(t *testing.T) {
 
 func TestSudoHelper_IsNeeded_NoSudoNeeded(t *testing.T) {
 	client := &mockSSHClient{}
-	
+
 	// Mock the first check to succeed (directory is writable)
 	client.On("Execute", mock.Anything, "test -w /etc/apt/sources.list.d/").Return(nil).Once()
 
@@ -58,10 +58,10 @@ func TestSudoHelper_IsNeeded_NoSudoNeeded(t *testing.T) {
 
 func TestSudoHelper_IsNeeded_SudoNeeded(t *testing.T) {
 	client := &mockSSHClient{}
-	
+
 	// Mock all directory checks to fail
 	client.On("Execute", mock.Anything, mock.AnythingOfType("string")).Return(errors.New("permission denied")).Times(4)
-	
+
 	// Mock sudo availability check to succeed
 	client.On("Execute", mock.Anything, "command -v sudo >/dev/null 2>&1").Return(nil)
 
@@ -75,10 +75,10 @@ func TestSudoHelper_IsNeeded_SudoNeeded(t *testing.T) {
 
 func TestSudoHelper_IsNeeded_SudoNotAvailable(t *testing.T) {
 	client := &mockSSHClient{}
-	
+
 	// Mock all directory checks to fail
 	client.On("Execute", mock.Anything, mock.AnythingOfType("string")).Return(errors.New("permission denied")).Times(4)
-	
+
 	// Mock sudo availability check to fail
 	client.On("Execute", mock.Anything, "command -v sudo >/dev/null 2>&1").Return(errors.New("command not found"))
 
@@ -112,10 +112,10 @@ func TestSudoHelper_AddPrefix_WithSudo(t *testing.T) {
 	helper := NewSudoHelper(client)
 
 	commands := []string{
-		"apt update",           // Should get sudo prefix
+		"apt update",                     // Should get sudo prefix
 		"curl -fsSL https://example.com", // Should not get sudo prefix
-		"cp /tmp/file /etc/",   // Should get sudo prefix (writes to /etc/)
-		"echo hello",           // Should not get sudo prefix
+		"cp /tmp/file /etc/",             // Should get sudo prefix (writes to /etc/)
+		"echo hello",                     // Should not get sudo prefix
 	}
 
 	result := helper.AddPrefix(commands, true)
@@ -142,23 +142,23 @@ func TestSudoHelper_CommandNeedsSudo(t *testing.T) {
 		{"apt update", true},
 		{"apt install package", true},
 		{"apt-get update", true},
-		
+
 		// APK commands
 		{"apk update", true},
 		{"apk add package", true},
-		
+
 		// YUM/DNF commands
 		{"yum install package", true},
 		{"dnf install package", true},
-		
+
 		// Pacman commands
 		{"pacman -S package", true},
 		{"pacman-key --add", true},
-		
+
 		// System path operations
 		{"cp /tmp/file /etc/config", true},
 		{"mv /tmp/file /usr/share/file", true},
-		
+
 		// Non-root commands
 		{"curl -fsSL https://example.com", false},
 		{"echo hello", false},
@@ -187,7 +187,7 @@ func TestNewCommandExecutor(t *testing.T) {
 
 func TestCommandExecutor_Execute_Success(t *testing.T) {
 	client := &mockSSHClient{}
-	
+
 	commands := []string{
 		"echo hello",
 		"ls -la",
@@ -201,23 +201,23 @@ func TestCommandExecutor_Execute_Success(t *testing.T) {
 
 	executor := NewCommandExecutor(client)
 	var output MockWriter
-	
+
 	err := executor.Execute(context.Background(), commands, &output)
 
 	assert.NoError(t, err)
-	
+
 	// Verify output contains progress information
 	outputStr := output.String()
 	assert.Contains(t, outputStr, "[1/3] echo hello")
-	assert.Contains(t, outputStr, "[2/3] ls -la") 
+	assert.Contains(t, outputStr, "[2/3] ls -la")
 	assert.Contains(t, outputStr, "[3/3] pwd")
-	
+
 	client.AssertExpectations(t)
 }
 
 func TestCommandExecutor_Execute_CommandFails(t *testing.T) {
 	client := &mockSSHClient{}
-	
+
 	commands := []string{
 		"echo hello",
 		"failing-command",
@@ -230,24 +230,24 @@ func TestCommandExecutor_Execute_CommandFails(t *testing.T) {
 
 	executor := NewCommandExecutor(client)
 	var output MockWriter
-	
+
 	err := executor.Execute(context.Background(), commands, &output)
 
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "command failed: failing-command")
 	assert.Contains(t, err.Error(), "command failed")
-	
+
 	client.AssertExpectations(t)
 }
 
 func TestCommandExecutor_Execute_WriteError(t *testing.T) {
 	client := &mockSSHClient{}
-	
+
 	commands := []string{"echo hello"}
 
 	executor := NewCommandExecutor(client)
 	writer := &FailingWriter{}
-	
+
 	err := executor.Execute(context.Background(), commands, writer)
 
 	assert.Error(t, err)

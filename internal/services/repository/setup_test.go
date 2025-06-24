@@ -68,9 +68,9 @@ func TestNewSetup(t *testing.T) {
 	setup := NewSetup(client, provider)
 
 	require.NotNil(t, setup)
-	
+
 	// Verify it implements the Setup interface
-	var _ Setup = setup
+	var _ = Setup(setup)
 }
 
 func TestSetup_Setup_Ubuntu(t *testing.T) {
@@ -177,7 +177,7 @@ func TestSetup_Setup_Arch(t *testing.T) {
 
 	// Mock provider method that arch handler will call
 	provider.On("GetGPGKeyID").Return("test-gpg-key-id")
-	
+
 	// Mock all SSH commands to succeed
 	client.On("Execute", mock.Anything, mock.AnythingOfType("string")).Return(nil)
 
@@ -230,5 +230,5 @@ func TestSetup_ImplementsInterface(t *testing.T) {
 	setup := NewSetup(client, provider)
 
 	// Verify it implements the Setup interface
-	var _ Setup = setup
+	var _ = Setup(setup)
 }

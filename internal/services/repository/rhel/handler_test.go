@@ -43,10 +43,10 @@ func TestNewHandler(t *testing.T) {
 
 func TestHandler_Setup_Success_NoSudoNeeded(t *testing.T) {
 	client := &MockSSHClient{}
-	
+
 	// Mock system directory write test - first one succeeds (no sudo needed)
 	client.On("Execute", mock.Anything, "test -w /etc/apt/sources.list.d/").Return(nil)
-	
+
 	repoContent := `[superviz]
 name=Superviz.io Repository
 baseurl=https://repo.superviz.io/rpm/
@@ -62,7 +62,7 @@ gpgkey=https://repo.superviz.io/rpm/RPM-GPG-KEY-superviz`
 		"rpm --import https://repo.superviz.io/rpm/RPM-GPG-KEY-superviz",
 		"if command -v dnf >/dev/null 2>&1; then dnf clean all; elif command -v yum >/dev/null 2>&1; then yum clean all; fi",
 	}
-	
+
 	for _, cmd := range expectedCommands {
 		client.On("Execute", mock.Anything, cmd).Return(nil)
 	}
@@ -80,16 +80,16 @@ gpgkey=https://repo.superviz.io/rpm/RPM-GPG-KEY-superviz`
 
 func TestHandler_Setup_Success_WithSudo(t *testing.T) {
 	client := &MockSSHClient{}
-	
+
 	// Mock system directory write tests - all fail (need sudo)
 	client.On("Execute", mock.Anything, "test -w /etc/apt/sources.list.d/").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/apk/repositories").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/yum.repos.d/").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/pacman.conf").Return(errors.New("not writable"))
-	
+
 	// Mock sudo check - sudo available
 	client.On("Execute", mock.Anything, "command -v sudo >/dev/null 2>&1").Return(nil)
-	
+
 	repoContent := `[superviz]
 name=Superviz.io Repository
 baseurl=https://repo.superviz.io/rpm/
@@ -105,7 +105,7 @@ gpgkey=https://repo.superviz.io/rpm/RPM-GPG-KEY-superviz`
 		"sudo rpm --import https://repo.superviz.io/rpm/RPM-GPG-KEY-superviz",
 		"if command -v dnf >/dev/null 2>&1; then dnf clean all; elif command -v yum >/dev/null 2>&1; then yum clean all; fi",
 	}
-	
+
 	for _, cmd := range expectedCommands {
 		client.On("Execute", mock.Anything, cmd).Return(nil)
 	}
@@ -123,16 +123,16 @@ gpgkey=https://repo.superviz.io/rpm/RPM-GPG-KEY-superviz`
 
 func TestHandler_Setup_Success_SudoNotAvailable(t *testing.T) {
 	client := &MockSSHClient{}
-	
+
 	// Mock system directory write tests - all fail (need sudo)
 	client.On("Execute", mock.Anything, "test -w /etc/apt/sources.list.d/").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/apk/repositories").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/yum.repos.d/").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/pacman.conf").Return(errors.New("not writable"))
-	
+
 	// Mock sudo check - sudo not found
 	client.On("Execute", mock.Anything, "command -v sudo >/dev/null 2>&1").Return(errors.New("sudo not found"))
-	
+
 	handler := NewHandler(client)
 	var output bytes.Buffer
 
@@ -146,7 +146,7 @@ func TestHandler_Setup_Success_SudoNotAvailable(t *testing.T) {
 
 func TestHandler_Setup_SudoDetectionError(t *testing.T) {
 	client := &MockSSHClient{}
-	
+
 	// Mock all Execute calls to return connection error
 	client.On("Execute", mock.Anything, mock.AnythingOfType("string")).Return(errors.New("connection failed"))
 
@@ -175,10 +175,10 @@ func TestHandler_Setup_WriteError(t *testing.T) {
 
 func TestHandler_Setup_CommandExecutionError(t *testing.T) {
 	client := &MockSSHClient{}
-	
+
 	// Mock system directory write test - first one succeeds (no sudo needed)
 	client.On("Execute", mock.Anything, "test -w /etc/apt/sources.list.d/").Return(nil)
-	
+
 	repoContent := `[superviz]
 name=Superviz.io Repository
 baseurl=https://repo.superviz.io/rpm/
@@ -187,7 +187,7 @@ gpgcheck=1
 gpgkey=https://repo.superviz.io/rpm/RPM-GPG-KEY-superviz`
 
 	// Mock first command to fail
-	client.On("Execute", mock.Anything, "cat > /tmp/superviz.repo << 'EOF'\n" + repoContent + "\nEOF").Return(errors.New("command failed"))
+	client.On("Execute", mock.Anything, "cat > /tmp/superviz.repo << 'EOF'\n"+repoContent+"\nEOF").Return(errors.New("command failed"))
 
 	handler := NewHandler(client)
 	var output bytes.Buffer
@@ -201,13 +201,13 @@ gpgkey=https://repo.superviz.io/rpm/RPM-GPG-KEY-superviz`
 
 func TestHandler_Setup_SudoWriteError(t *testing.T) {
 	client := &MockSSHClient{}
-	
+
 	// Mock system directory write tests - all fail (need sudo)
 	client.On("Execute", mock.Anything, "test -w /etc/apt/sources.list.d/").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/apk/repositories").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/yum.repos.d/").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/pacman.conf").Return(errors.New("not writable"))
-	
+
 	// Mock sudo check - sudo available
 	client.On("Execute", mock.Anything, "command -v sudo >/dev/null 2>&1").Return(nil)
 

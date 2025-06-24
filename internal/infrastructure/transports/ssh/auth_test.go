@@ -14,8 +14,8 @@ import (
 // Mock implementations for testing
 
 type mockPasswordReader struct {
-	password        string
-	err             error
+	password         string
+	err              error
 	readPasswordFunc func(prompt string) (string, error)
 }
 
@@ -27,8 +27,8 @@ func (m *mockPasswordReader) ReadPassword(prompt string) (string, error) {
 }
 
 type mockKeyLoader struct {
-	signer     ssh.Signer
-	err        error
+	signer      ssh.Signer
+	err         error
 	loadKeyFunc func(path string) (ssh.Signer, error)
 }
 
@@ -74,12 +74,12 @@ func TestNewAuthenticator(t *testing.T) {
 
 func TestDefaultAuthenticator_GetAuthMethods_WithKey(t *testing.T) {
 	tests := []struct {
-		name      string
-		keyPath   string
+		name       string
+		keyPath    string
 		mockSigner ssh.Signer
-		keyErr    error
-		wantErr   bool
-		errType   error
+		keyErr     error
+		wantErr    bool
+		errType    error
 	}{
 		{
 			name:       "successful key loading",
@@ -89,11 +89,11 @@ func TestDefaultAuthenticator_GetAuthMethods_WithKey(t *testing.T) {
 			wantErr:    false,
 		},
 		{
-			name:      "key loading failure",
-			keyPath:   "/invalid/path",
-			keyErr:    errors.New("file not found"),
-			wantErr:   true,
-			errType:   ErrAuthFailed,
+			name:    "key loading failure",
+			keyPath: "/invalid/path",
+			keyErr:  errors.New("file not found"),
+			wantErr: true,
+			errType: ErrAuthFailed,
 		},
 	}
 
@@ -291,13 +291,13 @@ func TestFileKeyLoader_LoadKey_InvalidKey(t *testing.T) {
 	// Create a temporary file with invalid key content
 	tmpFile, err := os.CreateTemp("", "invalid_key_*.pem")
 	require.NoError(t, err)
-	defer os.Remove(tmpFile.Name())
+	defer func() { _ = os.Remove(tmpFile.Name()) }() // Ignore cleanup errors
 
 	// Write invalid key content
 	invalidKeyContent := []byte("-----BEGIN PRIVATE KEY-----\ninvalid content\n-----END PRIVATE KEY-----")
 	_, err = tmpFile.Write(invalidKeyContent)
 	require.NoError(t, err)
-	tmpFile.Close()
+	require.NoError(t, tmpFile.Close())
 
 	// Test with invalid key file
 	_, err = loader.LoadKey(tmpFile.Name())
@@ -311,7 +311,7 @@ func TestFileKeyLoader_LoadKey_ValidKey(t *testing.T) {
 	// Create a temporary file with a valid test key
 	tmpFile, err := os.CreateTemp("", "valid_key_*.pem")
 	require.NoError(t, err)
-	defer os.Remove(tmpFile.Name())
+	defer func() { _ = os.Remove(tmpFile.Name()) }() // Ignore cleanup errors
 
 	// Use a minimal valid RSA private key for testing
 	validKeyContent := []byte(`-----BEGIN OPENSSH PRIVATE KEY-----
@@ -334,7 +334,7 @@ QW3pQ8x3w0cP8mBt6M7F5+1Z8F9t6E5k8X2d7M4FJk5C8mXaFr6+5q4F5d6Y3s7k9t8r
 	// but that's fine for testing the parse error path
 	_, err = tmpFile.Write(validKeyContent)
 	require.NoError(t, err)
-	tmpFile.Close()
+	require.NoError(t, tmpFile.Close())
 
 	// This should error because the key is not actually valid
 	_, err = loader.LoadKey(tmpFile.Name())

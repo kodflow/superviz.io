@@ -43,19 +43,19 @@ func TestNewHandler(t *testing.T) {
 
 func TestHandler_Setup_Success_WithoutSudo(t *testing.T) {
 	client := &MockSSHClient{}
-	
+
 	// Mock system directory write tests - all fail (need sudo)
 	client.On("Execute", mock.Anything, "test -w /etc/apt/sources.list.d/").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/apk/repositories").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/yum.repos.d/").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/pacman.conf").Return(errors.New("not writable"))
-	
+
 	// Mock sudo check - sudo not found
 	client.On("Execute", mock.Anything, "command -v sudo >/dev/null 2>&1").Return(errors.New("sudo not found"))
-	
+
 	// This test case won't work because IsNeeded will return an error when sudo is not available
 	// but system directories are not writable. Let's change this to a case where a directory IS writable.
-	
+
 	handler := NewHandler(client)
 	var output bytes.Buffer
 
@@ -69,10 +69,10 @@ func TestHandler_Setup_Success_WithoutSudo(t *testing.T) {
 
 func TestHandler_Setup_Success_NoSudoNeeded(t *testing.T) {
 	client := &MockSSHClient{}
-	
+
 	// Mock system directory write test - first one succeeds (no sudo needed)
 	client.On("Execute", mock.Anything, "test -w /etc/apt/sources.list.d/").Return(nil) // This one succeeds
-	
+
 	// Mock repository setup commands without sudo
 	expectedCommands := []string{
 		"echo 'https://repo.superviz.io/alpine/v$(cat /etc/alpine-release | cut -d'.' -f1-2)/main' >> /etc/apk/repositories",
@@ -81,7 +81,7 @@ func TestHandler_Setup_Success_NoSudoNeeded(t *testing.T) {
 		"rm /tmp/superviz.rsa.pub",
 		"apk update",
 	}
-	
+
 	for _, cmd := range expectedCommands {
 		client.On("Execute", mock.Anything, cmd).Return(nil)
 	}
@@ -99,16 +99,16 @@ func TestHandler_Setup_Success_NoSudoNeeded(t *testing.T) {
 
 func TestHandler_Setup_Success_WithSudo(t *testing.T) {
 	client := &MockSSHClient{}
-	
+
 	// Mock system directory write tests - all fail (need sudo)
 	client.On("Execute", mock.Anything, "test -w /etc/apt/sources.list.d/").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/apk/repositories").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/yum.repos.d/").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/pacman.conf").Return(errors.New("not writable"))
-	
+
 	// Mock sudo check - sudo available
 	client.On("Execute", mock.Anything, "command -v sudo >/dev/null 2>&1").Return(nil)
-	
+
 	// Mock repository setup commands with sudo prefix
 	expectedCommands := []string{
 		"sudo echo 'https://repo.superviz.io/alpine/v$(cat /etc/alpine-release | cut -d'.' -f1-2)/main' >> /etc/apk/repositories",
@@ -117,7 +117,7 @@ func TestHandler_Setup_Success_WithSudo(t *testing.T) {
 		"rm /tmp/superviz.rsa.pub",
 		"sudo apk update",
 	}
-	
+
 	for _, cmd := range expectedCommands {
 		client.On("Execute", mock.Anything, cmd).Return(nil)
 	}
@@ -135,7 +135,7 @@ func TestHandler_Setup_Success_WithSudo(t *testing.T) {
 
 func TestHandler_Setup_SudoDetectionError(t *testing.T) {
 	client := &MockSSHClient{}
-	
+
 	// Mock all Execute calls to return connection error
 	client.On("Execute", mock.Anything, mock.AnythingOfType("string")).Return(errors.New("connection failed"))
 
@@ -164,10 +164,10 @@ func TestHandler_Setup_WriteError(t *testing.T) {
 
 func TestHandler_Setup_CommandExecutionError(t *testing.T) {
 	client := &MockSSHClient{}
-	
+
 	// Mock system directory write test - first one succeeds (no sudo needed)
 	client.On("Execute", mock.Anything, "test -w /etc/apt/sources.list.d/").Return(nil)
-	
+
 	// Mock first command to fail
 	client.On("Execute", mock.Anything, "echo 'https://repo.superviz.io/alpine/v$(cat /etc/alpine-release | cut -d'.' -f1-2)/main' >> /etc/apk/repositories").Return(errors.New("command failed"))
 
@@ -183,13 +183,13 @@ func TestHandler_Setup_CommandExecutionError(t *testing.T) {
 
 func TestHandler_Setup_SudoWriteError(t *testing.T) {
 	client := &MockSSHClient{}
-	
+
 	// Mock system directory write tests - all fail (need sudo)
 	client.On("Execute", mock.Anything, "test -w /etc/apt/sources.list.d/").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/apk/repositories").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/yum.repos.d/").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/pacman.conf").Return(errors.New("not writable"))
-	
+
 	// Mock sudo check - sudo available
 	client.On("Execute", mock.Anything, "command -v sudo >/dev/null 2>&1").Return(nil)
 

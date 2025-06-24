@@ -97,10 +97,10 @@ func TestInstallCommandValidation(t *testing.T) {
 	t.Helper()
 
 	cases := []struct {
-		name     string
-		args     []string
-		wantErr  bool
-		errMsg   string
+		name    string
+		args    []string
+		wantErr bool
+		errMsg  string
 	}{
 		{
 			name:    "valid target",
@@ -152,9 +152,9 @@ func TestInstallCommandFlagParsing(t *testing.T) {
 
 	// Test parsing various flag combinations
 	testCases := []struct {
-		name    string
-		args    []string
-		check   func(t *testing.T, cmd *cobra.Command)
+		name  string
+		args  []string
+		check func(t *testing.T, cmd *cobra.Command)
 	}{
 		{
 			name: "ssh key flag",

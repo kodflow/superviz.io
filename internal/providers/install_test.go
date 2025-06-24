@@ -49,7 +49,7 @@ func TestNewInstallProvider(t *testing.T) {
 	require.NotNil(t, provider)
 
 	// Verify it implements the InstallProvider interface
-	var _ InstallProvider = provider
+	var _ = InstallProvider(provider)
 }
 
 func TestDefaultInstallProvider(t *testing.T) {
@@ -58,7 +58,7 @@ func TestDefaultInstallProvider(t *testing.T) {
 	require.NotNil(t, provider)
 
 	// Verify it implements the InstallProvider interface
-	var _ InstallProvider = provider
+	var _ = InstallProvider(provider)
 }
 
 func TestInstallProvider_GetInstallInfo(t *testing.T) {
@@ -170,7 +170,7 @@ func TestInitInstallInfo_IsCalledOnce(t *testing.T) {
 
 	assert.Equal(t, info1, info2)
 	assert.Equal(t, info2, info3)
-	
+
 	// Same for individual methods
 	url1 := provider.GetRepositoryURL()
 	url2 := provider.GetRepositoryURL()
