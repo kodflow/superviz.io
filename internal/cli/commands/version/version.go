@@ -21,6 +21,16 @@ var (
 //
 // initDefaults creates the singleton instances of the version service and
 // command, ensuring they are created only once for the lifetime of the application.
+//
+// Example:
+//
+//	initDefaults() // Called automatically via sync.Once
+//
+// Parameters:
+//   - None
+//
+// Returns:
+//   - None (initializes global variables)
 func initDefaults() {
 	defaultService = services.NewVersionService(nil)
 	defaultCmd = &cobra.Command{
@@ -37,8 +47,16 @@ func initDefaults() {
 // GetCommand provides access to the default version command instance, initializing
 // it if necessary using sync.Once for thread safety.
 //
+// Example:
+//
+//	versionCmd := GetCommand()
+//	rootCmd.AddCommand(versionCmd)
+//
+// Parameters:
+//   - None
+//
 // Returns:
-//   - Cobra command instance configured for version display
+//   - cmd: *cobra.Command instance configured for version display
 func GetCommand() *cobra.Command {
 	once.Do(initDefaults)
 	return defaultCmd
@@ -49,11 +67,17 @@ func GetCommand() *cobra.Command {
 // GetCommandWithService allows injection of a custom version service while
 // falling back to the singleton command if service is nil.
 //
+// Example:
+//
+//	customProvider := &MyVersionProvider{}
+//	service := services.NewVersionService(customProvider)
+//	cmd := GetCommandWithService(service)
+//
 // Parameters:
-//   - service: Custom version service instance (nil for default)
+//   - service: *services.VersionService custom version service instance (nil for default)
 //
 // Returns:
-//   - Cobra command instance with the specified or default service
+//   - cmd: *cobra.Command instance with the specified or default service
 func GetCommandWithService(service *services.VersionService) *cobra.Command {
 	if service == nil {
 		return GetCommand()
@@ -68,11 +92,17 @@ func GetCommandWithService(service *services.VersionService) *cobra.Command {
 // NewVersionCommand constructs a fresh version command instance with the
 // provided service, bypassing the singleton pattern for testing or special cases.
 //
+// Example:
+//
+//	mockProvider := &MockVersionProvider{}
+//	service := services.NewVersionService(mockProvider)
+//	cmd := NewVersionCommand(service)
+//
 // Parameters:
-//   - service: Version service instance to use for the command
+//   - service: *services.VersionService version service instance to use for the command
 //
 // Returns:
-//   - New Cobra command instance configured with the provided service
+//   - cmd: *cobra.Command new Cobra command instance configured with the provided service
 func NewVersionCommand(service *services.VersionService) *cobra.Command {
 	// Don't use default service here - use the provided one directly
 	return &cobra.Command{

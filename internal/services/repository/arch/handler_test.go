@@ -69,9 +69,8 @@ func TestNewHandler(t *testing.T) {
 	handler := NewHandler(client, provider)
 
 	assert.NotNil(t, handler)
-	assert.Equal(t, client, handler.client)
+	assert.NotNil(t, handler.Base)
 	assert.Equal(t, provider, handler.provider)
-	assert.NotNil(t, handler.sudo)
 }
 
 func TestHandler_Setup_Success_NoSudoNeeded(t *testing.T) {
@@ -156,6 +155,9 @@ func TestHandler_Setup_Success_SudoNotAvailable(t *testing.T) {
 	client := &MockSSHClient{}
 	provider := &MockInstallProvider{}
 
+	// Mock provider method
+	provider.On("GetGPGKeyID").Return("test-key-id")
+
 	// Mock system directory write tests - all fail (need sudo)
 	client.On("Execute", mock.Anything, "test -w /etc/apt/sources.list.d/").Return(errors.New("not writable"))
 	client.On("Execute", mock.Anything, "test -w /etc/apk/repositories").Return(errors.New("not writable"))
@@ -180,6 +182,9 @@ func TestHandler_Setup_SudoDetectionError(t *testing.T) {
 	client := &MockSSHClient{}
 	provider := &MockInstallProvider{}
 
+	// Mock provider method - called before any client Execute calls
+	provider.On("GetGPGKeyID").Return("test-key-id")
+
 	// Mock all Execute calls to return connection error
 	client.On("Execute", mock.Anything, mock.AnythingOfType("string")).Return(errors.New("connection failed"))
 
@@ -196,6 +201,10 @@ func TestHandler_Setup_SudoDetectionError(t *testing.T) {
 func TestHandler_Setup_WriteError(t *testing.T) {
 	client := &MockSSHClient{}
 	provider := &MockInstallProvider{}
+
+	// Mock provider method
+	provider.On("GetGPGKeyID").Return("test-key-id")
+
 	handler := NewHandler(client, provider)
 
 	// Use a writer that will fail
@@ -234,6 +243,9 @@ func TestHandler_Setup_CommandExecutionError(t *testing.T) {
 func TestHandler_Setup_SudoWriteError(t *testing.T) {
 	client := &MockSSHClient{}
 	provider := &MockInstallProvider{}
+
+	// Mock provider method
+	provider.On("GetGPGKeyID").Return("test-key-id")
 
 	// Mock system directory write tests - all fail (need sudo)
 	client.On("Execute", mock.Anything, "test -w /etc/apt/sources.list.d/").Return(errors.New("not writable"))

@@ -6,11 +6,21 @@ import (
 
 // NewRootCommand creates the root Cobra command for the Superviz CLI.
 //
+// NewRootCommand initializes the main CLI command with common configuration
+// and attaches all provided subcommands to create a complete command tree.
+//
+// Example:
+//
+//	versionCmd := version.GetCommand()
+//	installCmd := install.GetCommand()
+//	rootCmd := NewRootCommand(versionCmd, installCmd)
+//	rootCmd.Execute()
+//
 // Parameters:
-//   - subcommands: list of subcommands to attach
+//   - subcommands: ...*cobra.Command list of subcommands to attach
 //
 // Returns:
-//   - *cobra.Command: the fully configured root CLI command.
+//   - cmd: *cobra.Command the fully configured root CLI command
 func NewRootCommand(subcommands ...*cobra.Command) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "svz",

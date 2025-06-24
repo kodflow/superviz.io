@@ -3,7 +3,6 @@ package debian
 
 import (
 	"context"
-	"fmt"
 	"io"
 
 	"github.com/kodflow/superviz.io/internal/infrastructure/transports/ssh"
@@ -11,37 +10,48 @@ import (
 )
 
 // Handler handles Debian/Ubuntu repository setup.
+//
+//	handler := NewHandler(client)
+//	err := handler.Setup(ctx, writer)
+//
+// Handler provides Debian/Ubuntu APT repository configuration
+// using the common base handler functionality.
 type Handler struct {
-	client ssh.Client
-	sudo   *common.SudoHelper
+	// Base provides common repository setup functionality
+	Base *common.BaseHandler
 }
 
 // NewHandler creates a new Debian repository handler.
+//
+//	client := ssh.NewClient(config)
+//	handler := NewHandler(client)
+//
+// Parameters:
+//   - client: ssh.Client SSH client for executing commands
+//
+// Returns:
+//   - handler: *Handler configured Debian repository handler
 func NewHandler(client ssh.Client) *Handler {
 	return &Handler{
-		client: client,
-		sudo:   common.NewSudoHelper(client),
+		Base: common.NewBaseHandler(client),
 	}
 }
 
 // Setup sets up the repository for Debian/Ubuntu systems.
+//
+//	handler := NewHandler(client)
+//	err := handler.Setup(ctx, os.Stdout)
+//
+// Setup configures the superviz.io APT repository on Debian/Ubuntu systems
+// by installing dependencies, adding GPG keys, and configuring the repository.
+//
+// Parameters:
+//   - ctx: context.Context for timeout and cancellation
+//   - writer: io.Writer for setup progress output
+//
+// Returns:
+//   - err: error if repository setup fails
 func (h *Handler) Setup(ctx context.Context, writer io.Writer) error {
-	if _, err := fmt.Fprintf(writer, "Setting up APT repository...\n"); err != nil {
-		return fmt.Errorf("failed to write to output: %w", err)
-	}
-
-	// Detect if sudo is needed
-	needSudo, err := h.sudo.IsNeeded(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to detect sudo requirement: %w", err)
-	}
-
-	if needSudo {
-		if _, err := fmt.Fprintf(writer, "Using sudo for system operations...\n"); err != nil {
-			return fmt.Errorf("failed to write to output: %w", err)
-		}
-	}
-
 	commands := []string{
 		// Install required packages
 		"apt update",
@@ -60,9 +70,5 @@ func (h *Handler) Setup(ctx context.Context, writer io.Writer) error {
 		"apt update",
 	}
 
-	// Apply sudo prefix where needed
-	commands = h.sudo.AddPrefix(commands, needSudo)
-
-	executor := common.NewCommandExecutor(h.client)
-	return executor.Execute(ctx, commands, writer)
+	return h.Base.ExecuteSetup(ctx, writer, "Setting up APT repository...", commands)
 }

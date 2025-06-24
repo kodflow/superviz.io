@@ -8,13 +8,23 @@ import (
 )
 
 // RequireOneTarget validates that exactly one argument is provided in "user@host" format.
-// This function is designed for use as a Cobra command argument validator.
+//
+// RequireOneTarget ensures that command receives precisely one argument in the correct
+// user@host format for SSH connections. This function is designed for use as a Cobra
+// command argument validator.
+//
+// Example:
+//
+//	cmd.Args = utils.RequireOneTarget
+//	// Valid: "john@example.com"
+//	// Invalid: "example.com", "john@", "@example.com", "john@host@extra"
+//
 // Parameters:
-//   - cmd: The cobra command (unused)
-//   - args: Command line arguments to validate
+//   - cmd: *cobra.Command the cobra command (unused in validation)
+//   - args: []string command line arguments to validate
 //
 // Returns:
-//   - error: nil if validation passes, descriptive error otherwise
+//   - err: error nil if validation passes, descriptive error otherwise
 func RequireOneTarget(_ *cobra.Command, args []string) error {
 	if len(args) != 1 {
 		return fmt.Errorf("you must specify the target as user@host")
@@ -31,17 +41,25 @@ func RequireOneTarget(_ *cobra.Command, args []string) error {
 
 // ValidatePackageNames validates that each package name is non-empty and contains no dangerous characters.
 //
-// This function ensures security by preventing command injection via package names.
+// ValidatePackageNames ensures security by preventing command injection via package names.
 // It checks for the following potentially dangerous characters:
 // - Command control characters: ; | & $ ` ( ) [ ] { } < > * ? \ / ' "
 // - Whitespace characters: spaces, tabs, newlines, carriage returns
 // - ASCII control characters (0x00-0x1F, 0x7F)
 //
+// Example:
+//
+//	err := ValidatePackageNames("vim", "git", "curl")
+//	// Returns nil (valid packages)
+//
+//	err = ValidatePackageNames("vim; rm -rf /")
+//	// Returns error (contains dangerous characters)
+//
 // Parameters:
-//   - pkgs: List of package names to validate
+//   - pkgs: ...string list of package names to validate
 //
 // Returns:
-//   - error: nil if all names are valid, otherwise a descriptive error
+//   - err: error nil if all names are valid, otherwise a descriptive error
 func ValidatePackageNames(pkgs ...string) error {
 	if len(pkgs) == 0 {
 		return fmt.Errorf("no package names provided")

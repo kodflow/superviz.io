@@ -55,6 +55,16 @@ var (
 //
 // initVersionInfo is called once via sync.Once to populate the cached
 // version information with values from the build-time variables.
+//
+// Example:
+//
+//	initVersionInfo() // Called automatically via sync.Once
+//
+// Parameters:
+//   - None
+//
+// Returns:
+//   - None (updates global cachedVersionInfo)
 func initVersionInfo() {
 	cachedVersionInfo = VersionInfo{
 		Version:   version,
@@ -71,8 +81,23 @@ func initVersionInfo() {
 // Format creates a human-readable, multi-line string containing all
 // version information suitable for command-line output.
 //
+// Example:
+//
+//	info := GetVersionInfo()
+//	fmt.Println(info.Format())
+//	// Output:
+//	// Version:       v1.0.0
+//	// Commit:        abc123
+//	// Built at:      2023-01-01T12:00:00Z
+//	// Built by:      builder
+//	// Go version:    go1.21
+//	// OS/Arch:       linux/amd64
+//
+// Parameters:
+//   - None (method receiver)
+//
 // Returns:
-//   - Formatted version information string
+//   - formatted: string representation of version information
 func (vi VersionInfo) Format() string {
 	return "Version:       " + vi.Version +
 		"\nCommit:        " + vi.Commit +
@@ -86,11 +111,28 @@ func (vi VersionInfo) Format() string {
 //
 // VersionProvider abstracts access to version information, enabling
 // dependency injection and testing of version-related functionality.
+//
+// Example:
+//
+//	provider := NewVersionProvider()
+//	info := provider.GetVersionInfo()
+//	fmt.Println(info.Format())
 type VersionProvider interface {
 	// GetVersionInfo returns complete version information.
 	//
+	// GetVersionInfo provides access to all build-time metadata including
+	// version numbers, commit hashes, and build environment details.
+	//
+	// Example:
+	//	provider := NewVersionProvider()
+	//	info := provider.GetVersionInfo()
+	//	fmt.Printf("Version: %s\n", info.Version)
+	//
+	// Parameters:
+	//   - None
+	//
 	// Returns:
-	//   - VersionInfo containing all build and version metadata
+	//   - info: VersionInfo containing all build and version metadata
 	GetVersionInfo() VersionInfo
 }
 
@@ -105,8 +147,17 @@ type versionProvider struct{}
 // GetVersionInfo ensures the version info is initialized and returns
 // the complete metadata about the current build.
 //
+// Example:
+//
+//	provider := &versionProvider{}
+//	info := provider.GetVersionInfo()
+//	fmt.Printf("Version: %s\n", info.Version)
+//
+// Parameters:
+//   - None (method receiver)
+//
 // Returns:
-//   - VersionInfo containing all build and version metadata
+//   - info: VersionInfo containing all build and version metadata
 func (p *versionProvider) GetVersionInfo() VersionInfo {
 	once.Do(initVersionInfo)
 	return cachedVersionInfo
@@ -117,8 +168,17 @@ func (p *versionProvider) GetVersionInfo() VersionInfo {
 // DefaultVersionProvider provides access to the standard version provider
 // instance for use throughout the application.
 //
+// Example:
+//
+//	provider := DefaultVersionProvider()
+//	info := provider.GetVersionInfo()
+//	fmt.Println(info.Format())
+//
+// Parameters:
+//   - None
+//
 // Returns:
-//   - VersionProvider instance with default configuration
+//   - provider: VersionProvider instance with default configuration
 func DefaultVersionProvider() VersionProvider {
 	return NewVersionProvider()
 }
@@ -128,8 +188,17 @@ func DefaultVersionProvider() VersionProvider {
 // NewVersionProvider initializes a new instance of the version provider.
 // Note: Returns the same singleton instance for better performance.
 //
+// Example:
+//
+//	provider := NewVersionProvider()
+//	info := provider.GetVersionInfo()
+//	fmt.Printf("Version: %s\n", info.Version)
+//
+// Parameters:
+//   - None
+//
 // Returns:
-//   - VersionProvider instance ready for use
+//   - provider: VersionProvider instance ready for use
 func NewVersionProvider() VersionProvider {
 	return &versionProvider{}
 }
@@ -139,6 +208,19 @@ func NewVersionProvider() VersionProvider {
 // Reset clears the cached version information and resets the initialization
 // state, allowing fresh initialization in test scenarios.
 // WARNING: This should ONLY be used in tests!
+//
+// Example:
+//
+//	func TestVersionProvider(t *testing.T) {
+//		defer Reset() // Clean up after test
+//		// Test logic here
+//	}
+//
+// Parameters:
+//   - None
+//
+// Returns:
+//   - None (resets global state)
 func Reset() {
 	once = sync.Once{}
 	cachedVersionInfo = VersionInfo{}

@@ -12,39 +12,53 @@ import (
 )
 
 // Handler handles Arch repository setup.
+//
+//	handler := NewHandler(client, provider)
+//	err := handler.Setup(ctx, writer)
+//
+// Handler provides Arch Linux Pacman repository configuration
+// using the common base handler functionality with provider integration.
 type Handler struct {
-	client   ssh.Client
-	sudo     *common.SudoHelper
+	// Base provides common repository setup functionality
+	Base *common.BaseHandler
+	// provider supplies GPG key and repository information
 	provider providers.InstallProvider
 }
 
 // NewHandler creates a new Arch repository handler.
+//
+//	client := ssh.NewClient(config)
+//	provider := providers.NewInstallProvider()
+//	handler := NewHandler(client, provider)
+//
+// Parameters:
+//   - client: ssh.Client SSH client for executing commands
+//   - provider: providers.InstallProvider install configuration provider
+//
+// Returns:
+//   - handler: *Handler configured Arch repository handler
 func NewHandler(client ssh.Client, provider providers.InstallProvider) *Handler {
 	return &Handler{
-		client:   client,
-		sudo:     common.NewSudoHelper(client),
+		Base:     common.NewBaseHandler(client),
 		provider: provider,
 	}
 }
 
 // Setup sets up the repository for Arch systems.
+//
+//	handler := NewHandler(client, provider)
+//	err := handler.Setup(ctx, os.Stdout)
+//
+// Setup configures the superviz.io Pacman repository on Arch Linux systems
+// by adding repository configuration and importing GPG keys.
+//
+// Parameters:
+//   - ctx: context.Context for timeout and cancellation
+//   - writer: io.Writer for setup progress output
+//
+// Returns:
+//   - err: error if repository setup fails
 func (h *Handler) Setup(ctx context.Context, writer io.Writer) error {
-	if _, err := fmt.Fprintf(writer, "Setting up Pacman repository...\n"); err != nil {
-		return fmt.Errorf("failed to write to output: %w", err)
-	}
-
-	// Detect if sudo is needed
-	needSudo, err := h.sudo.IsNeeded(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to detect sudo requirement: %w", err)
-	}
-
-	if needSudo {
-		if _, err := fmt.Fprintf(writer, "Using sudo for system operations...\n"); err != nil {
-			return fmt.Errorf("failed to write to output: %w", err)
-		}
-	}
-
 	// Get GPG key ID from provider
 	gpgKeyID := h.provider.GetGPGKeyID()
 
@@ -64,9 +78,5 @@ func (h *Handler) Setup(ctx context.Context, writer io.Writer) error {
 		"pacman -Sy",
 	}
 
-	// Apply sudo prefix where needed
-	commands = h.sudo.AddPrefix(commands, needSudo)
-
-	executor := common.NewCommandExecutor(h.client)
-	return executor.Execute(ctx, commands, writer)
+	return h.Base.ExecuteSetup(ctx, writer, "Setting up Pacman repository...", commands)
 }

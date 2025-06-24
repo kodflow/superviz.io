@@ -11,37 +11,48 @@ import (
 )
 
 // Handler handles RHEL/CentOS/Fedora repository setup.
+//
+//	handler := NewHandler(client)
+//	err := handler.Setup(ctx, writer)
+//
+// Handler provides RHEL/CentOS/Fedora YUM/DNF repository configuration
+// using the common base handler functionality.
 type Handler struct {
-	client ssh.Client
-	sudo   *common.SudoHelper
+	// Base provides common repository setup functionality
+	Base *common.BaseHandler
 }
 
 // NewHandler creates a new RHEL repository handler.
+//
+//	client := ssh.NewClient(config)
+//	handler := NewHandler(client)
+//
+// Parameters:
+//   - client: ssh.Client SSH client for executing commands
+//
+// Returns:
+//   - handler: *Handler configured RHEL repository handler
 func NewHandler(client ssh.Client) *Handler {
 	return &Handler{
-		client: client,
-		sudo:   common.NewSudoHelper(client),
+		Base: common.NewBaseHandler(client),
 	}
 }
 
 // Setup sets up the repository for RHEL/CentOS/Fedora systems.
+//
+//	handler := NewHandler(client)
+//	err := handler.Setup(ctx, os.Stdout)
+//
+// Setup configures the superviz.io YUM/DNF repository on RHEL-based systems
+// by creating repository configuration and importing GPG keys.
+//
+// Parameters:
+//   - ctx: context.Context for timeout and cancellation
+//   - writer: io.Writer for setup progress output
+//
+// Returns:
+//   - err: error if repository setup fails
 func (h *Handler) Setup(ctx context.Context, writer io.Writer) error {
-	if _, err := fmt.Fprintf(writer, "Setting up YUM/DNF repository...\n"); err != nil {
-		return fmt.Errorf("failed to write to output: %w", err)
-	}
-
-	// Detect if sudo is needed
-	needSudo, err := h.sudo.IsNeeded(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to detect sudo requirement: %w", err)
-	}
-
-	if needSudo {
-		if _, err := fmt.Fprintf(writer, "Using sudo for system operations...\n"); err != nil {
-			return fmt.Errorf("failed to write to output: %w", err)
-		}
-	}
-
 	repoContent := `[superviz]
 name=Superviz.io Repository
 baseurl=https://repo.superviz.io/rpm/
@@ -62,9 +73,5 @@ gpgkey=https://repo.superviz.io/rpm/RPM-GPG-KEY-superviz`
 		"if command -v dnf >/dev/null 2>&1; then dnf clean all; elif command -v yum >/dev/null 2>&1; then yum clean all; fi",
 	}
 
-	// Apply sudo prefix where needed
-	commands = h.sudo.AddPrefix(commands, needSudo)
-
-	executor := common.NewCommandExecutor(h.client)
-	return executor.Execute(ctx, commands, writer)
+	return h.Base.ExecuteSetup(ctx, writer, "Setting up YUM/DNF repository...", commands)
 }

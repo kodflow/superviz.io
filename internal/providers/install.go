@@ -57,6 +57,16 @@ var (
 //
 // initInstallInfo is called once via sync.Once to populate the cached
 // installation information with the current configuration values.
+//
+// Example:
+//
+//	initInstallInfo() // Called automatically via sync.Once
+//
+// Parameters:
+//   - None
+//
+// Returns:
+//   - None (updates global cachedInstallInfo)
 func initInstallInfo() {
 	cachedInstallInfo = InstallInfo{
 		RepositoryURL: "https://repo.superviz.io",
@@ -70,29 +80,79 @@ func initInstallInfo() {
 //
 // InstallProvider abstracts access to installation metadata and configuration,
 // enabling dependency injection and testing of installation components.
+//
+// Example:
+//
+//	provider := NewInstallProvider()
+//	info := provider.GetInstallInfo()
+//	fmt.Printf("Repository: %s\n", info.RepositoryURL)
 type InstallProvider interface {
 	// GetInstallInfo returns complete installation information.
 	//
+	// GetInstallInfo provides access to all metadata required for
+	// superviz.io installation including repository URLs and package details.
+	//
+	// Example:
+	//	provider := NewInstallProvider()
+	//	info := provider.GetInstallInfo()
+	//	fmt.Printf("Package: %s\n", info.PackageName)
+	//
+	// Parameters:
+	//   - None
+	//
 	// Returns:
-	//   - InstallInfo containing all installation metadata
+	//   - info: InstallInfo containing all installation metadata
 	GetInstallInfo() InstallInfo
 
 	// GetRepositoryURL returns the package repository URL.
 	//
+	// GetRepositoryURL provides the base URL for accessing the superviz.io
+	// package repository for downloads and updates.
+	//
+	// Example:
+	//	provider := NewInstallProvider()
+	//	url := provider.GetRepositoryURL()
+	//	fmt.Printf("Repository: %s\n", url)
+	//
+	// Parameters:
+	//   - None
+	//
 	// Returns:
-	//   - String URL for the superviz.io package repository
+	//   - url: string URL for the superviz.io package repository
 	GetRepositoryURL() string
 
 	// GetPackageName returns the superviz.io package name.
 	//
+	// GetPackageName provides the canonical package name used across
+	// different package managers and distributions.
+	//
+	// Example:
+	//	provider := NewInstallProvider()
+	//	name := provider.GetPackageName()
+	//	fmt.Printf("Package: %s\n", name)
+	//
+	// Parameters:
+	//   - None
+	//
 	// Returns:
-	//   - String name of the superviz.io package
+	//   - name: string name of the superviz.io package
 	GetPackageName() string
 
 	// GetGPGKeyID returns the GPG key ID for package verification.
 	//
+	// GetGPGKeyID provides the identifier for the GPG key used to
+	// sign superviz.io packages for integrity verification.
+	//
+	// Example:
+	//	provider := NewInstallProvider()
+	//	keyID := provider.GetGPGKeyID()
+	//	fmt.Printf("GPG Key: %s\n", keyID)
+	//
+	// Parameters:
+	//   - None
+	//
 	// Returns:
-	//   - String identifier for the package signing GPG key
+	//   - keyID: string identifier for the package signing GPG key
 	GetGPGKeyID() string
 }
 
@@ -107,8 +167,17 @@ type installProvider struct{}
 // GetInstallInfo ensures the installation info is initialized and returns
 // the complete metadata needed for superviz.io installation.
 //
+// Example:
+//
+//	provider := &installProvider{}
+//	info := provider.GetInstallInfo()
+//	fmt.Printf("Repository: %s\n", info.RepositoryURL)
+//
+// Parameters:
+//   - None (method receiver)
+//
 // Returns:
-//   - InstallInfo containing all installation metadata
+//   - info: InstallInfo containing all installation metadata
 func (p *installProvider) GetInstallInfo() InstallInfo {
 	installOnce.Do(initInstallInfo)
 	return cachedInstallInfo
@@ -119,8 +188,17 @@ func (p *installProvider) GetInstallInfo() InstallInfo {
 // GetRepositoryURL provides the base URL for the superviz.io package repository
 // where installation packages can be downloaded.
 //
+// Example:
+//
+//	provider := &installProvider{}
+//	url := provider.GetRepositoryURL()
+//	fmt.Printf("Repository: %s\n", url)
+//
+// Parameters:
+//   - None (method receiver)
+//
 // Returns:
-//   - String URL for the superviz.io package repository
+//   - url: string URL for the superviz.io package repository
 func (p *installProvider) GetRepositoryURL() string {
 	installOnce.Do(initInstallInfo)
 	return cachedInstallInfo.RepositoryURL
@@ -131,8 +209,17 @@ func (p *installProvider) GetRepositoryURL() string {
 // GetPackageName provides the canonical name of the superviz.io package
 // as it appears in package managers.
 //
+// Example:
+//
+//	provider := &installProvider{}
+//	name := provider.GetPackageName()
+//	fmt.Printf("Package: %s\n", name)
+//
+// Parameters:
+//   - None (method receiver)
+//
 // Returns:
-//   - String name of the superviz.io package
+//   - name: string name of the superviz.io package
 func (p *installProvider) GetPackageName() string {
 	installOnce.Do(initInstallInfo)
 	return cachedInstallInfo.PackageName
@@ -143,8 +230,17 @@ func (p *installProvider) GetPackageName() string {
 // GetGPGKeyID provides the identifier for the GPG key used to sign
 // superviz.io packages for security verification.
 //
+// Example:
+//
+//	provider := &installProvider{}
+//	keyID := provider.GetGPGKeyID()
+//	fmt.Printf("GPG Key: %s\n", keyID)
+//
+// Parameters:
+//   - None (method receiver)
+//
 // Returns:
-//   - String identifier for the package signing GPG key
+//   - keyID: string identifier for the package signing GPG key
 func (p *installProvider) GetGPGKeyID() string {
 	installOnce.Do(initInstallInfo)
 	return cachedInstallInfo.GPGKeyID
@@ -155,8 +251,17 @@ func (p *installProvider) GetGPGKeyID() string {
 // DefaultInstallProvider provides access to the standard installation provider
 // instance for use throughout the application.
 //
+// Example:
+//
+//	provider := DefaultInstallProvider()
+//	info := provider.GetInstallInfo()
+//	fmt.Printf("Repository: %s\n", info.RepositoryURL)
+//
+// Parameters:
+//   - None
+//
 // Returns:
-//   - InstallProvider instance with default configuration
+//   - provider: InstallProvider instance with default configuration
 func DefaultInstallProvider() InstallProvider {
 	return NewInstallProvider()
 }
@@ -166,8 +271,17 @@ func DefaultInstallProvider() InstallProvider {
 // NewInstallProvider initializes a new instance of the installation provider
 // with standard configuration and caching behavior.
 //
+// Example:
+//
+//	provider := NewInstallProvider()
+//	info := provider.GetInstallInfo()
+//	fmt.Printf("Package: %s\n", info.PackageName)
+//
+// Parameters:
+//   - None
+//
 // Returns:
-//   - InstallProvider instance ready for use
+//   - provider: InstallProvider instance ready for use
 func NewInstallProvider() InstallProvider {
 	return &installProvider{}
 }

@@ -1,0 +1,4534 @@
+{
+  "statistics": {
+    "detectionDate": "2025-06-24T13:44:08.600Z",
+    "formats": {
+      "go": {
+        "sources": {
+          "internal/services/repository/rhel/handler_test.go": {
+            "lines": 243,
+            "tokens": 1949,
+            "sources": 1,
+            "clones": 28,
+            "duplicatedLines": 564,
+            "duplicatedTokens": 5143,
+            "percentage": 232.1,
+            "percentageTokens": 263.88,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/services/repository/rhel/handler.go": {
+            "lines": 77,
+            "tokens": 268,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/services/repository/debian/handler_test.go": {
+            "lines": 228,
+            "tokens": 1929,
+            "sources": 1,
+            "clones": 8,
+            "duplicatedLines": 207,
+            "duplicatedTokens": 1824,
+            "percentage": 90.79,
+            "percentageTokens": 94.56,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/services/repository/debian/handler.go": {
+            "lines": 73,
+            "tokens": 263,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/services/repository/common/helpers_test.go": {
+            "lines": 277,
+            "tokens": 2058,
+            "sources": 1,
+            "clones": 2,
+            "duplicatedLines": 38,
+            "duplicatedTokens": 342,
+            "percentage": 13.72,
+            "percentageTokens": 16.62,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/services/repository/common/helpers.go": {
+            "lines": 154,
+            "tokens": 942,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/services/repository/common/base_handler.go": {
+            "lines": 83,
+            "tokens": 421,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/services/repository/arch/handler_test.go": {
+            "lines": 276,
+            "tokens": 2356,
+            "sources": 1,
+            "clones": 11,
+            "duplicatedLines": 166,
+            "duplicatedTokens": 1676,
+            "percentage": 60.14,
+            "percentageTokens": 71.14,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/services/repository/arch/handler.go": {
+            "lines": 71,
+            "tokens": 450,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/services/repository/alpine/handler_test.go": {
+            "lines": 225,
+            "tokens": 1914,
+            "sources": 1,
+            "clones": 9,
+            "duplicatedLines": 199,
+            "duplicatedTokens": 1769,
+            "percentage": 88.44,
+            "percentageTokens": 92.42,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/services/repository/alpine/handler.go": {
+            "lines": 68,
+            "tokens": 247,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/transports/ssh/interfaces.go": {
+            "lines": 206,
+            "tokens": 802,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/transports/ssh/hostkey_test.go": {
+            "lines": 496,
+            "tokens": 3896,
+            "sources": 1,
+            "clones": 8,
+            "duplicatedLines": 76,
+            "duplicatedTokens": 766,
+            "percentage": 15.32,
+            "percentageTokens": 19.66,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/transports/ssh/hostkey.go": {
+            "lines": 242,
+            "tokens": 1718,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/transports/ssh/errors_test.go": {
+            "lines": 311,
+            "tokens": 2364,
+            "sources": 1,
+            "clones": 4,
+            "duplicatedLines": 78,
+            "duplicatedTokens": 544,
+            "percentage": 25.08,
+            "percentageTokens": 23.01,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/transports/ssh/errors.go": {
+            "lines": 183,
+            "tokens": 828,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/transports/ssh/dialer_test.go": {
+            "lines": 284,
+            "tokens": 2195,
+            "sources": 1,
+            "clones": 2,
+            "duplicatedLines": 24,
+            "duplicatedTokens": 224,
+            "percentage": 8.45,
+            "percentageTokens": 10.21,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/transports/ssh/dialer.go": {
+            "lines": 132,
+            "tokens": 984,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/transports/ssh/config_test.go": {
+            "lines": 228,
+            "tokens": 1628,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/transports/ssh/config.go": {
+            "lines": 82,
+            "tokens": 424,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/transports/ssh/client_test.go": {
+            "lines": 365,
+            "tokens": 2900,
+            "sources": 1,
+            "clones": 6,
+            "duplicatedLines": 98,
+            "duplicatedTokens": 732,
+            "percentage": 26.85,
+            "percentageTokens": 25.24,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/transports/ssh/client.go": {
+            "lines": 186,
+            "tokens": 1021,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/transports/ssh/auth_test.go": {
+            "lines": 375,
+            "tokens": 2897,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/transports/ssh/auth.go": {
+            "lines": 174,
+            "tokens": 924,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/cli/commands/version/version_test.go": {
+            "lines": 283,
+            "tokens": 2199,
+            "sources": 1,
+            "clones": 3,
+            "duplicatedLines": 32,
+            "duplicatedTokens": 267,
+            "percentage": 11.31,
+            "percentageTokens": 12.14,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/cli/commands/version/version.go": {
+            "lines": 84,
+            "tokens": 394,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/cli/commands/install/install_test.go": {
+            "lines": 352,
+            "tokens": 2923,
+            "sources": 1,
+            "clones": 1,
+            "duplicatedLines": 12,
+            "duplicatedTokens": 79,
+            "percentage": 3.41,
+            "percentageTokens": 2.7,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/cli/commands/install/install.go": {
+            "lines": 111,
+            "tokens": 636,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/services/repository/setup_test.go": {
+            "lines": 233,
+            "tokens": 1823,
+            "sources": 1,
+            "clones": 10,
+            "duplicatedLines": 123,
+            "duplicatedTokens": 1166,
+            "percentage": 52.79,
+            "percentageTokens": 63.96,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/services/repository/setup.go": {
+            "lines": 53,
+            "tokens": 366,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/pkgmanager/zypper_test.go": {
+            "lines": 138,
+            "tokens": 1514,
+            "sources": 1,
+            "clones": 20,
+            "duplicatedLines": 450,
+            "duplicatedTokens": 5117,
+            "percentage": 326.09,
+            "percentageTokens": 337.98,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/pkgmanager/zypper.go": {
+            "lines": 122,
+            "tokens": 728,
+            "sources": 1,
+            "clones": 12,
+            "duplicatedLines": 84,
+            "duplicatedTokens": 1176,
+            "percentage": 68.85,
+            "percentageTokens": 161.54,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/pkgmanager/yum_test.go": {
+            "lines": 138,
+            "tokens": 1514,
+            "sources": 1,
+            "clones": 4,
+            "duplicatedLines": 90,
+            "duplicatedTokens": 1024,
+            "percentage": 65.22,
+            "percentageTokens": 67.64,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/pkgmanager/yum.go": {
+            "lines": 147,
+            "tokens": 778,
+            "sources": 1,
+            "clones": 2,
+            "duplicatedLines": 14,
+            "duplicatedTokens": 196,
+            "percentage": 9.52,
+            "percentageTokens": 25.19,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/pkgmanager/pacman_test.go": {
+            "lines": 138,
+            "tokens": 1514,
+            "sources": 1,
+            "clones": 4,
+            "duplicatedLines": 90,
+            "duplicatedTokens": 1021,
+            "percentage": 65.22,
+            "percentageTokens": 67.44,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/pkgmanager/pacman.go": {
+            "lines": 123,
+            "tokens": 729,
+            "sources": 1,
+            "clones": 2,
+            "duplicatedLines": 14,
+            "duplicatedTokens": 196,
+            "percentage": 11.38,
+            "percentageTokens": 26.89,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/pkgmanager/manager_test.go": {
+            "lines": 68,
+            "tokens": 508,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/pkgmanager/manager.go": {
+            "lines": 106,
+            "tokens": 760,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/pkgmanager/emerge_test.go": {
+            "lines": 138,
+            "tokens": 1514,
+            "sources": 1,
+            "clones": 4,
+            "duplicatedLines": 90,
+            "duplicatedTokens": 1024,
+            "percentage": 65.22,
+            "percentageTokens": 67.64,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/pkgmanager/emerge.go": {
+            "lines": 161,
+            "tokens": 805,
+            "sources": 1,
+            "clones": 2,
+            "duplicatedLines": 14,
+            "duplicatedTokens": 196,
+            "percentage": 8.7,
+            "percentageTokens": 24.35,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/pkgmanager/dnf_test.go": {
+            "lines": 138,
+            "tokens": 1514,
+            "sources": 1,
+            "clones": 4,
+            "duplicatedLines": 90,
+            "duplicatedTokens": 1024,
+            "percentage": 65.22,
+            "percentageTokens": 67.64,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/pkgmanager/dnf.go": {
+            "lines": 123,
+            "tokens": 729,
+            "sources": 1,
+            "clones": 2,
+            "duplicatedLines": 14,
+            "duplicatedTokens": 196,
+            "percentage": 11.38,
+            "percentageTokens": 26.89,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/pkgmanager/apt_test.go": {
+            "lines": 117,
+            "tokens": 1142,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/pkgmanager/apt.go": {
+            "lines": 122,
+            "tokens": 728,
+            "sources": 1,
+            "clones": 2,
+            "duplicatedLines": 14,
+            "duplicatedTokens": 196,
+            "percentage": 11.48,
+            "percentageTokens": 26.92,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/pkgmanager/apk_test.go": {
+            "lines": 138,
+            "tokens": 1514,
+            "sources": 1,
+            "clones": 4,
+            "duplicatedLines": 90,
+            "duplicatedTokens": 1024,
+            "percentage": 65.22,
+            "percentageTokens": 67.64,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/infrastructure/pkgmanager/apk.go": {
+            "lines": 123,
+            "tokens": 732,
+            "sources": 1,
+            "clones": 2,
+            "duplicatedLines": 14,
+            "duplicatedTokens": 196,
+            "percentage": 11.38,
+            "percentageTokens": 26.78,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/utils/validation_test.go": {
+            "lines": 295,
+            "tokens": 2012,
+            "sources": 1,
+            "clones": 1,
+            "duplicatedLines": 12,
+            "duplicatedTokens": 79,
+            "percentage": 4.07,
+            "percentageTokens": 3.93,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/utils/validation.go": {
+            "lines": 71,
+            "tokens": 446,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/utils/fmt_test.go": {
+            "lines": 303,
+            "tokens": 2384,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/utils/fmt.go": {
+            "lines": 158,
+            "tokens": 858,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/services/version_test.go": {
+            "lines": 123,
+            "tokens": 920,
+            "sources": 1,
+            "clones": 1,
+            "duplicatedLines": 10,
+            "duplicatedTokens": 105,
+            "percentage": 8.13,
+            "percentageTokens": 11.41,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/services/version.go": {
+            "lines": 77,
+            "tokens": 335,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/services/interfaces.go": {
+            "lines": 92,
+            "tokens": 345,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/services/install_test.go": {
+            "lines": 680,
+            "tokens": 5638,
+            "sources": 1,
+            "clones": 14,
+            "duplicatedLines": 187,
+            "duplicatedTokens": 1568,
+            "percentage": 27.5,
+            "percentageTokens": 27.81,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/services/install.go": {
+            "lines": 275,
+            "tokens": 1847,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/services/errors_test.go": {
+            "lines": 55,
+            "tokens": 355,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/services/errors.go": {
+            "lines": 16,
+            "tokens": 69,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/services/detector_test.go": {
+            "lines": 315,
+            "tokens": 3882,
+            "sources": 1,
+            "clones": 18,
+            "duplicatedLines": 144,
+            "duplicatedTokens": 2778,
+            "percentage": 45.71,
+            "percentageTokens": 71.56,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/services/detector.go": {
+            "lines": 103,
+            "tokens": 568,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/providers/version_test.go": {
+            "lines": 175,
+            "tokens": 1245,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/providers/version.go": {
+            "lines": 144,
+            "tokens": 587,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/providers/install_test.go": {
+            "lines": 185,
+            "tokens": 1424,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/providers/install.go": {
+            "lines": 172,
+            "tokens": 628,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/cli/cli_test.go": {
+            "lines": 95,
+            "tokens": 800,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "internal/cli/cli.go": {
+            "lines": 29,
+            "tokens": 138,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "cmd/svz/main_test.go": {
+            "lines": 64,
+            "tokens": 500,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "cmd/svz/main.go": {
+            "lines": 44,
+            "tokens": 206,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          }
+        },
+        "total": {
+          "lines": 11666,
+          "tokens": 85629,
+          "sources": 67,
+          "clones": 95,
+          "duplicatedLines": 1519,
+          "duplicatedTokens": 15824,
+          "percentage": 13.02,
+          "percentageTokens": 18.48,
+          "newDuplicatedLines": 0,
+          "newClones": 0
+        }
+      },
+      "yaml": {
+        "sources": {
+          ".github/workflows/ci.yml": {
+            "lines": 146,
+            "tokens": 960,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          ".dist/config.yaml": {
+            "lines": 129,
+            "tokens": 773,
+            "sources": 1,
+            "clones": 1,
+            "duplicatedLines": 9,
+            "duplicatedTokens": 96,
+            "percentage": 6.98,
+            "percentageTokens": 12.42,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "goreleaser.yaml": {
+            "lines": 38,
+            "tokens": 252,
+            "sources": 1,
+            "clones": 1,
+            "duplicatedLines": 9,
+            "duplicatedTokens": 96,
+            "percentage": 23.68,
+            "percentageTokens": 38.1,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "golangci.yml": {
+            "lines": 64,
+            "tokens": 307,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          }
+        },
+        "total": {
+          "lines": 377,
+          "tokens": 2292,
+          "sources": 4,
+          "clones": 1,
+          "duplicatedLines": 9,
+          "duplicatedTokens": 96,
+          "percentage": 2.39,
+          "percentageTokens": 4.19,
+          "newDuplicatedLines": 0,
+          "newClones": 0
+        }
+      },
+      "json": {
+        "sources": {
+          ".vscode/settings.json": {
+            "lines": 12,
+            "tokens": 68,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          ".devcontainer/devcontainer.json": {
+            "lines": 27,
+            "tokens": 122,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          }
+        },
+        "total": {
+          "lines": 39,
+          "tokens": 190,
+          "sources": 2,
+          "clones": 0,
+          "duplicatedLines": 0,
+          "duplicatedTokens": 0,
+          "percentage": 0,
+          "percentageTokens": 0,
+          "newDuplicatedLines": 0,
+          "newClones": 0
+        }
+      },
+      "markdown": {
+        "sources": {
+          ".github/copilot-instructions.md": {
+            "lines": 194,
+            "tokens": 1594,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "SECURITY.md": {
+            "lines": 52,
+            "tokens": 505,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "README.md": {
+            "lines": 150,
+            "tokens": 1833,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "LICENSE.md": {
+            "lines": 110,
+            "tokens": 1197,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "COMMERCIAL-LICENSE.md": {
+            "lines": 102,
+            "tokens": 1286,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          }
+        },
+        "total": {
+          "lines": 608,
+          "tokens": 6415,
+          "sources": 5,
+          "clones": 0,
+          "duplicatedLines": 0,
+          "duplicatedTokens": 0,
+          "percentage": 0,
+          "percentageTokens": 0,
+          "newDuplicatedLines": 0,
+          "newClones": 0
+        }
+      },
+      "bash": {
+        "sources": {
+          "standardize_comments.sh": {
+            "lines": 17,
+            "tokens": 369,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          }
+        },
+        "total": {
+          "lines": 17,
+          "tokens": 369,
+          "sources": 1,
+          "clones": 0,
+          "duplicatedLines": 0,
+          "duplicatedTokens": 0,
+          "percentage": 0,
+          "percentageTokens": 0,
+          "newDuplicatedLines": 0,
+          "newClones": 0
+        }
+      },
+      "properties": {
+        "sources": {
+          "sonar-project.properties": {
+            "lines": 5,
+            "tokens": 22,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          }
+        },
+        "total": {
+          "lines": 5,
+          "tokens": 22,
+          "sources": 1,
+          "clones": 0,
+          "duplicatedLines": 0,
+          "duplicatedTokens": 0,
+          "percentage": 0,
+          "percentageTokens": 0,
+          "newDuplicatedLines": 0,
+          "newClones": 0
+        }
+      }
+    },
+    "total": {
+      "lines": 12712,
+      "tokens": 94917,
+      "sources": 80,
+      "clones": 96,
+      "duplicatedLines": 1528,
+      "duplicatedTokens": 15920,
+      "percentage": 12.02,
+      "percentageTokens": 16.77,
+      "newDuplicatedLines": 0,
+      "newClones": 0
+    }
+  },
+  "duplicates": [
+    {
+      "format": "go",
+      "lines": 16,
+      "fragment": ",\n\t\t\"if command -v dnf >/dev/null 2>&1; then dnf clean all; elif command -v yum >/dev/null 2>&1; then yum clean all; fi\",\n\t}\n\n\tfor _, cmd := range expectedCommands {\n\t\tclient.On(\"Execute\", mock.Anything, cmd).Return(nil)\n\t}\n\n\thandler := NewHandler(client)\n\tvar output bytes.Buffer\n\n\terr := handler.Setup(context.Background(), &output)\n\n\tassert.NoError(t, err)\n\tassert.Contains(t, output.String(), \"Setting up YUM/DNF repository...\")\n\tassert.Contains",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 105,
+        "end": 120,
+        "startLoc": {
+          "line": 105,
+          "column": 70,
+          "position": 730
+        },
+        "endLoc": {
+          "line": 120,
+          "column": 9,
+          "position": 854
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 62,
+        "end": 77,
+        "startLoc": {
+          "line": 62,
+          "column": 65,
+          "position": 379
+        },
+        "endLoc": {
+          "line": 77,
+          "column": 12,
+          "position": 503
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 10,
+      "fragment": "(t *testing.T) {\n\tclient := &MockSSHClient{}\n\n\t// Mock system directory write tests - all fail (need sudo)\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apt/sources.list.d/\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apk/repositories\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/yum.repos.d/\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/pacman.conf\").Return(errors.New(\"not writable\"))\n\n\t// Mock sudo check - sudo not found",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 124,
+        "end": 133,
+        "startLoc": {
+          "line": 124,
+          "column": 43,
+          "position": 883
+        },
+        "endLoc": {
+          "line": 133,
+          "column": 36,
+          "position": 1014
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 81,
+        "end": 90,
+        "startLoc": {
+          "line": 81,
+          "column": 35,
+          "position": 532
+        },
+        "endLoc": {
+          "line": 90,
+          "column": 36,
+          "position": 663
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 13,
+      "fragment": "(t *testing.T) {\n\tclient := &MockSSHClient{}\n\n\t// Mock system directory write tests - all fail (need sudo)\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apt/sources.list.d/\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apk/repositories\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/yum.repos.d/\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/pacman.conf\").Return(errors.New(\"not writable\"))\n\n\t// Mock sudo check - sudo available\n\tclient.On(\"Execute\", mock.Anything, \"command -v sudo >/dev/null 2>&1\").Return(nil)\n\n\thandler",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 202,
+        "end": 214,
+        "startLoc": {
+          "line": 202,
+          "column": 33,
+          "position": 1550
+        },
+        "endLoc": {
+          "line": 214,
+          "column": 8,
+          "position": 1706
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 81,
+        "end": 93,
+        "startLoc": {
+          "line": 81,
+          "column": 35,
+          "position": 532
+        },
+        "endLoc": {
+          "line": 93,
+          "column": 12,
+          "position": 688
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 47,
+      "fragment": "import (\n\t\"bytes\"\n\t\"context\"\n\t\"errors\"\n\t\"testing\"\n\n\t\"github.com/kodflow/superviz.io/internal/infrastructure/transports/ssh\"\n\t\"github.com/stretchr/testify/assert\"\n\t\"github.com/stretchr/testify/mock\"\n)\n\n// MockSSHClient mocks the SSH client interface\ntype MockSSHClient struct {\n\tmock.Mock\n}\n\nfunc (m *MockSSHClient) Connect(ctx context.Context, config *ssh.Config) error {\n\targs := m.Called(ctx, config)\n\treturn args.Error(0)\n}\n\nfunc (m *MockSSHClient) Execute(ctx context.Context, command string) error {\n\targs := m.Called(ctx, command)\n\treturn args.Error(0)\n}\n\nfunc (m *MockSSHClient) Close() error {\n\targs := m.Called()\n\treturn args.Error(0)\n}\n\nfunc TestNewHandler(t *testing.T) {\n\tclient := &MockSSHClient{}\n\thandler := NewHandler(client)\n\n\tassert.NotNil(t, handler)\n\tassert.Equal(t, client, handler.client)\n\tassert.NotNil(t, handler.sudo)\n}\n\nfunc TestHandler_Setup_Success_NoSudoNeeded(t *testing.T) {\n\tclient := &MockSSHClient{}\n\n\t// Mock system directory write test - first one succeeds (no sudo needed)\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apt/sources.list.d/\").Return(nil)\n\n\t// Mock repository setup commands without sudo",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/debian/handler_test.go",
+        "start": 4,
+        "end": 50,
+        "startLoc": {
+          "line": 4,
+          "column": 1,
+          "position": 7
+        },
+        "endLoc": {
+          "line": 50,
+          "column": 47,
+          "position": 337
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 4,
+        "end": 50,
+        "startLoc": {
+          "line": 4,
+          "column": 1,
+          "position": 7
+        },
+        "endLoc": {
+          "line": 50,
+          "column": 12,
+          "position": 337
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 14,
+      "fragment": ",\n\t}\n\n\tfor _, cmd := range expectedCommands {\n\t\tclient.On(\"Execute\", mock.Anything, cmd).Return(nil)\n\t}\n\n\thandler := NewHandler(client)\n\tvar output bytes.Buffer\n\n\terr := handler.Setup(context.Background(), &output)\n\n\tassert.NoError(t, err)\n\tassert.Contains(t, output.String(), \"Setting up APT repository...\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/debian/handler_test.go",
+        "start": 59,
+        "end": 72,
+        "startLoc": {
+          "line": 59,
+          "column": 13,
+          "position": 379
+        },
+        "endLoc": {
+          "line": 72,
+          "column": 31,
+          "position": 493
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 63,
+        "end": 76,
+        "startLoc": {
+          "line": 63,
+          "column": 117,
+          "position": 383
+        },
+        "endLoc": {
+          "line": 76,
+          "column": 35,
+          "position": 497
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 18,
+      "fragment": ")\n\tassert.NotContains(t, output.String(), \"Using sudo for system operations...\")\n\tclient.AssertExpectations(t)\n}\n\nfunc TestHandler_Setup_Success_WithSudo(t *testing.T) {\n\tclient := &MockSSHClient{}\n\n\t// Mock system directory write tests - all fail (need sudo)\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apt/sources.list.d/\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apk/repositories\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/yum.repos.d/\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/pacman.conf\").Return(errors.New(\"not writable\"))\n\n\t// Mock sudo check - sudo available\n\tclient.On(\"Execute\", mock.Anything, \"command -v sudo >/dev/null 2>&1\").Return(nil)\n\n\t// Mock repository setup commands with sudo prefix",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/debian/handler_test.go",
+        "start": 72,
+        "end": 89,
+        "startLoc": {
+          "line": 72,
+          "column": 31,
+          "position": 494
+        },
+        "endLoc": {
+          "line": 89,
+          "column": 51,
+          "position": 684
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 76,
+        "end": 93,
+        "startLoc": {
+          "line": 76,
+          "column": 35,
+          "position": 498
+        },
+        "endLoc": {
+          "line": 93,
+          "column": 12,
+          "position": 688
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 15,
+      "fragment": ",\n\t}\n\n\tfor _, cmd := range expectedCommands {\n\t\tclient.On(\"Execute\", mock.Anything, cmd).Return(nil)\n\t}\n\n\thandler := NewHandler(client)\n\tvar output bytes.Buffer\n\n\terr := handler.Setup(context.Background(), &output)\n\n\tassert.NoError(t, err)\n\tassert.Contains(t, output.String(), \"Setting up APT repository...\")\n\tassert.Contains",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/debian/handler_test.go",
+        "start": 98,
+        "end": 112,
+        "startLoc": {
+          "line": 98,
+          "column": 18,
+          "position": 726
+        },
+        "endLoc": {
+          "line": 112,
+          "column": 9,
+          "position": 846
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 63,
+        "end": 73,
+        "startLoc": {
+          "line": 63,
+          "column": 117,
+          "position": 383
+        },
+        "endLoc": {
+          "line": 73,
+          "column": 12,
+          "position": 499
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 26,
+      "fragment": ")\n\tassert.Contains(t, output.String(), \"Using sudo for system operations...\")\n\tclient.AssertExpectations(t)\n}\n\nfunc TestHandler_Setup_Success_SudoNotAvailable(t *testing.T) {\n\tclient := &MockSSHClient{}\n\n\t// Mock system directory write tests - all fail (need sudo)\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apt/sources.list.d/\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apk/repositories\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/yum.repos.d/\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/pacman.conf\").Return(errors.New(\"not writable\"))\n\n\t// Mock sudo check - sudo not found\n\tclient.On(\"Execute\", mock.Anything, \"command -v sudo >/dev/null 2>&1\").Return(errors.New(\"sudo not found\"))\n\n\thandler := NewHandler(client)\n\tvar output bytes.Buffer\n\n\terr := handler.Setup(context.Background(), &output)\n\n\t// This should fail because we need sudo but it's not available\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"root privileges required but sudo is not available\")\n\tassert.Contains(t, output.String(), \"Setting up APT repository...\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/debian/handler_test.go",
+        "start": 111,
+        "end": 136,
+        "startLoc": {
+          "line": 111,
+          "column": 31,
+          "position": 841
+        },
+        "endLoc": {
+          "line": 136,
+          "column": 31,
+          "position": 1123
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 119,
+        "end": 144,
+        "startLoc": {
+          "line": 119,
+          "column": 35,
+          "position": 849
+        },
+        "endLoc": {
+          "line": 144,
+          "column": 35,
+          "position": 1131
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 17,
+      "fragment": ")\n}\n\nfunc TestHandler_Setup_SudoDetectionError(t *testing.T) {\n\tclient := &MockSSHClient{}\n\n\t// Mock all Execute calls to return connection error\n\tclient.On(\"Execute\", mock.Anything, mock.AnythingOfType(\"string\")).Return(errors.New(\"connection failed\"))\n\n\thandler := NewHandler(client)\n\tvar output bytes.Buffer\n\n\terr := handler.Setup(context.Background(), &output)\n\n\t// Should get connection error during the write test or sudo check\n\tassert.Error(t, err)\n\tassert.Contains(t, output.String(), \"Setting up APT repository...\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/debian/handler_test.go",
+        "start": 136,
+        "end": 152,
+        "startLoc": {
+          "line": 136,
+          "column": 31,
+          "position": 1124
+        },
+        "endLoc": {
+          "line": 152,
+          "column": 31,
+          "position": 1259
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 144,
+        "end": 160,
+        "startLoc": {
+          "line": 144,
+          "column": 35,
+          "position": 1132
+        },
+        "endLoc": {
+          "line": 160,
+          "column": 35,
+          "position": 1267
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 23,
+      "fragment": ")\n}\n\nfunc TestHandler_Setup_WriteError(t *testing.T) {\n\tclient := &MockSSHClient{}\n\thandler := NewHandler(client)\n\n\t// Use a writer that will fail\n\twriter := &failingWriter{}\n\n\terr := handler.Setup(context.Background(), writer)\n\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"failed to write to output\")\n}\n\nfunc TestHandler_Setup_CommandExecutionError(t *testing.T) {\n\tclient := &MockSSHClient{}\n\n\t// Mock system directory write test - first one succeeds (no sudo needed)\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apt/sources.list.d/\").Return(nil)\n\n\t// Mock first command to fail",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/debian/handler_test.go",
+        "start": 152,
+        "end": 174,
+        "startLoc": {
+          "line": 152,
+          "column": 31,
+          "position": 1260
+        },
+        "endLoc": {
+          "line": 174,
+          "column": 30,
+          "position": 1417
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 160,
+        "end": 182,
+        "startLoc": {
+          "line": 160,
+          "column": 35,
+          "position": 1268
+        },
+        "endLoc": {
+          "line": 182,
+          "column": 12,
+          "position": 1425
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 55,
+      "fragment": ").Return(errors.New(\"command failed\"))\n\n\thandler := NewHandler(client)\n\tvar output bytes.Buffer\n\n\terr := handler.Setup(context.Background(), &output)\n\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"command failed\")\n\tclient.AssertExpectations(t)\n}\n\nfunc TestHandler_Setup_SudoWriteError(t *testing.T) {\n\tclient := &MockSSHClient{}\n\n\t// Mock system directory write tests - all fail (need sudo)\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apt/sources.list.d/\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apk/repositories\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/yum.repos.d/\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/pacman.conf\").Return(errors.New(\"not writable\"))\n\n\t// Mock sudo check - sudo available\n\tclient.On(\"Execute\", mock.Anything, \"command -v sudo >/dev/null 2>&1\").Return(nil)\n\n\thandler := NewHandler(client)\n\n\t// Use a writer that fails on the second write (sudo message)\n\twriter := &conditionalFailingWriter{failOnSecond: true}\n\n\terr := handler.Setup(context.Background(), writer)\n\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"failed to write to output\")\n}\n\n// Helper types for testing\n\ntype failingWriter struct{}\n\nfunc (w *failingWriter) Write(p []byte) (n int, err error) {\n\treturn 0, errors.New(\"write failed\")\n}\n\ntype conditionalFailingWriter struct {\n\twriteCount   int\n\tfailOnSecond bool\n}\n\nfunc (w *conditionalFailingWriter) Write(p []byte) (n int, err error) {\n\tw.writeCount++\n\tif w.failOnSecond && w.writeCount == 2 {\n\t\treturn 0, errors.New(\"write failed\")\n\t}\n\treturn len(p), nil\n}",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/debian/handler_test.go",
+        "start": 175,
+        "end": 229,
+        "startLoc": {
+          "line": 175,
+          "column": 13,
+          "position": 1433
+        },
+        "endLoc": {
+          "line": 229,
+          "column": 2,
+          "position": 1929
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 190,
+        "end": 244,
+        "startLoc": {
+          "line": 190,
+          "column": 8,
+          "position": 1453
+        },
+        "endLoc": {
+          "line": 244,
+          "column": 2,
+          "position": 1949
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 25,
+      "fragment": "\"github.com/stretchr/testify/assert\"\n\t\"github.com/stretchr/testify/mock\"\n)\n\n// MockSSHClient mocks the SSH client interface\ntype MockSSHClient struct {\n\tmock.Mock\n}\n\nfunc (m *MockSSHClient) Connect(ctx context.Context, config *ssh.Config) error {\n\targs := m.Called(ctx, config)\n\treturn args.Error(0)\n}\n\nfunc (m *MockSSHClient) Execute(ctx context.Context, command string) error {\n\targs := m.Called(ctx, command)\n\treturn args.Error(0)\n}\n\nfunc (m *MockSSHClient) Close() error {\n\targs := m.Called()\n\treturn args.Error(0)\n}\n\n// MockInstallProvider mocks the install provider interface",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/arch/handler_test.go",
+        "start": 12,
+        "end": 36,
+        "startLoc": {
+          "line": 12,
+          "column": 2,
+          "position": 31
+        },
+        "endLoc": {
+          "line": 36,
+          "column": 60,
+          "position": 211
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 11,
+        "end": 35,
+        "startLoc": {
+          "line": 11,
+          "column": 2,
+          "position": 28
+        },
+        "endLoc": {
+          "line": 35,
+          "column": 5,
+          "position": 208
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 12,
+      "fragment": "{}\n\n\t// Mock system directory write tests - all fail (need sudo)\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apt/sources.list.d/\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apk/repositories\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/yum.repos.d/\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/pacman.conf\").Return(errors.New(\"not writable\"))\n\n\t// Mock sudo check - sudo available\n\tclient.On(\"Execute\", mock.Anything, \"command -v sudo >/dev/null 2>&1\").Return(nil)\n\n\t// Mock provider to return a GPG key ID",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/arch/handler_test.go",
+        "start": 115,
+        "end": 126,
+        "startLoc": {
+          "line": 115,
+          "column": 20,
+          "position": 863
+        },
+        "endLoc": {
+          "line": 126,
+          "column": 40,
+          "position": 1001
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 82,
+        "end": 93,
+        "startLoc": {
+          "line": 82,
+          "column": 14,
+          "position": 550
+        },
+        "endLoc": {
+          "line": 93,
+          "column": 12,
+          "position": 688
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 15,
+      "fragment": ",\n\t}\n\n\tfor _, cmd := range expectedCommands {\n\t\tclient.On(\"Execute\", mock.Anything, cmd).Return(nil)\n\t}\n\n\thandler := NewHandler(client, provider)\n\tvar output bytes.Buffer\n\n\terr := handler.Setup(context.Background(), &output)\n\n\tassert.NoError(t, err)\n\tassert.Contains(t, output.String(), \"Setting up Pacman repository...\")\n\tassert.Contains",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/arch/handler_test.go",
+        "start": 136,
+        "end": 150,
+        "startLoc": {
+          "line": 136,
+          "column": 18,
+          "position": 1052
+        },
+        "endLoc": {
+          "line": 150,
+          "column": 9,
+          "position": 1175
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/arch/handler_test.go",
+        "start": 94,
+        "end": 108,
+        "startLoc": {
+          "line": 94,
+          "column": 13,
+          "position": 675
+        },
+        "endLoc": {
+          "line": 108,
+          "column": 12,
+          "position": 798
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 14,
+      "fragment": "(t *testing.T) {\n\tclient := &MockSSHClient{}\n\tprovider := &MockInstallProvider{}\n\n\t// Mock system directory write tests - all fail (need sudo)\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apt/sources.list.d/\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apk/repositories\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/yum.repos.d/\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/pacman.conf\").Return(errors.New(\"not writable\"))\n\n\t// Mock sudo check - sudo not found\n\tclient.On(\"Execute\", mock.Anything, \"command -v sudo >/dev/null 2>&1\").Return(errors.New(\"sudo not found\"))\n\n\thandler := NewHandler(client,",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/arch/handler_test.go",
+        "start": 155,
+        "end": 168,
+        "startLoc": {
+          "line": 155,
+          "column": 43,
+          "position": 1212
+        },
+        "endLoc": {
+          "line": 168,
+          "column": 2,
+          "position": 1390
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/arch/handler_test.go",
+        "start": 113,
+        "end": 136,
+        "startLoc": {
+          "line": 113,
+          "column": 35,
+          "position": 835
+        },
+        "endLoc": {
+          "line": 136,
+          "column": 2,
+          "position": 1051
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 9,
+      "fragment": ")\n\tvar output bytes.Buffer\n\n\terr := handler.Setup(context.Background(), &output)\n\n\t// This should fail because we need sudo but it's not available\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"root privileges required but sudo is not available\")\n\tassert.Contains(t, output.String(), \"Setting up Pacman repository...\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/arch/handler_test.go",
+        "start": 168,
+        "end": 176,
+        "startLoc": {
+          "line": 168,
+          "column": 9,
+          "position": 1393
+        },
+        "endLoc": {
+          "line": 176,
+          "column": 34,
+          "position": 1473
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 136,
+        "end": 144,
+        "startLoc": {
+          "line": 136,
+          "column": 7,
+          "position": 1051
+        },
+        "endLoc": {
+          "line": 144,
+          "column": 35,
+          "position": 1131
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 14,
+      "fragment": ")\n\n\t// Use a writer that will fail\n\twriter := &failingWriter{}\n\n\terr := handler.Setup(context.Background(), writer)\n\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"failed to write to output\")\n}\n\nfunc TestHandler_Setup_CommandExecutionError(t *testing.T) {\n\tclient := &MockSSHClient{}\n\tprovider",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/arch/handler_test.go",
+        "start": 199,
+        "end": 212,
+        "startLoc": {
+          "line": 199,
+          "column": 9,
+          "position": 1673
+        },
+        "endLoc": {
+          "line": 212,
+          "column": 9,
+          "position": 1767
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 165,
+        "end": 179,
+        "startLoc": {
+          "line": 165,
+          "column": 7,
+          "position": 1305
+        },
+        "endLoc": {
+          "line": 179,
+          "column": 74,
+          "position": 1400
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 14,
+      "fragment": "(t *testing.T) {\n\tclient := &MockSSHClient{}\n\tprovider := &MockInstallProvider{}\n\n\t// Mock system directory write tests - all fail (need sudo)\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apt/sources.list.d/\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apk/repositories\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/yum.repos.d/\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/pacman.conf\").Return(errors.New(\"not writable\"))\n\n\t// Mock sudo check - sudo available\n\tclient.On(\"Execute\", mock.Anything, \"command -v sudo >/dev/null 2>&1\").Return(nil)\n\n\thandler := NewHandler(client,",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/arch/handler_test.go",
+        "start": 234,
+        "end": 247,
+        "startLoc": {
+          "line": 234,
+          "column": 33,
+          "position": 1944
+        },
+        "endLoc": {
+          "line": 247,
+          "column": 2,
+          "position": 2117
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/arch/handler_test.go",
+        "start": 113,
+        "end": 214,
+        "startLoc": {
+          "line": 113,
+          "column": 35,
+          "position": 835
+        },
+        "endLoc": {
+          "line": 214,
+          "column": 2,
+          "position": 1713
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 31,
+      "fragment": ")\n\n\t// Use a writer that fails on the second write (sudo message)\n\twriter := &conditionalFailingWriter{failOnSecond: true}\n\n\terr := handler.Setup(context.Background(), writer)\n\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"failed to write to output\")\n}\n\n// Helper types for testing\n\ntype failingWriter struct{}\n\nfunc (w *failingWriter) Write(p []byte) (n int, err error) {\n\treturn 0, errors.New(\"write failed\")\n}\n\ntype conditionalFailingWriter struct {\n\twriteCount   int\n\tfailOnSecond bool\n}\n\nfunc (w *conditionalFailingWriter) Write(p []byte) (n int, err error) {\n\tw.writeCount++\n\tif w.failOnSecond && w.writeCount == 2 {\n\t\treturn 0, errors.New(\"write failed\")\n\t}\n\treturn len(p), nil\n}",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/arch/handler_test.go",
+        "start": 247,
+        "end": 277,
+        "startLoc": {
+          "line": 247,
+          "column": 9,
+          "position": 2120
+        },
+        "endLoc": {
+          "line": 277,
+          "column": 2,
+          "position": 2356
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 214,
+        "end": 244,
+        "startLoc": {
+          "line": 214,
+          "column": 7,
+          "position": 1713
+        },
+        "endLoc": {
+          "line": 244,
+          "column": 2,
+          "position": 1949
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 41,
+      "fragment": "import (\n\t\"bytes\"\n\t\"context\"\n\t\"errors\"\n\t\"testing\"\n\n\t\"github.com/kodflow/superviz.io/internal/infrastructure/transports/ssh\"\n\t\"github.com/stretchr/testify/assert\"\n\t\"github.com/stretchr/testify/mock\"\n)\n\n// MockSSHClient mocks the SSH client interface\ntype MockSSHClient struct {\n\tmock.Mock\n}\n\nfunc (m *MockSSHClient) Connect(ctx context.Context, config *ssh.Config) error {\n\targs := m.Called(ctx, config)\n\treturn args.Error(0)\n}\n\nfunc (m *MockSSHClient) Execute(ctx context.Context, command string) error {\n\targs := m.Called(ctx, command)\n\treturn args.Error(0)\n}\n\nfunc (m *MockSSHClient) Close() error {\n\targs := m.Called()\n\treturn args.Error(0)\n}\n\nfunc TestNewHandler(t *testing.T) {\n\tclient := &MockSSHClient{}\n\thandler := NewHandler(client)\n\n\tassert.NotNil(t, handler)\n\tassert.Equal(t, client, handler.client)\n\tassert.NotNil(t, handler.sudo)\n}\n\nfunc TestHandler_Setup_Success_WithoutSudo",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/alpine/handler_test.go",
+        "start": 4,
+        "end": 44,
+        "startLoc": {
+          "line": 4,
+          "column": 1,
+          "position": 7
+        },
+        "endLoc": {
+          "line": 44,
+          "column": 38,
+          "position": 288
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 4,
+        "end": 44,
+        "startLoc": {
+          "line": 4,
+          "column": 1,
+          "position": 7
+        },
+        "endLoc": {
+          "line": 44,
+          "column": 39,
+          "position": 288
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 13,
+      "fragment": "(t *testing.T) {\n\tclient := &MockSSHClient{}\n\n\t// Mock system directory write tests - all fail (need sudo)\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apt/sources.list.d/\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apk/repositories\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/yum.repos.d/\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/pacman.conf\").Return(errors.New(\"not writable\"))\n\n\t// Mock sudo check - sudo not found\n\tclient.On(\"Execute\", mock.Anything, \"command -v sudo >/dev/null 2>&1\").Return(errors.New(\"sudo not found\"))\n\n\t// This test case won't work because IsNeeded will return an error when sudo is not available",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/alpine/handler_test.go",
+        "start": 44,
+        "end": 56,
+        "startLoc": {
+          "line": 44,
+          "column": 38,
+          "position": 289
+        },
+        "endLoc": {
+          "line": 56,
+          "column": 94,
+          "position": 450
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 81,
+        "end": 136,
+        "startLoc": {
+          "line": 81,
+          "column": 35,
+          "position": 532
+        },
+        "endLoc": {
+          "line": 136,
+          "column": 8,
+          "position": 1044
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 9,
+      "fragment": "handler := NewHandler(client)\n\tvar output bytes.Buffer\n\n\terr := handler.Setup(context.Background(), &output)\n\n\t// This should fail because we need sudo but it's not available\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"root privileges required but sudo is not available\")\n\tassert.Contains(t, output.String(), \"Setting up APK repository...\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/alpine/handler_test.go",
+        "start": 59,
+        "end": 67,
+        "startLoc": {
+          "line": 59,
+          "column": 2,
+          "position": 457
+        },
+        "endLoc": {
+          "line": 67,
+          "column": 31,
+          "position": 544
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 136,
+        "end": 144,
+        "startLoc": {
+          "line": 136,
+          "column": 2,
+          "position": 1044
+        },
+        "endLoc": {
+          "line": 144,
+          "column": 35,
+          "position": 1131
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 14,
+      "fragment": ",\n\t}\n\n\tfor _, cmd := range expectedCommands {\n\t\tclient.On(\"Execute\", mock.Anything, cmd).Return(nil)\n\t}\n\n\thandler := NewHandler(client)\n\tvar output bytes.Buffer\n\n\terr := handler.Setup(context.Background(), &output)\n\n\tassert.NoError(t, err)\n\tassert.Contains(t, output.String(), \"Setting up APK repository...\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/alpine/handler_test.go",
+        "start": 82,
+        "end": 95,
+        "startLoc": {
+          "line": 82,
+          "column": 13,
+          "position": 633
+        },
+        "endLoc": {
+          "line": 95,
+          "column": 31,
+          "position": 747
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 63,
+        "end": 76,
+        "startLoc": {
+          "line": 63,
+          "column": 117,
+          "position": 383
+        },
+        "endLoc": {
+          "line": 76,
+          "column": 35,
+          "position": 497
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 20,
+      "fragment": ")\n\tassert.NotContains(t, output.String(), \"Using sudo for system operations...\")\n\tclient.AssertExpectations(t)\n}\n\nfunc TestHandler_Setup_Success_WithSudo(t *testing.T) {\n\tclient := &MockSSHClient{}\n\n\t// Mock system directory write tests - all fail (need sudo)\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apt/sources.list.d/\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apk/repositories\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/yum.repos.d/\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/pacman.conf\").Return(errors.New(\"not writable\"))\n\n\t// Mock sudo check - sudo available\n\tclient.On(\"Execute\", mock.Anything, \"command -v sudo >/dev/null 2>&1\").Return(nil)\n\n\t// Mock repository setup commands with sudo prefix\n\texpectedCommands := []string{\n\t\t\"sudo echo 'https://repo.superviz.io/alpine/v$(cat /etc/alpine-release | cut -d'.' -f1-2)/main' >> /etc/apk/repositories\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/alpine/handler_test.go",
+        "start": 95,
+        "end": 114,
+        "startLoc": {
+          "line": 95,
+          "column": 31,
+          "position": 748
+        },
+        "endLoc": {
+          "line": 114,
+          "column": 122,
+          "position": 951
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 76,
+        "end": 91,
+        "startLoc": {
+          "line": 76,
+          "column": 35,
+          "position": 498
+        },
+        "endLoc": {
+          "line": 91,
+          "column": 18,
+          "position": 697
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 15,
+      "fragment": ",\n\t}\n\n\tfor _, cmd := range expectedCommands {\n\t\tclient.On(\"Execute\", mock.Anything, cmd).Return(nil)\n\t}\n\n\thandler := NewHandler(client)\n\tvar output bytes.Buffer\n\n\terr := handler.Setup(context.Background(), &output)\n\n\tassert.NoError(t, err)\n\tassert.Contains(t, output.String(), \"Setting up APK repository...\")\n\tassert.Contains",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/alpine/handler_test.go",
+        "start": 118,
+        "end": 132,
+        "startLoc": {
+          "line": 118,
+          "column": 18,
+          "position": 968
+        },
+        "endLoc": {
+          "line": 132,
+          "column": 9,
+          "position": 1088
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 63,
+        "end": 96,
+        "startLoc": {
+          "line": 63,
+          "column": 117,
+          "position": 383
+        },
+        "endLoc": {
+          "line": 96,
+          "column": 12,
+          "position": 753
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 17,
+      "fragment": ")\n}\n\nfunc TestHandler_Setup_SudoDetectionError(t *testing.T) {\n\tclient := &MockSSHClient{}\n\n\t// Mock all Execute calls to return connection error\n\tclient.On(\"Execute\", mock.Anything, mock.AnythingOfType(\"string\")).Return(errors.New(\"connection failed\"))\n\n\thandler := NewHandler(client)\n\tvar output bytes.Buffer\n\n\terr := handler.Setup(context.Background(), &output)\n\n\t// Should get connection error during the write test or sudo check\n\tassert.Error(t, err)\n\tassert.Contains(t, output.String(), \"Setting up APK repository...\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/alpine/handler_test.go",
+        "start": 133,
+        "end": 149,
+        "startLoc": {
+          "line": 133,
+          "column": 2,
+          "position": 1109
+        },
+        "endLoc": {
+          "line": 149,
+          "column": 31,
+          "position": 1244
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 144,
+        "end": 160,
+        "startLoc": {
+          "line": 144,
+          "column": 35,
+          "position": 1132
+        },
+        "endLoc": {
+          "line": 160,
+          "column": 35,
+          "position": 1267
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 24,
+      "fragment": ")\n}\n\nfunc TestHandler_Setup_WriteError(t *testing.T) {\n\tclient := &MockSSHClient{}\n\thandler := NewHandler(client)\n\n\t// Use a writer that will fail\n\twriter := &failingWriter{}\n\n\terr := handler.Setup(context.Background(), writer)\n\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"failed to write to output\")\n}\n\nfunc TestHandler_Setup_CommandExecutionError(t *testing.T) {\n\tclient := &MockSSHClient{}\n\n\t// Mock system directory write test - first one succeeds (no sudo needed)\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apt/sources.list.d/\").Return(nil)\n\n\t// Mock first command to fail\n\tclient.On(\"Execute\", mock.Anything, \"echo 'https://repo.superviz.io/alpine/v$(cat /etc/alpine-release | cut -d'.' -f1-2)/main' >> /etc/apk/repositories\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/alpine/handler_test.go",
+        "start": 149,
+        "end": 172,
+        "startLoc": {
+          "line": 149,
+          "column": 31,
+          "position": 1245
+        },
+        "endLoc": {
+          "line": 172,
+          "column": 117,
+          "position": 1417
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 160,
+        "end": 175,
+        "startLoc": {
+          "line": 160,
+          "column": 35,
+          "position": 1268
+        },
+        "endLoc": {
+          "line": 175,
+          "column": 13,
+          "position": 1432
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 55,
+      "fragment": ").Return(errors.New(\"command failed\"))\n\n\thandler := NewHandler(client)\n\tvar output bytes.Buffer\n\n\terr := handler.Setup(context.Background(), &output)\n\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"command failed\")\n\tclient.AssertExpectations(t)\n}\n\nfunc TestHandler_Setup_SudoWriteError(t *testing.T) {\n\tclient := &MockSSHClient{}\n\n\t// Mock system directory write tests - all fail (need sudo)\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apt/sources.list.d/\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/apk/repositories\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/yum.repos.d/\").Return(errors.New(\"not writable\"))\n\tclient.On(\"Execute\", mock.Anything, \"test -w /etc/pacman.conf\").Return(errors.New(\"not writable\"))\n\n\t// Mock sudo check - sudo available\n\tclient.On(\"Execute\", mock.Anything, \"command -v sudo >/dev/null 2>&1\").Return(nil)\n\n\thandler := NewHandler(client)\n\n\t// Use a writer that fails on the second write (sudo message)\n\twriter := &conditionalFailingWriter{failOnSecond: true}\n\n\terr := handler.Setup(context.Background(), writer)\n\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"failed to write to output\")\n}\n\n// Helper types for testing\n\ntype failingWriter struct{}\n\nfunc (w *failingWriter) Write(p []byte) (n int, err error) {\n\treturn 0, errors.New(\"write failed\")\n}\n\ntype conditionalFailingWriter struct {\n\twriteCount   int\n\tfailOnSecond bool\n}\n\nfunc (w *conditionalFailingWriter) Write(p []byte) (n int, err error) {\n\tw.writeCount++\n\tif w.failOnSecond && w.writeCount == 2 {\n\t\treturn 0, errors.New(\"write failed\")\n\t}\n\treturn len(p), nil\n}",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/alpine/handler_test.go",
+        "start": 172,
+        "end": 226,
+        "startLoc": {
+          "line": 172,
+          "column": 117,
+          "position": 1418
+        },
+        "endLoc": {
+          "line": 226,
+          "column": 2,
+          "position": 1914
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/rhel/handler_test.go",
+        "start": 190,
+        "end": 244,
+        "startLoc": {
+          "line": 190,
+          "column": 8,
+          "position": 1453
+        },
+        "endLoc": {
+          "line": 244,
+          "column": 2,
+          "position": 1949
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 16,
+      "fragment": ")\n\n\tmanager := &defaultHostKeyManager{\n\t\tstore:    store,\n\t\tprompter: &mockUserPrompter{},\n\t}\n\n\tconfig := &Config{\n\t\tSkipHostKeyCheck: false,\n\t}\n\n\tcallback, err := manager.GetHostKeyCallback(context.Background(), config)\n\trequire.NoError(t, err)\n\trequire.NotNil(t, callback)\n\n\tstore",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/transports/ssh/hostkey_test.go",
+        "start": 165,
+        "end": 180,
+        "startLoc": {
+          "line": 165,
+          "column": 4,
+          "position": 1292
+        },
+        "endLoc": {
+          "line": 180,
+          "column": 6,
+          "position": 1391
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/transports/ssh/hostkey_test.go",
+        "start": 137,
+        "end": 152,
+        "startLoc": {
+          "line": 137,
+          "column": 17,
+          "position": 1072
+        },
+        "endLoc": {
+          "line": 152,
+          "column": 44,
+          "position": 1171
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 7,
+      "fragment": "(t *testing.T) {\n\tkey := createTestKey(t)\n\thostname := \"test.example.com\"\n\tremote := &net.TCPAddr{IP: net.ParseIP(\"127.0.0.1\"), Port: 22}\n\n\tstore := &mockHostKeyStore{}\n\tstore.On(\"IsKnown\", hostname, remote, key).Return(false",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/transports/ssh/hostkey_test.go",
+        "start": 205,
+        "end": 211,
+        "startLoc": {
+          "line": 205,
+          "column": 75,
+          "position": 1588
+        },
+        "endLoc": {
+          "line": 211,
+          "column": 6,
+          "position": 1673
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/transports/ssh/hostkey_test.go",
+        "start": 183,
+        "end": 189,
+        "startLoc": {
+          "line": 183,
+          "column": 62,
+          "position": 1404
+        },
+        "endLoc": {
+          "line": 189,
+          "column": 5,
+          "position": 1489
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 10,
+      "fragment": "(t *testing.T) {\n\tkey := createTestKey(t)\n\thostname := \"test.example.com\"\n\tremote := &net.TCPAddr{IP: net.ParseIP(\"127.0.0.1\"), Port: 22}\n\n\tstore := &mockHostKeyStore{}\n\tstore.On(\"IsKnown\", hostname, remote, key).Return(false)\n\tstore.On(\"Add\", hostname, key).Return(nil)\n\n\tprompter",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/transports/ssh/hostkey_test.go",
+        "start": 230,
+        "end": 239,
+        "startLoc": {
+          "line": 230,
+          "column": 76,
+          "position": 1800
+        },
+        "endLoc": {
+          "line": 239,
+          "column": 9,
+          "position": 1909
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/transports/ssh/hostkey_test.go",
+        "start": 183,
+        "end": 214,
+        "startLoc": {
+          "line": 183,
+          "column": 62,
+          "position": 1404
+        },
+        "endLoc": {
+          "line": 214,
+          "column": 8,
+          "position": 1697
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 9,
+      "fragment": "(t *testing.T) {\n\tkey := createTestKey(t)\n\thostname := \"test.example.com\"\n\tremote := &net.TCPAddr{IP: net.ParseIP(\"127.0.0.1\"), Port: 22}\n\n\tstore := &mockHostKeyStore{}\n\tstore.On(\"IsKnown\", hostname, remote, key).Return(false)\n\n\tprompter",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/transports/ssh/hostkey_test.go",
+        "start": 259,
+        "end": 267,
+        "startLoc": {
+          "line": 259,
+          "column": 76,
+          "position": 2047
+        },
+        "endLoc": {
+          "line": 267,
+          "column": 9,
+          "position": 2137
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/transports/ssh/hostkey_test.go",
+        "start": 183,
+        "end": 212,
+        "startLoc": {
+          "line": 183,
+          "column": 62,
+          "position": 1404
+        },
+        "endLoc": {
+          "line": 212,
+          "column": 6,
+          "position": 1677
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 18,
+      "fragment": ",\n\t\t\texpected: false,\n\t\t},\n\t\t{\n\t\t\tname:     \"nil error\",\n\t\t\terr:      nil,\n\t\t\texpected: false,\n\t\t},\n\t\t{\n\t\t\tname:     \"standard error\",\n\t\t\terr:      errors.New(\"some error\"),\n\t\t\texpected: false,\n\t\t},\n\t}\n\n\tfor _, tt := range tests {\n\t\tt.Run(tt.name, func(t *testing.T) {\n\t\t\tresult := IsConnectionError",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/transports/ssh/errors_test.go",
+        "start": 198,
+        "end": 215,
+        "startLoc": {
+          "line": 198,
+          "column": 14,
+          "position": 1544
+        },
+        "endLoc": {
+          "line": 215,
+          "column": 18,
+          "position": 1665
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/transports/ssh/errors_test.go",
+        "start": 157,
+        "end": 174,
+        "startLoc": {
+          "line": 157,
+          "column": 20,
+          "position": 1264
+        },
+        "endLoc": {
+          "line": 174,
+          "column": 12,
+          "position": 1385
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 23,
+      "fragment": ")),\n\t\t\texpected: true,\n\t\t},\n\t\t{\n\t\t\tname:     \"different error type\",\n\t\t\terr:      ErrAuthFailed,\n\t\t\texpected: false,\n\t\t},\n\t\t{\n\t\t\tname:     \"nil error\",\n\t\t\terr:      nil,\n\t\t\texpected: false,\n\t\t},\n\t\t{\n\t\t\tname:     \"standard error\",\n\t\t\terr:      errors.New(\"some error\"),\n\t\t\texpected: false,\n\t\t},\n\t}\n\n\tfor _, tt := range tests {\n\t\tt.Run(tt.name, func(t *testing.T) {\n\t\t\tresult := IsTimeoutError",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/transports/ssh/errors_test.go",
+        "start": 234,
+        "end": 256,
+        "startLoc": {
+          "line": 234,
+          "column": 28,
+          "position": 1794
+        },
+        "endLoc": {
+          "line": 256,
+          "column": 15,
+          "position": 1945
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/transports/ssh/errors_test.go",
+        "start": 193,
+        "end": 174,
+        "startLoc": {
+          "line": 193,
+          "column": 22,
+          "position": 1514
+        },
+        "endLoc": {
+          "line": 174,
+          "column": 12,
+          "position": 1385
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 13,
+      "fragment": ",\n\t\t\texpectedErr: ErrHostKeyRejected,\n\t\t},\n\t}\n\n\tfor _, tt := range tests {\n\t\tt.Run(tt.name, func(t *testing.T) {\n\t\t\terr := errors.New(tt.errMsg)\n\t\t\twrappedErr := dialer.wrapError(err, \"example.com:22\")\n\t\t\trequire.True(t, errors.Is(wrappedErr, tt.expectedErr))\n\t\t})\n\t}\n}",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/transports/ssh/dialer_test.go",
+        "start": 273,
+        "end": 285,
+        "startLoc": {
+          "line": 273,
+          "column": 42,
+          "position": 2083
+        },
+        "endLoc": {
+          "line": 285,
+          "column": 2,
+          "position": 2195
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/transports/ssh/dialer_test.go",
+        "start": 239,
+        "end": 251,
+        "startLoc": {
+          "line": 239,
+          "column": 31,
+          "position": 1842
+        },
+        "endLoc": {
+          "line": 251,
+          "column": 2,
+          "position": 1954
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 13,
+      "fragment": ",\n\t}\n\n\tsshClient := NewClient(opts).(*client)\n\tconfig := &Config{\n\t\tHost:    \"example.com\",\n\t\tUser:    \"testuser\",\n\t\tPort:    22,\n\t\tTimeout: 30 * time.Second,\n\t}\n\n\terr := sshClient.Connect(context.Background(), config)\n\trequire.Error",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/transports/ssh/client_test.go",
+        "start": 186,
+        "end": 198,
+        "startLoc": {
+          "line": 186,
+          "column": 8,
+          "position": 1381
+        },
+        "endLoc": {
+          "line": 198,
+          "column": 6,
+          "position": 1471
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/transports/ssh/client_test.go",
+        "start": 149,
+        "end": 161,
+        "startLoc": {
+          "line": 149,
+          "column": 11,
+          "position": 1075
+        },
+        "endLoc": {
+          "line": 161,
+          "column": 8,
+          "position": 1165
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 19,
+      "fragment": "),\n\t}\n\n\topts := &ClientOptions{\n\t\tAuthenticator:  mockAuth,\n\t\tHostKeyManager: mockHKM,\n\t}\n\n\tsshClient := NewClient(opts).(*client)\n\tconfig := &Config{\n\t\tHost:    \"example.com\",\n\t\tUser:    \"testuser\",\n\t\tPort:    22,\n\t\tTimeout: 30 * time.Second,\n\t}\n\n\terr := sshClient.Connect(context.Background(), config)\n\trequire.Error(t, err)\n\trequire.True(t, errors.Is(err, ErrAuthFailed",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/transports/ssh/client_test.go",
+        "start": 207,
+        "end": 225,
+        "startLoc": {
+          "line": 207,
+          "column": 2,
+          "position": 1556
+        },
+        "endLoc": {
+          "line": 225,
+          "column": 14,
+          "position": 1697
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/transports/ssh/client_test.go",
+        "start": 181,
+        "end": 199,
+        "startLoc": {
+          "line": 181,
+          "column": 17,
+          "position": 1353
+        },
+        "endLoc": {
+          "line": 199,
+          "column": 19,
+          "position": 1494
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 20,
+      "fragment": ",\n\t}\n\n\topts := &ClientOptions{\n\t\tAuthenticator:  mockAuth,\n\t\tHostKeyManager: mockHKM,\n\t\tDialer:         mockDialer,\n\t}\n\n\tsshClient := NewClient(opts).(*client)\n\tconfig := &Config{\n\t\tHost:    \"example.com\",\n\t\tUser:    \"testuser\",\n\t\tPort:    22,\n\t\tTimeout: 30 * time.Second,\n\t}\n\n\terr := sshClient.Connect(context.Background(), config)\n\trequire.Error(t, err)\n\trequire.Contains",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/transports/ssh/client_test.go",
+        "start": 236,
+        "end": 255,
+        "startLoc": {
+          "line": 236,
+          "column": 2,
+          "position": 1791
+        },
+        "endLoc": {
+          "line": 255,
+          "column": 9,
+          "position": 1926
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/transports/ssh/client_test.go",
+        "start": 143,
+        "end": 199,
+        "startLoc": {
+          "line": 143,
+          "column": 4,
+          "position": 1041
+        },
+        "endLoc": {
+          "line": 199,
+          "column": 5,
+          "position": 1482
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 12,
+      "fragment": "(t *testing.T) {\n\n\tvar buf bytes.Buffer\n\tcmd := newVersionCmdWithBuffer(&buf)\n\tcmd.SetArgs([]string{})\n\n\terr := cmd.Execute()\n\trequire.NoError(t, err)\n\n\toutput := buf.String()\n\n\texpected",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/cli/commands/version/version_test.go",
+        "start": 179,
+        "end": 190,
+        "startLoc": {
+          "line": 179,
+          "column": 33,
+          "position": 1288
+        },
+        "endLoc": {
+          "line": 190,
+          "column": 9,
+          "position": 1369
+        }
+      },
+      "secondFile": {
+        "name": "internal/cli/commands/version/version_test.go",
+        "start": 153,
+        "end": 163,
+        "startLoc": {
+          "line": 153,
+          "column": 37,
+          "position": 1114
+        },
+        "endLoc": {
+          "line": 163,
+          "column": 8,
+          "position": 1194
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 20,
+      "fragment": "type mockSSHClient struct {\n\tmock.Mock\n}\n\nfunc (m *mockSSHClient) Connect(ctx context.Context, config *ssh.Config) error {\n\targs := m.Called(ctx, config)\n\treturn args.Error(0)\n}\n\nfunc (m *mockSSHClient) Execute(ctx context.Context, command string) error {\n\targs := m.Called(ctx, command)\n\treturn args.Error(0)\n}\n\nfunc (m *mockSSHClient) Close() error {\n\targs := m.Called()\n\treturn args.Error(0)\n}\n\ntype",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/setup_test.go",
+        "start": 19,
+        "end": 38,
+        "startLoc": {
+          "line": 19,
+          "column": 1,
+          "position": 44
+        },
+        "endLoc": {
+          "line": 38,
+          "column": 5,
+          "position": 214
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/common/helpers_test.go",
+        "start": 16,
+        "end": 35,
+        "startLoc": {
+          "line": 16,
+          "column": 1,
+          "position": 37
+        },
+        "endLoc": {
+          "line": 35,
+          "column": 24,
+          "position": 207
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 11,
+      "fragment": "(t *testing.T) {\n\tclient := &mockSSHClient{}\n\tprovider := &mockInstallProvider{}\n\n\t// Mock all SSH commands to succeed\n\tclient.On(\"Execute\", mock.Anything, mock.AnythingOfType(\"string\")).Return(nil)\n\n\tsetup := NewSetup(client, provider)\n\tvar output bytes.Buffer\n\n\terr := setup.Setup(context.Background(), \"alpine\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/setup_test.go",
+        "start": 110,
+        "end": 120,
+        "startLoc": {
+          "line": 110,
+          "column": 23,
+          "position": 791
+        },
+        "endLoc": {
+          "line": 120,
+          "column": 9,
+          "position": 892
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/setup_test.go",
+        "start": 93,
+        "end": 103,
+        "startLoc": {
+          "line": 93,
+          "column": 23,
+          "position": 639
+        },
+        "endLoc": {
+          "line": 103,
+          "column": 9,
+          "position": 740
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 11,
+      "fragment": "(t *testing.T) {\n\tclient := &mockSSHClient{}\n\tprovider := &mockInstallProvider{}\n\n\t// Mock all SSH commands to succeed\n\tclient.On(\"Execute\", mock.Anything, mock.AnythingOfType(\"string\")).Return(nil)\n\n\tsetup := NewSetup(client, provider)\n\tvar output bytes.Buffer\n\n\terr := setup.Setup(context.Background(), \"centos\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/setup_test.go",
+        "start": 126,
+        "end": 136,
+        "startLoc": {
+          "line": 126,
+          "column": 23,
+          "position": 925
+        },
+        "endLoc": {
+          "line": 136,
+          "column": 9,
+          "position": 1026
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/setup_test.go",
+        "start": 93,
+        "end": 103,
+        "startLoc": {
+          "line": 93,
+          "column": 23,
+          "position": 639
+        },
+        "endLoc": {
+          "line": 103,
+          "column": 9,
+          "position": 740
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 11,
+      "fragment": "(t *testing.T) {\n\tclient := &mockSSHClient{}\n\tprovider := &mockInstallProvider{}\n\n\t// Mock all SSH commands to succeed\n\tclient.On(\"Execute\", mock.Anything, mock.AnythingOfType(\"string\")).Return(nil)\n\n\tsetup := NewSetup(client, provider)\n\tvar output bytes.Buffer\n\n\terr := setup.Setup(context.Background(), \"rhel\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/setup_test.go",
+        "start": 142,
+        "end": 152,
+        "startLoc": {
+          "line": 142,
+          "column": 21,
+          "position": 1059
+        },
+        "endLoc": {
+          "line": 152,
+          "column": 7,
+          "position": 1160
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/setup_test.go",
+        "start": 93,
+        "end": 103,
+        "startLoc": {
+          "line": 93,
+          "column": 23,
+          "position": 639
+        },
+        "endLoc": {
+          "line": 103,
+          "column": 9,
+          "position": 740
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 11,
+      "fragment": "(t *testing.T) {\n\tclient := &mockSSHClient{}\n\tprovider := &mockInstallProvider{}\n\n\t// Mock all SSH commands to succeed\n\tclient.On(\"Execute\", mock.Anything, mock.AnythingOfType(\"string\")).Return(nil)\n\n\tsetup := NewSetup(client, provider)\n\tvar output bytes.Buffer\n\n\terr := setup.Setup(context.Background(), \"fedora\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/repository/setup_test.go",
+        "start": 158,
+        "end": 168,
+        "startLoc": {
+          "line": 158,
+          "column": 23,
+          "position": 1193
+        },
+        "endLoc": {
+          "line": 168,
+          "column": 9,
+          "position": 1294
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/setup_test.go",
+        "start": 93,
+        "end": 103,
+        "startLoc": {
+          "line": 93,
+          "column": 23,
+          "position": 639
+        },
+        "endLoc": {
+          "line": 103,
+          "column": 9,
+          "position": 740
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 24,
+      "fragment": ", cmd)\n\n\t_, err = m.Install(context.Background())\n\tassert.Error(t, err)\n\n\t// Test security validation - dangerous package names should be rejected\n\t_, err = m.Install(context.Background(), \"package; rm -rf /\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Install(context.Background(), \"package && malicious_command\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Install(context.Background(), \"package`command`\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Install(context.Background(), \"package$(command)\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n}\n\nfunc TestYUM_Remove",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/yum_test.go",
+        "start": 33,
+        "end": 56,
+        "startLoc": {
+          "line": 33,
+          "column": 32,
+          "position": 272
+        },
+        "endLoc": {
+          "line": 56,
+          "column": 15,
+          "position": 524
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper_test.go",
+        "start": 33,
+        "end": 56,
+        "startLoc": {
+          "line": 33,
+          "column": 35,
+          "position": 272
+        },
+        "endLoc": {
+          "line": 56,
+          "column": 18,
+          "position": 524
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 24,
+      "fragment": ", cmd)\n\n\t_, err = m.Remove(context.Background())\n\tassert.Error(t, err)\n\n\t// Test security validation - dangerous package names should be rejected\n\t_, err = m.Remove(context.Background(), \"package; rm -rf /\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Remove(context.Background(), \"package && malicious_command\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Remove(context.Background(), \"package`command`\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Remove(context.Background(), \"package$(command)\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n}\n\nfunc TestYUM_IsInstalled",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/yum_test.go",
+        "start": 61,
+        "end": 84,
+        "startLoc": {
+          "line": 61,
+          "column": 31,
+          "position": 593
+        },
+        "endLoc": {
+          "line": 84,
+          "column": 20,
+          "position": 845
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper_test.go",
+        "start": 61,
+        "end": 84,
+        "startLoc": {
+          "line": 61,
+          "column": 34,
+          "position": 593
+        },
+        "endLoc": {
+          "line": 84,
+          "column": 23,
+          "position": 845
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 24,
+      "fragment": ", cmd)\n\n\t_, err = m.IsInstalled(context.Background(), \"\")\n\tassert.Error(t, err)\n\n\t// Test security validation - dangerous package names should be rejected\n\t_, err = m.IsInstalled(context.Background(), \"package; rm -rf /\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.IsInstalled(context.Background(), \"package && malicious_command\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.IsInstalled(context.Background(), \"package`command`\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.IsInstalled(context.Background(), \"package$(command)\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n}\n\nfunc TestYUM_VersionCheck",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/yum_test.go",
+        "start": 89,
+        "end": 112,
+        "startLoc": {
+          "line": 89,
+          "column": 26,
+          "position": 911
+        },
+        "endLoc": {
+          "line": 112,
+          "column": 21,
+          "position": 1166
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper_test.go",
+        "start": 89,
+        "end": 112,
+        "startLoc": {
+          "line": 89,
+          "column": 34,
+          "position": 911
+        },
+        "endLoc": {
+          "line": 112,
+          "column": 24,
+          "position": 1166
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 22,
+      "fragment": ", avail)\n\n\t_, _, err = m.VersionCheck(context.Background(), \"\")\n\tassert.Error(t, err)\n\n\t// Test security validation - dangerous package names should be rejected\n\t_, _, err = m.VersionCheck(context.Background(), \"package; rm -rf /\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, _, err = m.VersionCheck(context.Background(), \"package && malicious_command\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, _, err = m.VersionCheck(context.Background(), \"package`command`\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, _, err = m.VersionCheck(context.Background(), \"package$(command)\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n}",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/yum_test.go",
+        "start": 118,
+        "end": 139,
+        "startLoc": {
+          "line": 118,
+          "column": 72,
+          "position": 1249
+        },
+        "endLoc": {
+          "line": 139,
+          "column": 2,
+          "position": 1514
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper_test.go",
+        "start": 118,
+        "end": 139,
+        "startLoc": {
+          "line": 118,
+          "column": 63,
+          "position": 1249
+        },
+        "endLoc": {
+          "line": 139,
+          "column": 2,
+          "position": 1514
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 8,
+      "fragment": ") Install(ctx context.Context, pkgs ...string) (string, error) {\n\tif len(pkgs) == 0 {\n\t\treturn \"\", fmt.Errorf(\"no package specified for install\")\n\t}\n\tif err := utils.ValidatePackageNames(pkgs...); err != nil {\n\t\treturn \"\", err\n\t}\n\treturn fmt.Sprintf(\"sudo yum install -y %s\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/yum.go",
+        "start": 86,
+        "end": 93,
+        "startLoc": {
+          "line": 86,
+          "column": 4,
+          "position": 281
+        },
+        "endLoc": {
+          "line": 93,
+          "column": 25,
+          "position": 379
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper.go",
+        "start": 61,
+        "end": 68,
+        "startLoc": {
+          "line": 61,
+          "column": 7,
+          "position": 231
+        },
+        "endLoc": {
+          "line": 68,
+          "column": 28,
+          "position": 329
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 8,
+      "fragment": ") Remove(ctx context.Context, pkgs ...string) (string, error) {\n\tif len(pkgs) == 0 {\n\t\treturn \"\", fmt.Errorf(\"no package specified for removal\")\n\t}\n\tif err := utils.ValidatePackageNames(pkgs...); err != nil {\n\t\treturn \"\", err\n\t}\n\treturn fmt.Sprintf(\"sudo yum remove -y %s\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/yum.go",
+        "start": 105,
+        "end": 112,
+        "startLoc": {
+          "line": 105,
+          "column": 4,
+          "position": 424
+        },
+        "endLoc": {
+          "line": 112,
+          "column": 24,
+          "position": 522
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper.go",
+        "start": 80,
+        "end": 87,
+        "startLoc": {
+          "line": 80,
+          "column": 7,
+          "position": 374
+        },
+        "endLoc": {
+          "line": 87,
+          "column": 27,
+          "position": 472
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 24,
+      "fragment": ", cmd)\n\n\t_, err = m.Install(context.Background())\n\tassert.Error(t, err)\n\n\t// Test security validation - dangerous package names should be rejected\n\t_, err = m.Install(context.Background(), \"package; rm -rf /\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Install(context.Background(), \"package && malicious_command\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Install(context.Background(), \"package`command`\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Install(context.Background(), \"package$(command)\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n}\n\nfunc TestPACMAN_Remove",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/pacman_test.go",
+        "start": 33,
+        "end": 56,
+        "startLoc": {
+          "line": 33,
+          "column": 39,
+          "position": 272
+        },
+        "endLoc": {
+          "line": 56,
+          "column": 18,
+          "position": 524
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper_test.go",
+        "start": 33,
+        "end": 56,
+        "startLoc": {
+          "line": 33,
+          "column": 35,
+          "position": 272
+        },
+        "endLoc": {
+          "line": 56,
+          "column": 18,
+          "position": 524
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 24,
+      "fragment": ", cmd)\n\n\t_, err = m.Remove(context.Background())\n\tassert.Error(t, err)\n\n\t// Test security validation - dangerous package names should be rejected\n\t_, err = m.Remove(context.Background(), \"package; rm -rf /\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Remove(context.Background(), \"package && malicious_command\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Remove(context.Background(), \"package`command`\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Remove(context.Background(), \"package$(command)\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n}\n\nfunc TestPACMAN_IsInstalled",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/pacman_test.go",
+        "start": 61,
+        "end": 84,
+        "startLoc": {
+          "line": 61,
+          "column": 41,
+          "position": 593
+        },
+        "endLoc": {
+          "line": 84,
+          "column": 23,
+          "position": 845
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper_test.go",
+        "start": 61,
+        "end": 84,
+        "startLoc": {
+          "line": 61,
+          "column": 34,
+          "position": 593
+        },
+        "endLoc": {
+          "line": 84,
+          "column": 23,
+          "position": 845
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 24,
+      "fragment": ", cmd)\n\n\t_, err = m.IsInstalled(context.Background(), \"\")\n\tassert.Error(t, err)\n\n\t// Test security validation - dangerous package names should be rejected\n\t_, err = m.IsInstalled(context.Background(), \"package; rm -rf /\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.IsInstalled(context.Background(), \"package && malicious_command\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.IsInstalled(context.Background(), \"package`command`\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.IsInstalled(context.Background(), \"package$(command)\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n}\n\nfunc TestPACMAN_VersionCheck",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/pacman_test.go",
+        "start": 89,
+        "end": 112,
+        "startLoc": {
+          "line": 89,
+          "column": 18,
+          "position": 911
+        },
+        "endLoc": {
+          "line": 112,
+          "column": 24,
+          "position": 1166
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper_test.go",
+        "start": 89,
+        "end": 112,
+        "startLoc": {
+          "line": 89,
+          "column": 34,
+          "position": 911
+        },
+        "endLoc": {
+          "line": 112,
+          "column": 24,
+          "position": 1166
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 22,
+      "fragment": ")\n\n\t_, _, err = m.VersionCheck(context.Background(), \"\")\n\tassert.Error(t, err)\n\n\t// Test security validation - dangerous package names should be rejected\n\t_, _, err = m.VersionCheck(context.Background(), \"package; rm -rf /\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, _, err = m.VersionCheck(context.Background(), \"package && malicious_command\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, _, err = m.VersionCheck(context.Background(), \"package`command`\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, _, err = m.VersionCheck(context.Background(), \"package$(command)\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n}",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/pacman_test.go",
+        "start": 118,
+        "end": 139,
+        "startLoc": {
+          "line": 118,
+          "column": 10,
+          "position": 1252
+        },
+        "endLoc": {
+          "line": 139,
+          "column": 2,
+          "position": 1514
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper_test.go",
+        "start": 118,
+        "end": 139,
+        "startLoc": {
+          "line": 118,
+          "column": 6,
+          "position": 1252
+        },
+        "endLoc": {
+          "line": 139,
+          "column": 2,
+          "position": 1514
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 8,
+      "fragment": ") Install(ctx context.Context, pkgs ...string) (string, error) {\n\tif len(pkgs) == 0 {\n\t\treturn \"\", fmt.Errorf(\"no package specified for install\")\n\t}\n\tif err := utils.ValidatePackageNames(pkgs...); err != nil {\n\t\treturn \"\", err\n\t}\n\treturn fmt.Sprintf(\"sudo pacman -S --noconfirm %s\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/pacman.go",
+        "start": 61,
+        "end": 68,
+        "startLoc": {
+          "line": 61,
+          "column": 7,
+          "position": 231
+        },
+        "endLoc": {
+          "line": 68,
+          "column": 32,
+          "position": 329
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper.go",
+        "start": 61,
+        "end": 68,
+        "startLoc": {
+          "line": 61,
+          "column": 7,
+          "position": 231
+        },
+        "endLoc": {
+          "line": 68,
+          "column": 28,
+          "position": 329
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 8,
+      "fragment": ") Remove(ctx context.Context, pkgs ...string) (string, error) {\n\tif len(pkgs) == 0 {\n\t\treturn \"\", fmt.Errorf(\"no package specified for removal\")\n\t}\n\tif err := utils.ValidatePackageNames(pkgs...); err != nil {\n\t\treturn \"\", err\n\t}\n\treturn fmt.Sprintf(\"sudo pacman -Rns --noconfirm %s\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/pacman.go",
+        "start": 80,
+        "end": 87,
+        "startLoc": {
+          "line": 80,
+          "column": 7,
+          "position": 374
+        },
+        "endLoc": {
+          "line": 87,
+          "column": 34,
+          "position": 472
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper.go",
+        "start": 80,
+        "end": 87,
+        "startLoc": {
+          "line": 80,
+          "column": 7,
+          "position": 374
+        },
+        "endLoc": {
+          "line": 87,
+          "column": 27,
+          "position": 472
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 24,
+      "fragment": ", cmd)\n\n\t_, err = m.Install(context.Background())\n\tassert.Error(t, err)\n\n\t// Test security validation - dangerous package names should be rejected\n\t_, err = m.Install(context.Background(), \"package; rm -rf /\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Install(context.Background(), \"package && malicious_command\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Install(context.Background(), \"package`command`\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Install(context.Background(), \"package$(command)\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n}\n\nfunc TestEMERGE_Remove",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/emerge_test.go",
+        "start": 33,
+        "end": 56,
+        "startLoc": {
+          "line": 33,
+          "column": 24,
+          "position": 272
+        },
+        "endLoc": {
+          "line": 56,
+          "column": 18,
+          "position": 524
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper_test.go",
+        "start": 33,
+        "end": 56,
+        "startLoc": {
+          "line": 33,
+          "column": 35,
+          "position": 272
+        },
+        "endLoc": {
+          "line": 56,
+          "column": 18,
+          "position": 524
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 24,
+      "fragment": ", cmd)\n\n\t_, err = m.Remove(context.Background())\n\tassert.Error(t, err)\n\n\t// Test security validation - dangerous package names should be rejected\n\t_, err = m.Remove(context.Background(), \"package; rm -rf /\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Remove(context.Background(), \"package && malicious_command\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Remove(context.Background(), \"package`command`\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Remove(context.Background(), \"package$(command)\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n}\n\nfunc TestEMERGE_IsInstalled",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/emerge_test.go",
+        "start": 61,
+        "end": 84,
+        "startLoc": {
+          "line": 61,
+          "column": 27,
+          "position": 593
+        },
+        "endLoc": {
+          "line": 84,
+          "column": 23,
+          "position": 845
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper_test.go",
+        "start": 61,
+        "end": 84,
+        "startLoc": {
+          "line": 61,
+          "column": 34,
+          "position": 593
+        },
+        "endLoc": {
+          "line": 84,
+          "column": 23,
+          "position": 845
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 24,
+      "fragment": ", cmd)\n\n\t_, err = m.IsInstalled(context.Background(), \"\")\n\tassert.Error(t, err)\n\n\t// Test security validation - dangerous package names should be rejected\n\t_, err = m.IsInstalled(context.Background(), \"package; rm -rf /\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.IsInstalled(context.Background(), \"package && malicious_command\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.IsInstalled(context.Background(), \"package`command`\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.IsInstalled(context.Background(), \"package$(command)\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n}\n\nfunc TestEMERGE_VersionCheck",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/emerge_test.go",
+        "start": 89,
+        "end": 112,
+        "startLoc": {
+          "line": 89,
+          "column": 19,
+          "position": 911
+        },
+        "endLoc": {
+          "line": 112,
+          "column": 24,
+          "position": 1166
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper_test.go",
+        "start": 89,
+        "end": 112,
+        "startLoc": {
+          "line": 89,
+          "column": 34,
+          "position": 911
+        },
+        "endLoc": {
+          "line": 112,
+          "column": 24,
+          "position": 1166
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 22,
+      "fragment": ", avail)\n\n\t_, _, err = m.VersionCheck(context.Background(), \"\")\n\tassert.Error(t, err)\n\n\t// Test security validation - dangerous package names should be rejected\n\t_, _, err = m.VersionCheck(context.Background(), \"package; rm -rf /\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, _, err = m.VersionCheck(context.Background(), \"package && malicious_command\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, _, err = m.VersionCheck(context.Background(), \"package`command`\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, _, err = m.VersionCheck(context.Background(), \"package$(command)\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n}",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/emerge_test.go",
+        "start": 118,
+        "end": 139,
+        "startLoc": {
+          "line": 118,
+          "column": 55,
+          "position": 1249
+        },
+        "endLoc": {
+          "line": 139,
+          "column": 2,
+          "position": 1514
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper_test.go",
+        "start": 118,
+        "end": 139,
+        "startLoc": {
+          "line": 118,
+          "column": 63,
+          "position": 1249
+        },
+        "endLoc": {
+          "line": 139,
+          "column": 2,
+          "position": 1514
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 8,
+      "fragment": ") Install(ctx context.Context, pkgs ...string) (string, error) {\n\tif len(pkgs) == 0 {\n\t\treturn \"\", fmt.Errorf(\"no package specified for install\")\n\t}\n\tif err := utils.ValidatePackageNames(pkgs...); err != nil {\n\t\treturn \"\", err\n\t}\n\treturn fmt.Sprintf(\"sudo emerge %s\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/emerge.go",
+        "start": 86,
+        "end": 93,
+        "startLoc": {
+          "line": 86,
+          "column": 7,
+          "position": 281
+        },
+        "endLoc": {
+          "line": 93,
+          "column": 17,
+          "position": 379
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper.go",
+        "start": 61,
+        "end": 68,
+        "startLoc": {
+          "line": 61,
+          "column": 7,
+          "position": 231
+        },
+        "endLoc": {
+          "line": 68,
+          "column": 28,
+          "position": 329
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 8,
+      "fragment": ") Remove(ctx context.Context, pkgs ...string) (string, error) {\n\tif len(pkgs) == 0 {\n\t\treturn \"\", fmt.Errorf(\"no package specified for removal\")\n\t}\n\tif err := utils.ValidatePackageNames(pkgs...); err != nil {\n\t\treturn \"\", err\n\t}\n\treturn fmt.Sprintf(\"sudo emerge -C %s\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/emerge.go",
+        "start": 109,
+        "end": 116,
+        "startLoc": {
+          "line": 109,
+          "column": 7,
+          "position": 432
+        },
+        "endLoc": {
+          "line": 116,
+          "column": 20,
+          "position": 530
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper.go",
+        "start": 80,
+        "end": 87,
+        "startLoc": {
+          "line": 80,
+          "column": 7,
+          "position": 374
+        },
+        "endLoc": {
+          "line": 87,
+          "column": 27,
+          "position": 472
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 24,
+      "fragment": ", cmd)\n\n\t_, err = m.Install(context.Background())\n\tassert.Error(t, err)\n\n\t// Test security validation - dangerous package names should be rejected\n\t_, err = m.Install(context.Background(), \"package; rm -rf /\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Install(context.Background(), \"package && malicious_command\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Install(context.Background(), \"package`command`\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Install(context.Background(), \"package$(command)\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n}\n\nfunc TestDNF_Remove",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/dnf_test.go",
+        "start": 33,
+        "end": 56,
+        "startLoc": {
+          "line": 33,
+          "column": 32,
+          "position": 272
+        },
+        "endLoc": {
+          "line": 56,
+          "column": 15,
+          "position": 524
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper_test.go",
+        "start": 33,
+        "end": 56,
+        "startLoc": {
+          "line": 33,
+          "column": 35,
+          "position": 272
+        },
+        "endLoc": {
+          "line": 56,
+          "column": 18,
+          "position": 524
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 24,
+      "fragment": ", cmd)\n\n\t_, err = m.Remove(context.Background())\n\tassert.Error(t, err)\n\n\t// Test security validation - dangerous package names should be rejected\n\t_, err = m.Remove(context.Background(), \"package; rm -rf /\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Remove(context.Background(), \"package && malicious_command\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Remove(context.Background(), \"package`command`\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Remove(context.Background(), \"package$(command)\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n}\n\nfunc TestDNF_IsInstalled",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/dnf_test.go",
+        "start": 61,
+        "end": 84,
+        "startLoc": {
+          "line": 61,
+          "column": 31,
+          "position": 593
+        },
+        "endLoc": {
+          "line": 84,
+          "column": 20,
+          "position": 845
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper_test.go",
+        "start": 61,
+        "end": 84,
+        "startLoc": {
+          "line": 61,
+          "column": 34,
+          "position": 593
+        },
+        "endLoc": {
+          "line": 84,
+          "column": 23,
+          "position": 845
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 24,
+      "fragment": ", cmd)\n\n\t_, err = m.IsInstalled(context.Background(), \"\")\n\tassert.Error(t, err)\n\n\t// Test security validation - dangerous package names should be rejected\n\t_, err = m.IsInstalled(context.Background(), \"package; rm -rf /\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.IsInstalled(context.Background(), \"package && malicious_command\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.IsInstalled(context.Background(), \"package`command`\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.IsInstalled(context.Background(), \"package$(command)\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n}\n\nfunc TestDNF_VersionCheck",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/dnf_test.go",
+        "start": 89,
+        "end": 112,
+        "startLoc": {
+          "line": 89,
+          "column": 26,
+          "position": 911
+        },
+        "endLoc": {
+          "line": 112,
+          "column": 21,
+          "position": 1166
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper_test.go",
+        "start": 89,
+        "end": 112,
+        "startLoc": {
+          "line": 89,
+          "column": 34,
+          "position": 911
+        },
+        "endLoc": {
+          "line": 112,
+          "column": 24,
+          "position": 1166
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 22,
+      "fragment": ", avail)\n\n\t_, _, err = m.VersionCheck(context.Background(), \"\")\n\tassert.Error(t, err)\n\n\t// Test security validation - dangerous package names should be rejected\n\t_, _, err = m.VersionCheck(context.Background(), \"package; rm -rf /\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, _, err = m.VersionCheck(context.Background(), \"package && malicious_command\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, _, err = m.VersionCheck(context.Background(), \"package`command`\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, _, err = m.VersionCheck(context.Background(), \"package$(command)\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n}",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/dnf_test.go",
+        "start": 118,
+        "end": 139,
+        "startLoc": {
+          "line": 118,
+          "column": 72,
+          "position": 1249
+        },
+        "endLoc": {
+          "line": 139,
+          "column": 2,
+          "position": 1514
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper_test.go",
+        "start": 118,
+        "end": 139,
+        "startLoc": {
+          "line": 118,
+          "column": 63,
+          "position": 1249
+        },
+        "endLoc": {
+          "line": 139,
+          "column": 2,
+          "position": 1514
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 8,
+      "fragment": ") Install(ctx context.Context, pkgs ...string) (string, error) {\n\tif len(pkgs) == 0 {\n\t\treturn \"\", fmt.Errorf(\"no package specified for install\")\n\t}\n\tif err := utils.ValidatePackageNames(pkgs...); err != nil {\n\t\treturn \"\", err\n\t}\n\treturn fmt.Sprintf(\"sudo dnf install -y %s\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/dnf.go",
+        "start": 61,
+        "end": 68,
+        "startLoc": {
+          "line": 61,
+          "column": 4,
+          "position": 231
+        },
+        "endLoc": {
+          "line": 68,
+          "column": 25,
+          "position": 329
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper.go",
+        "start": 61,
+        "end": 68,
+        "startLoc": {
+          "line": 61,
+          "column": 7,
+          "position": 231
+        },
+        "endLoc": {
+          "line": 68,
+          "column": 28,
+          "position": 329
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 8,
+      "fragment": ") Remove(ctx context.Context, pkgs ...string) (string, error) {\n\tif len(pkgs) == 0 {\n\t\treturn \"\", fmt.Errorf(\"no package specified for removal\")\n\t}\n\tif err := utils.ValidatePackageNames(pkgs...); err != nil {\n\t\treturn \"\", err\n\t}\n\treturn fmt.Sprintf(\"sudo dnf remove -y %s\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/dnf.go",
+        "start": 80,
+        "end": 87,
+        "startLoc": {
+          "line": 80,
+          "column": 4,
+          "position": 374
+        },
+        "endLoc": {
+          "line": 87,
+          "column": 24,
+          "position": 472
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper.go",
+        "start": 80,
+        "end": 87,
+        "startLoc": {
+          "line": 80,
+          "column": 7,
+          "position": 374
+        },
+        "endLoc": {
+          "line": 87,
+          "column": 27,
+          "position": 472
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 8,
+      "fragment": ") Install(ctx context.Context, pkgs ...string) (string, error) {\n\tif len(pkgs) == 0 {\n\t\treturn \"\", fmt.Errorf(\"no package specified for install\")\n\t}\n\tif err := utils.ValidatePackageNames(pkgs...); err != nil {\n\t\treturn \"\", err\n\t}\n\treturn fmt.Sprintf(\"sudo apt install -y %s\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/apt.go",
+        "start": 61,
+        "end": 68,
+        "startLoc": {
+          "line": 61,
+          "column": 4,
+          "position": 231
+        },
+        "endLoc": {
+          "line": 68,
+          "column": 25,
+          "position": 329
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper.go",
+        "start": 61,
+        "end": 68,
+        "startLoc": {
+          "line": 61,
+          "column": 7,
+          "position": 231
+        },
+        "endLoc": {
+          "line": 68,
+          "column": 28,
+          "position": 329
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 8,
+      "fragment": ") Remove(ctx context.Context, pkgs ...string) (string, error) {\n\tif len(pkgs) == 0 {\n\t\treturn \"\", fmt.Errorf(\"no package specified for removal\")\n\t}\n\tif err := utils.ValidatePackageNames(pkgs...); err != nil {\n\t\treturn \"\", err\n\t}\n\treturn fmt.Sprintf(\"sudo apt remove -y %s\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/apt.go",
+        "start": 80,
+        "end": 87,
+        "startLoc": {
+          "line": 80,
+          "column": 4,
+          "position": 374
+        },
+        "endLoc": {
+          "line": 87,
+          "column": 24,
+          "position": 472
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper.go",
+        "start": 80,
+        "end": 87,
+        "startLoc": {
+          "line": 80,
+          "column": 7,
+          "position": 374
+        },
+        "endLoc": {
+          "line": 87,
+          "column": 27,
+          "position": 472
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 24,
+      "fragment": ", cmd)\n\n\t_, err = m.Install(context.Background())\n\tassert.Error(t, err)\n\n\t// Test security validation - dangerous package names should be rejected\n\t_, err = m.Install(context.Background(), \"package; rm -rf /\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Install(context.Background(), \"package && malicious_command\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Install(context.Background(), \"package`command`\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Install(context.Background(), \"package$(command)\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n}\n\nfunc TestAPK_Remove",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/apk_test.go",
+        "start": 33,
+        "end": 56,
+        "startLoc": {
+          "line": 33,
+          "column": 25,
+          "position": 272
+        },
+        "endLoc": {
+          "line": 56,
+          "column": 15,
+          "position": 524
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper_test.go",
+        "start": 33,
+        "end": 56,
+        "startLoc": {
+          "line": 33,
+          "column": 35,
+          "position": 272
+        },
+        "endLoc": {
+          "line": 56,
+          "column": 18,
+          "position": 524
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 24,
+      "fragment": ", cmd)\n\n\t_, err = m.Remove(context.Background())\n\tassert.Error(t, err)\n\n\t// Test security validation - dangerous package names should be rejected\n\t_, err = m.Remove(context.Background(), \"package; rm -rf /\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Remove(context.Background(), \"package && malicious_command\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Remove(context.Background(), \"package`command`\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.Remove(context.Background(), \"package$(command)\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n}\n\nfunc TestAPK_IsInstalled",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/apk_test.go",
+        "start": 61,
+        "end": 84,
+        "startLoc": {
+          "line": 61,
+          "column": 25,
+          "position": 593
+        },
+        "endLoc": {
+          "line": 84,
+          "column": 20,
+          "position": 845
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper_test.go",
+        "start": 61,
+        "end": 84,
+        "startLoc": {
+          "line": 61,
+          "column": 34,
+          "position": 593
+        },
+        "endLoc": {
+          "line": 84,
+          "column": 23,
+          "position": 845
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 24,
+      "fragment": ", cmd)\n\n\t_, err = m.IsInstalled(context.Background(), \"\")\n\tassert.Error(t, err)\n\n\t// Test security validation - dangerous package names should be rejected\n\t_, err = m.IsInstalled(context.Background(), \"package; rm -rf /\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.IsInstalled(context.Background(), \"package && malicious_command\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.IsInstalled(context.Background(), \"package`command`\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, err = m.IsInstalled(context.Background(), \"package$(command)\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n}\n\nfunc TestAPK_VersionCheck",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/apk_test.go",
+        "start": 89,
+        "end": 112,
+        "startLoc": {
+          "line": 89,
+          "column": 19,
+          "position": 911
+        },
+        "endLoc": {
+          "line": 112,
+          "column": 21,
+          "position": 1166
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper_test.go",
+        "start": 89,
+        "end": 112,
+        "startLoc": {
+          "line": 89,
+          "column": 34,
+          "position": 911
+        },
+        "endLoc": {
+          "line": 112,
+          "column": 24,
+          "position": 1166
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 22,
+      "fragment": ", avail)\n\n\t_, _, err = m.VersionCheck(context.Background(), \"\")\n\tassert.Error(t, err)\n\n\t// Test security validation - dangerous package names should be rejected\n\t_, _, err = m.VersionCheck(context.Background(), \"package; rm -rf /\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, _, err = m.VersionCheck(context.Background(), \"package && malicious_command\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, _, err = m.VersionCheck(context.Background(), \"package`command`\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n\n\t_, _, err = m.VersionCheck(context.Background(), \"package$(command)\")\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"contains invalid characters\")\n}",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/apk_test.go",
+        "start": 118,
+        "end": 139,
+        "startLoc": {
+          "line": 118,
+          "column": 50,
+          "position": 1249
+        },
+        "endLoc": {
+          "line": 139,
+          "column": 2,
+          "position": 1514
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper_test.go",
+        "start": 118,
+        "end": 139,
+        "startLoc": {
+          "line": 118,
+          "column": 63,
+          "position": 1249
+        },
+        "endLoc": {
+          "line": 139,
+          "column": 2,
+          "position": 1514
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 8,
+      "fragment": ") Install(ctx context.Context, pkgs ...string) (string, error) {\n\tif len(pkgs) == 0 {\n\t\treturn \"\", fmt.Errorf(\"no package specified for install\")\n\t}\n\tif err := utils.ValidatePackageNames(pkgs...); err != nil {\n\t\treturn \"\", err\n\t}\n\treturn fmt.Sprintf(\"sudo apk add %s\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/apk.go",
+        "start": 61,
+        "end": 68,
+        "startLoc": {
+          "line": 61,
+          "column": 4,
+          "position": 231
+        },
+        "endLoc": {
+          "line": 68,
+          "column": 18,
+          "position": 329
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper.go",
+        "start": 61,
+        "end": 68,
+        "startLoc": {
+          "line": 61,
+          "column": 7,
+          "position": 231
+        },
+        "endLoc": {
+          "line": 68,
+          "column": 28,
+          "position": 329
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 8,
+      "fragment": ") Remove(ctx context.Context, pkgs ...string) (string, error) {\n\tif len(pkgs) == 0 {\n\t\treturn \"\", fmt.Errorf(\"no package specified for removal\")\n\t}\n\tif err := utils.ValidatePackageNames(pkgs...); err != nil {\n\t\treturn \"\", err\n\t}\n\treturn fmt.Sprintf(\"sudo apk del %s\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/infrastructure/pkgmanager/apk.go",
+        "start": 80,
+        "end": 87,
+        "startLoc": {
+          "line": 80,
+          "column": 4,
+          "position": 374
+        },
+        "endLoc": {
+          "line": 87,
+          "column": 18,
+          "position": 472
+        }
+      },
+      "secondFile": {
+        "name": "internal/infrastructure/pkgmanager/zypper.go",
+        "start": 80,
+        "end": 87,
+        "startLoc": {
+          "line": 80,
+          "column": 7,
+          "position": 374
+        },
+        "endLoc": {
+          "line": 87,
+          "column": 27,
+          "position": 472
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 13,
+      "fragment": ", tc.args)\n\n\t\t\tif tc.wantErr {\n\t\t\t\trequire.Error(t, err)\n\t\t\t\trequire.Equal(t, tc.errMsg, err.Error())\n\t\t\t} else {\n\t\t\t\trequire.NoError(t, err)\n\t\t\t}\n\t\t})\n\t}\n}\n\n// TestValidatePackageNames tests the ValidatePackageNames function with comprehensive security cases.",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/utils/validation_test.go",
+        "start": 77,
+        "end": 89,
+        "startLoc": {
+          "line": 77,
+          "column": 4,
+          "position": 510
+        },
+        "endLoc": {
+          "line": 89,
+          "column": 103,
+          "position": 589
+        }
+      },
+      "secondFile": {
+        "name": "internal/cli/commands/install/install_test.go",
+        "start": 136,
+        "end": 148,
+        "startLoc": {
+          "line": 136,
+          "column": 4,
+          "position": 1023
+        },
+        "endLoc": {
+          "line": 148,
+          "column": 5,
+          "position": 1102
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 11,
+      "fragment": ".GetVersionInfo()\n\n\trequire.Equal(t, \"test-version\", info.Version)\n\trequire.Equal(t, \"test-commit\", info.Commit)\n\trequire.Equal(t, \"test-date\", info.BuiltAt)\n\trequire.Equal(t, \"test-user\", info.BuiltBy)\n\trequire.Equal(t, \"go1.21.0\", info.GoVersion)\n\trequire.Equal(t, \"linux/amd64\", info.OSArch)\n}\n\nfunc",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/version_test.go",
+        "start": 61,
+        "end": 71,
+        "startLoc": {
+          "line": 61,
+          "column": 8,
+          "position": 380
+        },
+        "endLoc": {
+          "line": 71,
+          "column": 5,
+          "position": 485
+        }
+      },
+      "secondFile": {
+        "name": "internal/cli/commands/version/version_test.go",
+        "start": 116,
+        "end": 125,
+        "startLoc": {
+          "line": 116,
+          "column": 13,
+          "position": 784
+        },
+        "endLoc": {
+          "line": 125,
+          "column": 65,
+          "position": 888
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 25,
+      "fragment": "type mockInstallProvider struct {\n\tmock.Mock\n}\n\nfunc (m *mockInstallProvider) GetInstallInfo() providers.InstallInfo {\n\targs := m.Called()\n\treturn args.Get(0).(providers.InstallInfo)\n}\n\nfunc (m *mockInstallProvider) GetRepositoryURL() string {\n\targs := m.Called()\n\treturn args.String(0)\n}\n\nfunc (m *mockInstallProvider) GetPackageName() string {\n\targs := m.Called()\n\treturn args.String(0)\n}\n\nfunc (m *mockInstallProvider) GetGPGKeyID() string {\n\targs := m.Called()\n\treturn args.String(0)\n}\n\ntype",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/install_test.go",
+        "start": 22,
+        "end": 46,
+        "startLoc": {
+          "line": 22,
+          "column": 1,
+          "position": 53
+        },
+        "endLoc": {
+          "line": 46,
+          "column": 5,
+          "position": 241
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/setup_test.go",
+        "start": 38,
+        "end": 62,
+        "startLoc": {
+          "line": 38,
+          "column": 1,
+          "position": 214
+        },
+        "endLoc": {
+          "line": 62,
+          "column": 19,
+          "position": 402
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 20,
+      "fragment": "type mockSSHClient struct {\n\tmock.Mock\n}\n\nfunc (m *mockSSHClient) Connect(ctx context.Context, config *ssh.Config) error {\n\targs := m.Called(ctx, config)\n\treturn args.Error(0)\n}\n\nfunc (m *mockSSHClient) Execute(ctx context.Context, command string) error {\n\targs := m.Called(ctx, command)\n\treturn args.Error(0)\n}\n\nfunc (m *mockSSHClient) Close() error {\n\targs := m.Called()\n\treturn args.Error(0)\n}\n\ntype mockDistroDetector",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/install_test.go",
+        "start": 46,
+        "end": 65,
+        "startLoc": {
+          "line": 46,
+          "column": 1,
+          "position": 241
+        },
+        "endLoc": {
+          "line": 65,
+          "column": 19,
+          "position": 413
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/repository/common/helpers_test.go",
+        "start": 16,
+        "end": 38,
+        "startLoc": {
+          "line": 16,
+          "column": 1,
+          "position": 37
+        },
+        "endLoc": {
+          "line": 38,
+          "column": 20,
+          "position": 216
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 14,
+      "fragment": ",\n\t}\n\n\tservice := NewInstallService(opts)\n\tconfig := &providers.InstallConfig{\n\t\tHost:   \"test.example.com\",\n\t\tUser:   \"testuser\",\n\t\tTarget: \"testuser@test.example.com\",\n\t}\n\n\tvar output bytes.Buffer\n\terr := service.Install(context.Background(), &output, config)\n\n\tassert.Error",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/install_test.go",
+        "start": 392,
+        "end": 405,
+        "startLoc": {
+          "line": 392,
+          "column": 7,
+          "position": 3265
+        },
+        "endLoc": {
+          "line": 405,
+          "column": 6,
+          "position": 3353
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/install_test.go",
+        "start": 339,
+        "end": 353,
+        "startLoc": {
+          "line": 339,
+          "column": 10,
+          "position": 2817
+        },
+        "endLoc": {
+          "line": 353,
+          "column": 8,
+          "position": 2906
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 15,
+      "fragment": ",\n\t}\n\n\tservice := NewInstallService(opts)\n\tconfig := &providers.InstallConfig{\n\t\tHost:   \"test.example.com\",\n\t\tUser:   \"testuser\",\n\t\tTarget: \"testuser@test.example.com\",\n\t}\n\n\tvar output bytes.Buffer\n\terr := service.Install(context.Background(), &output, config)\n\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"failed to detect distribution\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/install_test.go",
+        "start": 421,
+        "end": 435,
+        "startLoc": {
+          "line": 421,
+          "column": 9,
+          "position": 3510
+        },
+        "endLoc": {
+          "line": 435,
+          "column": 32,
+          "position": 3621
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/install_test.go",
+        "start": 339,
+        "end": 406,
+        "startLoc": {
+          "line": 339,
+          "column": 10,
+          "position": 2817
+        },
+        "endLoc": {
+          "line": 406,
+          "column": 49,
+          "position": 3376
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 6,
+      "fragment": "{}\n\n\tclient.On(\"Connect\", mock.Anything, mock.Anything).Return(nil)\n\tclient.On(\"Close\").Return(nil)\n\tdetector.On(\"Detect\", mock.Anything).Return(\"ubuntu\", nil)\n\trepoSetup.On(\"Setup\", mock.Anything, \"ubuntu\", mock.Anything).Return(errors",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/install_test.go",
+        "start": 444,
+        "end": 449,
+        "startLoc": {
+          "line": 444,
+          "column": 14,
+          "position": 3685
+        },
+        "endLoc": {
+          "line": 449,
+          "column": 7,
+          "position": 3769
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/install_test.go",
+        "start": 328,
+        "end": 333,
+        "startLoc": {
+          "line": 328,
+          "column": 20,
+          "position": 2694
+        },
+        "endLoc": {
+          "line": 333,
+          "column": 4,
+          "position": 2778
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 17,
+      "fragment": "SSHClient:      client,\n\t\tDistroDetector: detector,\n\t\tRepoSetup:      repoSetup,\n\t}\n\n\tservice := NewInstallService(opts)\n\tconfig := &providers.InstallConfig{\n\t\tHost:   \"test.example.com\",\n\t\tUser:   \"testuser\",\n\t\tTarget: \"testuser@test.example.com\",\n\t}\n\n\tvar output bytes.Buffer\n\terr := service.Install(context.Background(), &output, config)\n\n\tassert.Error(t, err)\n\tassert.Contains(t, err.Error(), \"failed to setup repository\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/install_test.go",
+        "start": 452,
+        "end": 468,
+        "startLoc": {
+          "line": 452,
+          "column": 3,
+          "position": 3788
+        },
+        "endLoc": {
+          "line": 468,
+          "column": 29,
+          "position": 3917
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/install_test.go",
+        "start": 337,
+        "end": 406,
+        "startLoc": {
+          "line": 337,
+          "column": 3,
+          "position": 2799
+        },
+        "endLoc": {
+          "line": 406,
+          "column": 49,
+          "position": 3376
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 7,
+      "fragment": "(t *testing.T) {\n\tclient := &mockSSHClient{}\n\tdetector := &mockDistroDetector{}\n\trepoSetup := &mockRepoSetup{}\n\n\tclient.On(\"Connect\", mock.Anything, mock.Anything).Return(nil)\n\tclient.On(\"Close\").Return(errors",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/install_test.go",
+        "start": 475,
+        "end": 481,
+        "startLoc": {
+          "line": 475,
+          "column": 38,
+          "position": 3951
+        },
+        "endLoc": {
+          "line": 481,
+          "column": 7,
+          "position": 4026
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/install_test.go",
+        "start": 441,
+        "end": 447,
+        "startLoc": {
+          "line": 441,
+          "column": 42,
+          "position": 3647
+        },
+        "endLoc": {
+          "line": 447,
+          "column": 4,
+          "position": 3722
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 19,
+      "fragment": ")\n\n\topts := &InstallServiceOptions{\n\t\tSSHClient:      client,\n\t\tDistroDetector: detector,\n\t\tRepoSetup:      repoSetup,\n\t}\n\n\tservice := NewInstallService(opts)\n\tconfig := &providers.InstallConfig{\n\t\tHost:   \"test.example.com\",\n\t\tUser:   \"testuser\",\n\t\tTarget: \"testuser@test.example.com\",\n\t}\n\n\tvar output bytes.Buffer\n\terr := service.Install(context.Background(), &output, config)\n\n\t// Should succeed despite close error (best effort - error is logged but ignored)",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/install_test.go",
+        "start": 483,
+        "end": 501,
+        "startLoc": {
+          "line": 483,
+          "column": 4,
+          "position": 4079
+        },
+        "endLoc": {
+          "line": 501,
+          "column": 82,
+          "position": 4196
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/install_test.go",
+        "start": 449,
+        "end": 353,
+        "startLoc": {
+          "line": 449,
+          "column": 2,
+          "position": 3775
+        },
+        "endLoc": {
+          "line": 353,
+          "column": 7,
+          "position": 2904
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 12,
+      "fragment": ").Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q 'ID=alpine' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q '^ID=\\\"\\\\?centos' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q '^ID=\\\"\\\\?rhel' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q 'ID=fedora' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q 'ID=arch' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\n\tdetectorInstance := NewDetector(client)\n\tresult, err := detectorInstance.Detect(context.Background())\n\n\tassert.NoError(t, err)\n\tassert.Equal(t, \"debian\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/detector_test.go",
+        "start": 72,
+        "end": 83,
+        "startLoc": {
+          "line": 72,
+          "column": 4,
+          "position": 700
+        },
+        "endLoc": {
+          "line": 83,
+          "column": 9,
+          "position": 906
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/detector_test.go",
+        "start": 49,
+        "end": 60,
+        "startLoc": {
+          "line": 49,
+          "column": 2,
+          "position": 375
+        },
+        "endLoc": {
+          "line": 60,
+          "column": 9,
+          "position": 581
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 11,
+      "fragment": ").Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q '^ID=\\\"\\\\?centos' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q '^ID=\\\"\\\\?rhel' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q 'ID=fedora' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q 'ID=arch' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\n\tdetectorInstance := NewDetector(client)\n\tresult, err := detectorInstance.Detect(context.Background())\n\n\tassert.NoError(t, err)\n\tassert.Equal(t, \"alpine\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/detector_test.go",
+        "start": 96,
+        "end": 106,
+        "startLoc": {
+          "line": 96,
+          "column": 4,
+          "position": 1055
+        },
+        "endLoc": {
+          "line": 106,
+          "column": 9,
+          "position": 1231
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/detector_test.go",
+        "start": 50,
+        "end": 60,
+        "startLoc": {
+          "line": 50,
+          "column": 2,
+          "position": 405
+        },
+        "endLoc": {
+          "line": 60,
+          "column": 9,
+          "position": 581
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 10,
+      "fragment": ").Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q '^ID=\\\"\\\\?rhel' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q 'ID=fedora' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q 'ID=arch' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\n\tdetectorInstance := NewDetector(client)\n\tresult, err := detectorInstance.Detect(context.Background())\n\n\tassert.NoError(t, err)\n\tassert.Equal(t, \"centos\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/detector_test.go",
+        "start": 120,
+        "end": 129,
+        "startLoc": {
+          "line": 120,
+          "column": 4,
+          "position": 1410
+        },
+        "endLoc": {
+          "line": 129,
+          "column": 9,
+          "position": 1556
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/detector_test.go",
+        "start": 51,
+        "end": 60,
+        "startLoc": {
+          "line": 51,
+          "column": 2,
+          "position": 435
+        },
+        "endLoc": {
+          "line": 60,
+          "column": 9,
+          "position": 581
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 9,
+      "fragment": ").Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q 'ID=fedora' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q 'ID=arch' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\n\tdetectorInstance := NewDetector(client)\n\tresult, err := detectorInstance.Detect(context.Background())\n\n\tassert.NoError(t, err)\n\tassert.Equal(t, \"rhel\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/detector_test.go",
+        "start": 144,
+        "end": 152,
+        "startLoc": {
+          "line": 144,
+          "column": 4,
+          "position": 1765
+        },
+        "endLoc": {
+          "line": 152,
+          "column": 7,
+          "position": 1881
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/detector_test.go",
+        "start": 52,
+        "end": 60,
+        "startLoc": {
+          "line": 52,
+          "column": 2,
+          "position": 465
+        },
+        "endLoc": {
+          "line": 60,
+          "column": 9,
+          "position": 581
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 6,
+      "fragment": "client.On(\"Execute\", mock.Anything, \"grep -q 'ID=ubuntu' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q 'ID=debian' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q 'ID=alpine' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q '^ID=\\\"\\\\?centos' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q '^ID=\\\"\\\\?rhel' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q 'ID=fedora' /etc/os-release\").Return(nil",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/detector_test.go",
+        "start": 163,
+        "end": 168,
+        "startLoc": {
+          "line": 163,
+          "column": 2,
+          "position": 1952
+        },
+        "endLoc": {
+          "line": 168,
+          "column": 4,
+          "position": 2119
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/detector_test.go",
+        "start": 94,
+        "end": 53,
+        "startLoc": {
+          "line": 94,
+          "column": 2,
+          "position": 977
+        },
+        "endLoc": {
+          "line": 53,
+          "column": 7,
+          "position": 489
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 8,
+      "fragment": ").Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q 'ID=arch' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\n\tdetectorInstance := NewDetector(client)\n\tresult, err := detectorInstance.Detect(context.Background())\n\n\tassert.NoError(t, err)\n\tassert.Equal(t, \"fedora\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/detector_test.go",
+        "start": 168,
+        "end": 175,
+        "startLoc": {
+          "line": 168,
+          "column": 4,
+          "position": 2120
+        },
+        "endLoc": {
+          "line": 175,
+          "column": 9,
+          "position": 2206
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/detector_test.go",
+        "start": 53,
+        "end": 60,
+        "startLoc": {
+          "line": 53,
+          "column": 2,
+          "position": 495
+        },
+        "endLoc": {
+          "line": 60,
+          "column": 9,
+          "position": 581
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 7,
+      "fragment": "client.On(\"Execute\", mock.Anything, \"grep -q 'ID=ubuntu' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q 'ID=debian' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q 'ID=alpine' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q '^ID=\\\"\\\\?centos' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q '^ID=\\\"\\\\?rhel' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q 'ID=fedora' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q 'ID=arch' /etc/os-release\").Return(nil",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/detector_test.go",
+        "start": 186,
+        "end": 192,
+        "startLoc": {
+          "line": 186,
+          "column": 2,
+          "position": 2277
+        },
+        "endLoc": {
+          "line": 192,
+          "column": 4,
+          "position": 2474
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/detector_test.go",
+        "start": 94,
+        "end": 54,
+        "startLoc": {
+          "line": 94,
+          "column": 2,
+          "position": 977
+        },
+        "endLoc": {
+          "line": 54,
+          "column": 7,
+          "position": 519
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 9,
+      "fragment": "client.On(\"Execute\", mock.Anything, \"grep -q 'ID=ubuntu' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q 'ID=debian' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q 'ID=alpine' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q '^ID=\\\"\\\\?centos' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q '^ID=\\\"\\\\?rhel' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q 'ID=fedora' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\tclient.On(\"Execute\", mock.Anything, \"grep -q 'ID=arch' /etc/os-release\").Return(errors.New(\"not found\")).Maybe()\n\n\t// Fallback to package manager detection - apt found",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/detector_test.go",
+        "start": 299,
+        "end": 307,
+        "startLoc": {
+          "line": 299,
+          "column": 2,
+          "position": 3584
+        },
+        "endLoc": {
+          "line": 307,
+          "column": 53,
+          "position": 3795
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/detector_test.go",
+        "start": 94,
+        "end": 56,
+        "startLoc": {
+          "line": 94,
+          "column": 2,
+          "position": 977
+        },
+        "endLoc": {
+          "line": 56,
+          "column": 17,
+          "position": 533
+        }
+      }
+    },
+    {
+      "format": "go",
+      "lines": 9,
+      "fragment": "client.On(\"Execute\", mock.Anything, \"command -v apt >/dev/null 2>&1\").Return(nil)\n\n\tdetectorInstance := NewDetector(client)\n\tresult, err := detectorInstance.Detect(context.Background())\n\n\tassert.NoError(t, err)\n\tassert.Equal(t, \"debian\", result)\n\tclient.AssertExpectations(t)\n}",
+      "tokens": 0,
+      "firstFile": {
+        "name": "internal/services/detector_test.go",
+        "start": 308,
+        "end": 316,
+        "startLoc": {
+          "line": 308,
+          "column": 2,
+          "position": 3798
+        },
+        "endLoc": {
+          "line": 316,
+          "column": 2,
+          "position": 3882
+        }
+      },
+      "secondFile": {
+        "name": "internal/services/detector_test.go",
+        "start": 208,
+        "end": 216,
+        "startLoc": {
+          "line": 208,
+          "column": 2,
+          "position": 2606
+        },
+        "endLoc": {
+          "line": 216,
+          "column": 2,
+          "position": 2690
+        }
+      }
+    },
+    {
+      "format": "yaml",
+      "lines": 10,
+      "fragment": "-\n        -s -w\n        -X github.com/kodflow/superviz.io/internal/cli.version={{ .Version }}\n        -X github.com/kodflow/superviz.io/internal/cli.commit={{ .ShortCommit }}\n        -X github.com/kodflow/superviz.io/internal/cli.date={{ .Date }}\n        -X github.com/kodflow/superviz.io/internal/cli.builtBy={{ .Env.BUILT_BY }}\n        -X github.com/kodflow/superviz.io/internal/cli.goVersion={{ .Env.GOVERSION }}\n        -X github.com/kodflow/superviz.io/internal/cli.osArch={{ .Os }}/{{ .Arch }}\n\narchives",
+      "tokens": 0,
+      "firstFile": {
+        "name": "goreleaser.yaml",
+        "start": 22,
+        "end": 31,
+        "startLoc": {
+          "line": 22,
+          "column": 2,
+          "position": 117
+        },
+        "endLoc": {
+          "line": 31,
+          "column": 9,
+          "position": 213
+        }
+      },
+      "secondFile": {
+        "name": ".dist/config.yaml",
+        "start": 47,
+        "end": 48,
+        "startLoc": {
+          "line": 47,
+          "column": 7,
+          "position": 244
+        },
+        "endLoc": {
+          "line": 48,
+          "column": 4,
+          "position": 333
+        }
+      }
+    }
+  ],
+  "filename": "/opt/homebrew/lib/node_modules/jscpd/node_modules/@jscpd/html-reporter/dist/templates/main.pug"
+}

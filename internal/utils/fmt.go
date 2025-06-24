@@ -23,9 +23,18 @@ var builderPool = sync.Pool{
 // FprintIgnoreErr provides a convenient way to write formatted output when
 // error handling is not critical, such as logging or debug output.
 //
+// Example:
+//
+//	var buf bytes.Buffer
+//	FprintIgnoreErr(&buf, "Hello", " ", "World", 123)
+//	fmt.Println(buf.String()) // "Hello World123"
+//
 // Parameters:
-//   - w: Writer to output the formatted values
-//   - args: Values to write (supports strings, numbers, booleans, etc.)
+//   - w: io.Writer to output the formatted values
+//   - args: ...any values to write (supports strings, numbers, booleans, etc.)
+//
+// Returns:
+//   - None (errors are ignored)
 func FprintIgnoreErr(w io.Writer, args ...any) {
 	_, _ = writeArgs(w, args)
 }
@@ -35,9 +44,18 @@ func FprintIgnoreErr(w io.Writer, args ...any) {
 // FprintlnIgnoreErr is similar to FprintIgnoreErr but automatically appends
 // a newline character to the output.
 //
+// Example:
+//
+//	var buf bytes.Buffer
+//	FprintlnIgnoreErr(&buf, "Hello", " ", "World")
+//	fmt.Printf("%q", buf.String()) // "Hello World\n"
+//
 // Parameters:
-//   - w: Writer to output the formatted values
-//   - args: Values to write (supports strings, numbers, booleans, etc.)
+//   - w: io.Writer to output the formatted values
+//   - args: ...any values to write (supports strings, numbers, booleans, etc.)
+//
+// Returns:
+//   - None (errors are ignored)
 func FprintlnIgnoreErr(w io.Writer, args ...any) {
 	_, _ = writeArgs(w, args)
 	_, _ = w.Write([]byte("\n"))
@@ -48,9 +66,18 @@ func FprintlnIgnoreErr(w io.Writer, args ...any) {
 // MustFprint provides a fail-fast approach to output formatting, panicking
 // if any write operation fails. Use when write failures are unrecoverable.
 //
+// Example:
+//
+//	var buf bytes.Buffer
+//	MustFprint(&buf, "Hello", " ", "World")
+//	fmt.Println(buf.String()) // "Hello World"
+//
 // Parameters:
-//   - w: Writer to output the formatted values
-//   - args: Values to write (supports strings, numbers, booleans, etc.)
+//   - w: io.Writer to output the formatted values
+//   - args: ...any values to write (supports strings, numbers, booleans, etc.)
+//
+// Returns:
+//   - None (panics on error)
 //
 // Panics:
 //   - If any write operation fails
@@ -65,9 +92,18 @@ func MustFprint(w io.Writer, args ...any) {
 // MustFprintln is similar to MustFprint but automatically appends a newline
 // character and panics if any write operation fails.
 //
+// Example:
+//
+//	var buf bytes.Buffer
+//	MustFprintln(&buf, "Hello", " ", "World")
+//	fmt.Printf("%q", buf.String()) // "Hello World\n"
+//
 // Parameters:
-//   - w: Writer to output the formatted values
-//   - args: Values to write (supports strings, numbers, booleans, etc.)
+//   - w: io.Writer to output the formatted values
+//   - args: ...any values to write (supports strings, numbers, booleans, etc.)
+//
+// Returns:
+//   - None (panics on error)
 //
 // Panics:
 //   - If any write operation fails
@@ -85,12 +121,18 @@ func MustFprintln(w io.Writer, args ...any) {
 // writeArgs converts various types to strings and writes them efficiently
 // using a pooled strings.Builder to minimize memory allocations.
 //
+// Example:
+//
+//	var buf bytes.Buffer
+//	n, err := writeArgs(&buf, []any{"Hello", 123, true})
+//	// buf contains "Hello123true", n is bytes written
+//
 // Parameters:
-//   - w: Writer to output the converted arguments
-//   - args: Arguments to convert and write
+//   - w: io.Writer to output the converted arguments
+//   - args: []any arguments to convert and write
 //
 // Returns:
-//   - Number of bytes written
+//   - n: int64 number of bytes written
 //   - err: error if any write operation fails
 func writeArgs(w io.Writer, args []any) (int64, error) {
 	builder := builderPool.Get().(*strings.Builder)
@@ -135,6 +177,21 @@ func writeArgs(w io.Writer, args []any) (int64, error) {
 //
 // Returns:
 //   - Estimated size in bytes
+//
+// estimatedSize calculates the estimated buffer size needed for string conversion.
+//
+// estimatedSize provides a heuristic for pre-allocating string builder capacity
+// to reduce memory reallocations during argument conversion.
+//
+// Example:
+//
+//	size := estimatedSize(5) // Returns 80 (5 * 16)
+//
+// Parameters:
+//   - n: int number of arguments to be converted
+//
+// Returns:
+//   - size: int estimated buffer size in bytes
 func estimatedSize(n int) int {
 	return n * 16
 }
@@ -144,11 +201,18 @@ func estimatedSize(n int) int {
 // toString handles type conversion for types not explicitly supported
 // by the main formatting logic, providing graceful degradation.
 //
+// Example:
+//
+//	str := toString(errors.New("test error"))
+//	// Returns "test error"
+//	str = toString(struct{}{})
+//	// Returns "[unsupported type]"
+//
 // Parameters:
-//   - v: Value to convert to string
+//   - v: any value to convert to string
 //
 // Returns:
-//   - String representation of the value
+//   - str: string representation of the value
 func toString(v any) string {
 	switch val := v.(type) {
 	case error:

@@ -37,8 +37,7 @@ func TestNewHandler(t *testing.T) {
 	handler := NewHandler(client)
 
 	assert.NotNil(t, handler)
-	assert.Equal(t, client, handler.client)
-	assert.NotNil(t, handler.sudo)
+	assert.NotNil(t, handler.Base)
 }
 
 func TestHandler_Setup_Success_NoSudoNeeded(t *testing.T) {
