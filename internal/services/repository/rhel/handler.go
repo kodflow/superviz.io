@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"net"
 	"net/url"
 	"strings"
 	"text/template"
@@ -267,6 +268,40 @@ func validateURL(rawURL string) error {
 
 	if parsedURL.Host == "" {
 		return fmt.Errorf("URL must have a valid host")
+	}
+
+	// Security checks for dangerous hosts
+	hostname := parsedURL.Hostname()
+
+	// Block localhost and loopback addresses
+	if hostname == "localhost" || hostname == "127.0.0.1" || hostname == "::1" {
+		return fmt.Errorf("localhost and loopback addresses are not allowed")
+	}
+
+	// Block private IP ranges
+	if ip := net.ParseIP(hostname); ip != nil {
+		if ip.IsPrivate() || ip.IsLoopback() {
+			return fmt.Errorf("private and loopback IP addresses are not allowed")
+		}
+	}
+
+	// Whitelist allowed domains for security
+	allowedDomains := []string{
+		"repo.superviz.io",
+		"github.com",
+		"raw.githubusercontent.com",
+	}
+
+	allowed := false
+	for _, domain := range allowedDomains {
+		if hostname == domain || strings.HasSuffix(hostname, "."+domain) {
+			allowed = true
+			break
+		}
+	}
+
+	if !allowed {
+		return fmt.Errorf("domain %s is not in the allowed list", hostname)
 	}
 
 	return nil

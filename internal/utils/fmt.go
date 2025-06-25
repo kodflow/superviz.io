@@ -61,15 +61,17 @@ func FprintlnIgnoreErr(w io.Writer, args ...any) {
 	_, _ = w.Write([]byte("\n"))
 }
 
-// MustFprint writes all values to the writer or panics on error.
+// Fprint writes all values to the writer and returns an error if any operation fails.
 //
-// MustFprint provides a fail-fast approach to output formatting, panicking
-// if any write operation fails. Use when write failures are unrecoverable.
+// Fprint provides formatted output writing with proper error handling.
+// Use this instead of MustFprint for production code.
 //
 // Example:
 //
 //	var buf bytes.Buffer
-//	MustFprint(&buf, "Hello", " ", "World")
+//	if err := Fprint(&buf, "Hello", " ", "World"); err != nil {
+//		return fmt.Errorf("write failed: %w", err)
+//	}
 //	fmt.Println(buf.String()) // "Hello World"
 //
 // Parameters:
@@ -77,25 +79,23 @@ func FprintlnIgnoreErr(w io.Writer, args ...any) {
 //   - args: ...any values to write (supports strings, numbers, booleans, etc.)
 //
 // Returns:
-//   - None (panics on error)
-//
-// Panics:
-//   - If any write operation fails
-func MustFprint(w io.Writer, args ...any) {
-	if _, err := writeArgs(w, args); err != nil {
-		panic("Fprint failed: " + err.Error())
-	}
+//   - Error if any write operation fails
+func Fprint(w io.Writer, args ...any) error {
+	_, err := writeArgs(w, args)
+	return err
 }
 
-// MustFprintln writes all values with newline to the writer or panics on error.
+// Fprintln writes all values with newline to the writer and returns an error if any operation fails.
 //
-// MustFprintln is similar to MustFprint but automatically appends a newline
-// character and panics if any write operation fails.
+// Fprintln is similar to Fprint but automatically appends a newline
+// character and returns proper error handling for production use.
 //
 // Example:
 //
 //	var buf bytes.Buffer
-//	MustFprintln(&buf, "Hello", " ", "World")
+//	if err := Fprintln(&buf, "Hello", " ", "World"); err != nil {
+//		return fmt.Errorf("write failed: %w", err)
+//	}
 //	fmt.Printf("%q", buf.String()) // "Hello World\n"
 //
 // Parameters:
@@ -103,17 +103,13 @@ func MustFprint(w io.Writer, args ...any) {
 //   - args: ...any values to write (supports strings, numbers, booleans, etc.)
 //
 // Returns:
-//   - None (panics on error)
-//
-// Panics:
-//   - If any write operation fails
-func MustFprintln(w io.Writer, args ...any) {
+//   - Error if any write operation fails
+func Fprintln(w io.Writer, args ...any) error {
 	if _, err := writeArgs(w, args); err != nil {
-		panic("Fprintln failed: " + err.Error())
+		return err
 	}
-	if _, err := w.Write([]byte("\n")); err != nil {
-		panic("Fprintln write failed: " + err.Error())
-	}
+	_, err := w.Write([]byte("\n"))
+	return err
 }
 
 // writeArgs efficiently writes arguments to the writer using pooled string builders.

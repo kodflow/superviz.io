@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-// MockSSHClient mocks the SSH client interface
+// MockSSHClient mocks the SSH client
 type MockSSHClient struct {
 	mock.Mock
 }
@@ -319,9 +319,9 @@ func TestValidateRepoConfig(t *testing.T) {
 		{
 			name: "valid config",
 			config: &RepoConfig{
-				Name:      "Test Repo",
-				BaseURL:   "https://repo.example.com/rpm/",
-				GPGKeyURL: "https://repo.example.com/gpg-key",
+				Name:      "Test Repository",
+				BaseURL:   "https://repo.superviz.io/rpm/",
+				GPGKeyURL: "https://repo.superviz.io/gpg-key",
 				Enabled:   true,
 				GPGCheck:  true,
 			},
@@ -337,8 +337,8 @@ func TestValidateRepoConfig(t *testing.T) {
 			name: "empty name",
 			config: &RepoConfig{
 				Name:      "",
-				BaseURL:   "https://repo.example.com/rpm/",
-				GPGKeyURL: "https://repo.example.com/gpg-key",
+				BaseURL:   "https://repo.superviz.io/rpm/",
+				GPGKeyURL: "https://repo.superviz.io/gpg-key",
 			},
 			expectErr: true,
 			errMsg:    "repository name cannot be empty",
@@ -347,8 +347,8 @@ func TestValidateRepoConfig(t *testing.T) {
 			name: "whitespace only name",
 			config: &RepoConfig{
 				Name:      "   ",
-				BaseURL:   "https://repo.example.com/rpm/",
-				GPGKeyURL: "https://repo.example.com/gpg-key",
+				BaseURL:   "https://repo.superviz.io/rpm/",
+				GPGKeyURL: "https://repo.superviz.io/gpg-key",
 			},
 			expectErr: true,
 			errMsg:    "repository name cannot be empty",
@@ -367,7 +367,7 @@ func TestValidateRepoConfig(t *testing.T) {
 			name: "invalid GPG key URL",
 			config: &RepoConfig{
 				Name:      "Test Repo",
-				BaseURL:   "https://repo.example.com/rpm/",
+				BaseURL:   "https://repo.superviz.io/rpm/",
 				GPGKeyURL: "ftp://insecure.example.com/gpg-key",
 			},
 			expectErr: true,
@@ -394,8 +394,8 @@ func TestValidateRepoConfig(t *testing.T) {
 func TestGenerateRepoContent(t *testing.T) {
 	config := &RepoConfig{
 		Name:      "Test Repository",
-		BaseURL:   "https://repo.example.com/rpm/",
-		GPGKeyURL: "https://repo.example.com/gpg-key",
+		BaseURL:   "https://repo.superviz.io/rpm/",
+		GPGKeyURL: "https://repo.superviz.io/gpg-key",
 		Enabled:   true,
 		GPGCheck:  true,
 	}
@@ -407,17 +407,17 @@ func TestGenerateRepoContent(t *testing.T) {
 	// Check that all expected values are present
 	assert.Contains(t, content, "[superviz]")
 	assert.Contains(t, content, "name=Test Repository")
-	assert.Contains(t, content, "baseurl=https://repo.example.com/rpm/")
+	assert.Contains(t, content, "baseurl=https://repo.superviz.io/rpm/")
 	assert.Contains(t, content, "enabled=1")
 	assert.Contains(t, content, "gpgcheck=1")
-	assert.Contains(t, content, "gpgkey=https://repo.example.com/gpg-key")
+	assert.Contains(t, content, "gpgkey=https://repo.superviz.io/gpg-key")
 }
 
 func TestGenerateRepoContent_DisabledConfig(t *testing.T) {
 	config := &RepoConfig{
 		Name:      "Disabled Repository",
-		BaseURL:   "https://repo.example.com/rpm/",
-		GPGKeyURL: "https://repo.example.com/gpg-key",
+		BaseURL:   "https://repo.superviz.io/rpm/",
+		GPGKeyURL: "https://repo.superviz.io/gpg-key",
 		Enabled:   false,
 		GPGCheck:  false,
 	}
@@ -470,8 +470,8 @@ func TestNewHandlerWithProvider(t *testing.T) {
 	client := &MockSSHClient{}
 	provider := NewCustomRepoProvider(
 		"Test Repo",
-		"https://test.example.com/rpm/",
-		"https://test.example.com/gpg-key",
+		"https://repo.superviz.io/rpm/",
+		"https://repo.superviz.io/gpg-key",
 		true,
 		true,
 	)
@@ -488,8 +488,8 @@ func TestHandler_Setup_WithCustomProvider(t *testing.T) {
 	client := &MockSSHClient{}
 	provider := NewCustomRepoProvider(
 		"Custom Test Repository",
-		"https://custom.example.com/rpm/",
-		"https://custom.example.com/gpg-key",
+		"https://repo.superviz.io/rpm/",
+		"https://repo.superviz.io/gpg-key",
 		true,
 		true,
 	)
@@ -500,16 +500,16 @@ func TestHandler_Setup_WithCustomProvider(t *testing.T) {
 	// Mock repository setup commands without sudo
 	expectedRepoContent := `[superviz]
 name=Custom Test Repository
-baseurl=https://custom.example.com/rpm/
+baseurl=https://repo.superviz.io/rpm/
 enabled=1
 gpgcheck=1
-gpgkey=https://custom.example.com/gpg-key`
+gpgkey=https://repo.superviz.io/gpg-key`
 
 	expectedCommands := []string{
 		fmt.Sprintf("cat > /tmp/superviz.repo << 'EOF'\n%s\nEOF", expectedRepoContent),
 		"cp /tmp/superviz.repo /etc/yum.repos.d/superviz.repo",
 		"rm /tmp/superviz.repo",
-		"rpm --import https://custom.example.com/gpg-key",
+		"rpm --import https://repo.superviz.io/gpg-key",
 		"if command -v dnf >/dev/null 2>&1; then dnf clean all; elif command -v yum >/dev/null 2>&1; then yum clean all; fi",
 	}
 
