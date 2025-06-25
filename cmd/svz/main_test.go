@@ -52,7 +52,7 @@ func TestMain(t *testing.T) {
 	err := cmd.Run()
 
 	if err == nil {
-		// os.Exit(0) = succès → OK
+		// os.Exit(0) = success → OK
 		return
 	}
 

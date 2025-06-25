@@ -3,7 +3,8 @@ GOVERSION := $(shell go version | awk '{print $$3}')
 BUILT_BY  := local
 OS        := $(shell uname -s | tr '[:upper:]' '[:lower:]')
 ARCH      := $(shell uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
-
+.SILENT:
+# Ensure GoReleaser is installed
 # Make args forwarding
 ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 $(eval $(ARGS):;@:)

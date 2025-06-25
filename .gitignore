@@ -57,4 +57,5 @@ coverage/
 *.tmp
 *~
 
-coverage.out
+*.out
+*.html
