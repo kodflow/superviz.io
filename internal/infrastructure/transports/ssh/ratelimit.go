@@ -38,13 +38,19 @@ type TokenBucketRateLimiter struct {
 	hosts map[string]*hostState
 	// mu protects concurrent access to hosts map
 	mu sync.RWMutex
+	// lastCleanup tracks when we last cleaned up inactive hosts
+	lastCleanup time.Time
+	// cleanupInterval defines how often to clean up inactive hosts
+	cleanupInterval time.Duration
 }
 
 // hostState tracks rate limiting state for a single host.
 type hostState struct {
 	// attempts tracks recent connection attempts
 	attempts []time.Time
-	// mu protects concurrent access to attempts slice
+	// lastUsed tracks when this host was last accessed
+	lastUsed time.Time
+	// mu protects concurrent access to attempts slice and lastUsed
 	mu sync.Mutex
 }
 
@@ -52,6 +58,7 @@ type hostState struct {
 //
 // NewTokenBucketRateLimiter initializes a rate limiter that allows
 // up to maxAttempts connection attempts per timeWindow per host.
+// It also sets up automatic cleanup of inactive hosts to prevent memory leaks.
 //
 // Example:
 //
@@ -66,9 +73,11 @@ type hostState struct {
 //   - RateLimiter configured rate limiter instance
 func NewTokenBucketRateLimiter(maxAttempts int, timeWindow time.Duration) RateLimiter {
 	return &TokenBucketRateLimiter{
-		maxAttempts: maxAttempts,
-		timeWindow:  timeWindow,
-		hosts:       make(map[string]*hostState),
+		maxAttempts:     maxAttempts,
+		timeWindow:      timeWindow,
+		hosts:           make(map[string]*hostState),
+		lastCleanup:     time.Now(),
+		cleanupInterval: timeWindow * 2, // Clean up every 2x the time window
 	}
 }
 
@@ -108,6 +117,7 @@ func (r *TokenBucketRateLimiter) Allow(ctx context.Context, host string) (bool, 
 		// Create new host state
 		state = &hostState{
 			attempts: make([]time.Time, 0, r.maxAttempts),
+			lastUsed: now,
 		}
 
 		r.mu.Lock()
@@ -123,6 +133,9 @@ func (r *TokenBucketRateLimiter) Allow(ctx context.Context, host string) (bool, 
 	// Check and update attempts for this host
 	state.mu.Lock()
 	defer state.mu.Unlock()
+
+	// Update last used time
+	state.lastUsed = now
 
 	// Remove old attempts outside the time window
 	validAttempts := 0
@@ -143,7 +156,53 @@ func (r *TokenBucketRateLimiter) Allow(ctx context.Context, host string) (bool, 
 
 	// Add this attempt
 	state.attempts = append(state.attempts, now)
+
+	// Periodic cleanup of inactive hosts to prevent memory leaks
+	r.cleanupInactiveHostsIfNeeded(now)
+
 	return true, nil
+}
+
+// cleanupInactiveHostsIfNeeded performs periodic cleanup of inactive hosts.
+//
+// cleanupInactiveHostsIfNeeded removes hosts that haven't had attempts recently
+// to prevent memory leaks in long-running applications with many different hosts.
+//
+// Parameters:
+//   - now: time.Time current time for cleanup calculations
+func (r *TokenBucketRateLimiter) cleanupInactiveHostsIfNeeded(now time.Time) {
+	// Only cleanup if enough time has passed
+	if now.Sub(r.lastCleanup) < r.cleanupInterval {
+		return
+	}
+
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	// Check if we still need to cleanup (double-checked locking)
+	if now.Sub(r.lastCleanup) < r.cleanupInterval {
+		return
+	}
+
+	cutoff := now.Add(-2 * r.timeWindow) // Clean hosts inactive for 2x time window
+
+	hostsToDelete := make([]string, 0)
+	for host, state := range r.hosts {
+		state.mu.Lock()
+		shouldDelete := state.lastUsed.Before(cutoff)
+		state.mu.Unlock()
+
+		if shouldDelete {
+			hostsToDelete = append(hostsToDelete, host)
+		}
+	}
+
+	// Delete inactive hosts
+	for _, host := range hostsToDelete {
+		delete(r.hosts, host)
+	}
+
+	r.lastCleanup = now
 }
 
 // NoOpRateLimiter is a rate limiter that always allows connections.
