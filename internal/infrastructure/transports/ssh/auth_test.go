@@ -255,78 +255,100 @@ func TestDefaultAuthenticator_CacheWithDifferentPaths(t *testing.T) {
 }
 
 func TestTerminalPasswordReader_ReadPassword(t *testing.T) {
-	// Note: This test cannot fully test the actual terminal reading behavior
-	// due to stdin dependency, but we can test the success path structure
-
+	// We can't easily test the actual terminal reading in CI/tests,
+	// but we can test the interface compliance and error handling
 	reader := &terminalPasswordReader{}
-
-	// We cannot directly test this function as it reads from os.Stdin
-	// and uses term.ReadPassword which requires a terminal.
-	// Instead, we verify that the function exists and has the right signature
-
-	// This test would need to be run manually or with a mocked stdin,
-	// but for coverage purposes, we document that this function handles
-	// terminal password reading with proper error handling.
-
-	// Test that the reader can be created
 	require.NotNil(t, reader)
 
-	// The actual functionality is tested through the authenticator tests
-	// which use mockPasswordReader
+	// Test that the method exists and is callable
+	// In a real scenario, this would prompt for password
+	// We can't test it fully without mocking os.Stdin
+	_ = reader.ReadPassword
 }
 
-func TestFileKeyLoader_LoadKey(t *testing.T) {
+func TestFileKeyLoader_LoadKey_FileNotFound(t *testing.T) {
 	loader := &fileKeyLoader{}
-	require.NotNil(t, loader)
 
 	// Test with non-existent file
-	_, err := loader.LoadKey("/non/existent/path")
+	signer, err := loader.LoadKey("/path/that/does/not/exist")
 	require.Error(t, err)
+	require.Nil(t, signer)
 	require.Contains(t, err.Error(), "unable to read private key")
 }
 
 func TestFileKeyLoader_LoadKey_InvalidKey(t *testing.T) {
-	loader := &fileKeyLoader{}
-
 	// Create a temporary file with invalid key content
-	tmpFile, err := os.CreateTemp("", "invalid_key_*.pem")
+	tmpFile, err := os.CreateTemp("", "invalid_key_*")
 	require.NoError(t, err)
-	defer func() { _ = os.Remove(tmpFile.Name()) }() // Ignore cleanup errors
+	defer func() {
+		_ = os.Remove(tmpFile.Name())
+	}()
 
-	// Write invalid key content
-	invalidKeyContent := []byte("-----BEGIN PRIVATE KEY-----\ninvalid content\n-----END PRIVATE KEY-----")
-	_, err = tmpFile.Write(invalidKeyContent)
+	// Write invalid key data
+	_, err = tmpFile.WriteString("invalid key content")
 	require.NoError(t, err)
-	require.NoError(t, tmpFile.Close())
+	err = tmpFile.Close()
+	require.NoError(t, err)
 
-	// Test with invalid key file
-	_, err = loader.LoadKey(tmpFile.Name())
+	loader := &fileKeyLoader{}
+	signer, err := loader.LoadKey(tmpFile.Name())
 	require.Error(t, err)
+	require.Nil(t, signer)
 	require.Contains(t, err.Error(), "unable to parse private key")
 }
 
 func TestFileKeyLoader_LoadKey_ValidKey(t *testing.T) {
+	// Create a test RSA private key
+	testKey := `-----BEGIN RSA PRIVATE KEY-----
+MIIEowIBAAKCAQEA3r8k3W6GQF4I6zUJyJKB3cYbzz4rQJQz3+s9xvQa5HUeqH2
+2h8rBJn5A7sDg1J2+J5b5A6r7QJ7t6F7+aKoKq4+f9e9J1U8W1e5x9Y8r9R8r8t
+d0w+I8t7Y5I5S1o5b4b8Y8rP5Fd0N3FdY3H7a8t8P3h8F6F7a8x9Y8r9R8r8td0
+w+I8t7Y5I5S1o5b4b8Y8rP5Fd0N3FdY3H7a8t8P3h8F6F7a8x9Y8r9R8r8td0w+
+I8t7Y5I5S1o5b4b8Y8rP5Fd0N3FdY3H7a8t8P3h8F6F7a8x9Y8r9R8r8td0w+I8
+t7Y5I5S1o5b4b8Y8rP5Fd0N3FdY3H7a8t8P3h8F6F7a8x9Y8r9R8r8td0w+I8t7
+Y5I5S1o5b4b8Y8rP5Fd0N3FdY3H7a8t8P3h8F6F7a8x9Y8r9R8r8td0wIDAQAB
+AoIBAE4LmqU/qEiYxYxHYf3J7Q8J8j1Kj3l4h8H8k8j5j8H8kD3f3A4F7a8x9Y8
+r9R8r8td0w+I8t7Y5I5S1o5b4b8Y8rP5Fd0N3FdY3H7a8t8P3h8F6F7a8x9Y8r9
+R8r8td0w+I8t7Y5I5S1o5b4b8Y8rP5Fd0N3FdY3H7a8t8P3h8F6F7a8x9Y8r9R8
+r8td0w+I8t7Y5I5S1o5b4b8Y8rP5Fd0N3FdY3H7a8t8P3h8F6F7a8x9Y8r9R8r8
+td0w+I8t7Y5I5S1o5b4b8Y8rP5Fd0N3FdY3H7a8t8P3h8F6F7a8x9Y8r9R8r8td
+0w+I8t7Y5I5S1o5b4b8Y8rP5Fd0N3FdY3H7a8t8P3h8F6F7a8x9Y8r9R8r8td0w
++I8t7Y5I5S1o5b4b8Y8rP5Fd0N3FdY3H7a8t8P3h8F6F7a8x9Y8r9R8r8td0wEC
+gYEA8V8k6k3b8t8P3h8F6F7a8x9Y8r9R8r8td0w+I8t7Y5I5S1o5b4b8Y8rP5Fd
+0N3FdY3H7a8t8P3h8F6F7a8x9Y8r9R8r8td0w+I8t7Y5I5S1o5b4b8Y8rP5Fd0N
+3FdY3H7a8t8P3h8F6F7a8x9Y8r9R8r8td0w+I8t7Y5I5S1o5b4b8Y8rP5Fd0N3F
+dY3H7a8t8P3h8F6F7a8x9Y8r9R8r8td0w+I8t7Y5I5S1o5b4b8Y8rP5Fd0ECgYBF
+8k6k3b8t8P3h8F6F7a8x9Y8r9R8r8td0w+I8t7Y5I5S1o5b4b8Y8rP5Fd0N3FdY
+3H7a8t8P3h8F6F7a8x9Y8r9R8r8td0w+I8t7Y5I5S1o5b4b8Y8rP5Fd0N3FdY3H7
+a8t8P3h8F6F7a8x9Y8r9R8r8td0w+I8t7Y5I5S1o5b4b8Y8rP5Fd0N3FdY3H7a8
+t8P3h8F6F7a8x9Y8r9R8r8td0w+I8t7Y5I5S1o5b4b8Y8rP5Fd0N3FdY3H7a8t8
+P3h8F6F7a8x9Y8r9R8r8td0w+I8t7Y5I5S1o5b4b8Y8rP5Fd0ECgYAq4+f9e9J1
+U8W1e5x9Y8r9R8r8td0w+I8t7Y5I5S1o5b4b8Y8rP5Fd0N3FdY3H7a8t8P3h8F6
+F7a8x9Y8r9R8r8td0w+I8t7Y5I5S1o5b4b8Y8rP5Fd0N3FdY3H7a8t8P3h8F6F7
+a8x9Y8r9R8r8td0w+I8t7Y5I5S1o5b4b8Y8rP5Fd0N3FdY3H7a8t8P3h8F6F7a8
+x9Y8r9R8r8td0w+I8t7Y5I5S1o5b4b8Y8rP5Fd0N3FdY3H7a8t8P3h8F6F7a8x9
+Y8r9R8r8td0w+I8t7Y5I5S1o5b4b8Y8rP5Fd0N3FdY3H7a8t8P3h8F6F7a8x9Y8
+r9R8r8td0w==
+-----END RSA PRIVATE KEY-----`
+
+	// Create a temporary file with a valid (but made-up) RSA key
+	tmpFile, err := os.CreateTemp("", "valid_key_*")
+	require.NoError(t, err)
+	defer func() {
+		_ = os.Remove(tmpFile.Name())
+	}()
+
+	_, err = tmpFile.WriteString(testKey)
+	require.NoError(t, err)
+	err = tmpFile.Close()
+	require.NoError(t, err)
+
 	loader := &fileKeyLoader{}
+	signer, err := loader.LoadKey(tmpFile.Name())
 
-	// Create a temporary file with a valid test key
-	tmpFile, err := os.CreateTemp("", "valid_key_*.pem")
-	require.NoError(t, err)
-	defer func() { _ = os.Remove(tmpFile.Name()) }() // Ignore cleanup errors
-
-	// Use a minimal valid RSA private key for testing
-	validKeyContent := []byte(`-----BEGIN OPENSSH PRIVATE KEY-----
-INVALID_TEST_KEY_CONTENT_FOR_PARSING_ERROR
------END OPENSSH PRIVATE KEY-----`)
-
-	// Write key content - this will actually be invalid because it's truncated,
-	// but that's fine for testing the parse error path
-	_, err = tmpFile.Write(validKeyContent)
-	require.NoError(t, err)
-	require.NoError(t, tmpFile.Close())
-
-	// This should error because the key is not actually valid
-	_, err = loader.LoadKey(tmpFile.Name())
+	// This should fail with invalid key format, which tests the parsing error path
 	require.Error(t, err)
+	require.Nil(t, signer)
 	require.Contains(t, err.Error(), "unable to parse private key")
 }
 

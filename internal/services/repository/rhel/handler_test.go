@@ -291,6 +291,63 @@ func TestValidateURL(t *testing.T) {
 			expectErr: true,
 			errMsg:    "URL must use HTTPS scheme",
 		},
+		{
+			name:      "localhost URL",
+			url:       "https://localhost/repo/",
+			expectErr: true,
+			errMsg:    "localhost and loopback addresses are not allowed",
+		},
+		{
+			name:      "loopback IP 127.0.0.1",
+			url:       "https://127.0.0.1/repo/",
+			expectErr: true,
+			errMsg:    "localhost and loopback addresses are not allowed",
+		},
+		{
+			name:      "IPv6 loopback",
+			url:       "https://[::1]/repo/",
+			expectErr: true,
+			errMsg:    "localhost and loopback addresses are not allowed",
+		},
+		{
+			name:      "private IP 192.168.1.1",
+			url:       "https://192.168.1.1/repo/",
+			expectErr: true,
+			errMsg:    "private and loopback IP addresses are not allowed",
+		},
+		{
+			name:      "private IP 10.0.0.1",
+			url:       "https://10.0.0.1/repo/",
+			expectErr: true,
+			errMsg:    "private and loopback IP addresses are not allowed",
+		},
+		{
+			name:      "private IP 172.16.0.1",
+			url:       "https://172.16.0.1/repo/",
+			expectErr: true,
+			errMsg:    "private and loopback IP addresses are not allowed",
+		},
+		{
+			name:      "disallowed domain",
+			url:       "https://evil.com/repo/",
+			expectErr: true,
+			errMsg:    "domain evil.com is not in the allowed list",
+		},
+		{
+			name:      "allowed GitHub domain",
+			url:       "https://github.com/user/repo/",
+			expectErr: false,
+		},
+		{
+			name:      "allowed GitHub subdomain",
+			url:       "https://raw.githubusercontent.com/user/repo/main/file",
+			expectErr: false,
+		},
+		{
+			name:      "allowed superviz subdomain",
+			url:       "https://api.repo.superviz.io/rpm/",
+			expectErr: false,
+		},
 	}
 
 	for _, tc := range testCases {
@@ -427,6 +484,48 @@ func TestGenerateRepoContent_DisabledConfig(t *testing.T) {
 	assert.NotEmpty(t, content)
 
 	// Check that disabled flags are set correctly
+	assert.Contains(t, content, "enabled=0")
+	assert.Contains(t, content, "gpgcheck=0")
+}
+
+// Test coverage for template execution errors (though unlikely with our simple template)
+func TestGenerateRepoContent_WithSpecialCharacters(t *testing.T) {
+	config := &RepoConfig{
+		Name:      "Repository with special chars & <test>",
+		BaseURL:   "https://repo.superviz.io/rpm/test%20dir/",
+		GPGKeyURL: "https://repo.superviz.io/gpg-key?version=1.0",
+		Enabled:   true,
+		GPGCheck:  true,
+	}
+
+	content, err := generateRepoContent(config)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, content)
+
+	// Check that special characters are handled properly
+	assert.Contains(t, content, "Repository with special chars & <test>")
+	assert.Contains(t, content, "https://repo.superviz.io/rpm/test%20dir/")
+	assert.Contains(t, content, "https://repo.superviz.io/gpg-key?version=1.0")
+}
+
+// Test edge cases for better coverage
+func TestGenerateRepoContent_EmptyValues(t *testing.T) {
+	config := &RepoConfig{
+		Name:      "",
+		BaseURL:   "",
+		GPGKeyURL: "",
+		Enabled:   false,
+		GPGCheck:  false,
+	}
+
+	content, err := generateRepoContent(config)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, content)
+
+	// Check that empty values are handled
+	assert.Contains(t, content, "name=")
+	assert.Contains(t, content, "baseurl=")
+	assert.Contains(t, content, "gpgkey=")
 	assert.Contains(t, content, "enabled=0")
 	assert.Contains(t, content, "gpgcheck=0")
 }

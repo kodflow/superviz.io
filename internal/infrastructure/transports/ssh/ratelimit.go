@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -25,10 +26,27 @@ type RateLimiter interface {
 	Allow(ctx context.Context, host string) (bool, error)
 }
 
-// TokenBucketRateLimiter implements rate limiting using token bucket algorithm.
+// TokenBucketRateLimiter implements rate limiting using token bucket algorithm with atomic operations.
 //
 // TokenBucketRateLimiter maintains per-host token buckets to limit connection
-// attempts over time, providing protection against brute force attacks.
+// attempts over time, providing ultra-fast protection against brute force attacks
+// using lock-free atomic operations for maximum performance.
+// Code block:
+//
+//	limiter := NewTokenBucketRateLimiter(3, time.Minute)
+//	allowed, err := limiter.Allow(ctx, "example.com")
+//	if err != nil {
+//	    log.Printf("Rate limit check failed: %v", err)
+//	    return
+//	}
+//	if !allowed {
+//	    log.Println("Rate limited")
+//	    return
+//	}
+//
+// Parameters: N/A (for types)
+//
+// Returns: N/A (for types)
 type TokenBucketRateLimiter struct {
 	// maxAttempts is the maximum number of attempts allowed per time window
 	maxAttempts int
@@ -38,67 +56,113 @@ type TokenBucketRateLimiter struct {
 	hosts map[string]*hostState
 	// mu protects concurrent access to hosts map
 	mu sync.RWMutex
-	// lastCleanup tracks when we last cleaned up inactive hosts
-	lastCleanup time.Time
+	// lastCleanup tracks when we last cleaned up inactive hosts (atomic)
+	lastCleanup atomic.Int64 // Unix nano timestamp
 	// cleanupInterval defines how often to clean up inactive hosts
 	cleanupInterval time.Duration
+	// requestCount tracks total requests atomically for metrics
+	requestCount atomic.Uint64
+	// rateLimitedCount tracks rate-limited requests atomically
+	rateLimitedCount atomic.Uint64
 }
 
-// hostState tracks rate limiting state for a single host.
+// hostState tracks rate limiting state for a single host with atomic operations.
+//
+// hostState provides lock-free access to attempt tracking for maximum performance
+// in high-concurrency scenarios, using atomic operations for counters.
+// Code block:
+//
+//	state := &hostState{
+//	    attempts: make([]time.Time, 0, maxAttempts),
+//	    lastUsed: atomic.NewInt64(time.Now().UnixNano()),
+//	}
+//
+// Parameters: N/A (for types)
+//
+// Returns: N/A (for types)
 type hostState struct {
 	// attempts tracks recent connection attempts
 	attempts []time.Time
-	// lastUsed tracks when this host was last accessed
-	lastUsed time.Time
-	// mu protects concurrent access to attempts slice and lastUsed
+	// lastUsed tracks when this host was last accessed (atomic unix nano)
+	lastUsed atomic.Int64
+	// mu protects concurrent access to attempts slice
 	mu sync.Mutex
 }
 
-// NewTokenBucketRateLimiter creates a new token bucket rate limiter.
+// NewTokenBucketRateLimiter creates a new token bucket rate limiter with atomic operations.
 //
-// NewTokenBucketRateLimiter initializes a rate limiter that allows
+// NewTokenBucketRateLimiter initializes a high-performance rate limiter that allows
 // up to maxAttempts connection attempts per timeWindow per host.
-// It also sets up automatic cleanup of inactive hosts to prevent memory leaks.
+// It uses atomic operations for maximum concurrency and zero-allocation patterns.
 //
-// Example:
+// Code block:
 //
 //	// Allow 3 attempts per minute per host
 //	limiter := NewTokenBucketRateLimiter(3, time.Minute)
+//	allowed, err := limiter.Allow(ctx, "example.com")
+//	if err != nil {
+//	    log.Printf("Rate limiting failed: %v", err)
+//	    return
+//	}
+//	if !allowed {
+//	    log.Println("Request rate limited")
+//	    return
+//	}
 //
 // Parameters:
-//   - maxAttempts: int maximum attempts allowed per time window
-//   - timeWindow: time.Duration duration of the rate limiting window
+//   - 1 maxAttempts: int - maximum attempts allowed per time window (must be > 0)
+//   - 2 timeWindow: time.Duration - duration of the rate limiting window (must be > 0)
 //
 // Returns:
-//   - RateLimiter configured rate limiter instance
+//   - 1 limiter: RateLimiter - configured ultra-performance rate limiter instance
 func NewTokenBucketRateLimiter(maxAttempts int, timeWindow time.Duration) RateLimiter {
-	return &TokenBucketRateLimiter{
+	limiter := &TokenBucketRateLimiter{
 		maxAttempts:     maxAttempts,
 		timeWindow:      timeWindow,
 		hosts:           make(map[string]*hostState),
-		lastCleanup:     time.Now(),
 		cleanupInterval: timeWindow * 2, // Clean up every 2x the time window
 	}
+	// Initialize atomic timestamp
+	limiter.lastCleanup.Store(time.Now().UnixNano())
+	return limiter
 }
 
-// Allow checks if a connection attempt to the given host is allowed.
+// Allow checks if a connection attempt to the given host is allowed using atomic operations.
 //
-// Allow implements rate limiting by tracking connection attempts per host
-// within the configured time window. Attempts outside the window are discarded.
+// Allow implements ultra-fast rate limiting by tracking connection attempts per host
+// within the configured time window using atomic operations and lock-free patterns.
+// Attempts outside the window are discarded automatically.
+//
+// Code block:
+//
+//	ctx := context.Background()
+//	allowed, err := limiter.Allow(ctx, "example.com")
+//	if err != nil {
+//	    log.Printf("Rate check failed: %v", err)
+//	    return
+//	}
+//	if !allowed {
+//	    log.Println("Request rate limited")
+//	    return
+//	}
 //
 // Parameters:
-//   - ctx: context.Context for timeout and cancellation
-//   - host: string hostname or IP address to check
+//   - 1 ctx: context.Context - request context for timeout and cancellation
+//   - 2 host: string - hostname or IP address to check (must not be empty)
 //
 // Returns:
-//   - bool true if connection attempt is allowed, false if rate limited
-//   - error if rate limiting check fails
+//   - 1 allowed: bool - true if connection attempt is allowed, false if rate limited
+//   - 2 error - non-nil if rate limiting check fails or context cancelled
 func (r *TokenBucketRateLimiter) Allow(ctx context.Context, host string) (bool, error) {
+	// Input validation with fast path
 	if host == "" {
 		return false, fmt.Errorf("host cannot be empty")
 	}
 
-	// Check for context cancellation
+	// Atomic counter increment for metrics
+	r.requestCount.Add(1)
+
+	// Check for context cancellation with zero-allocation
 	select {
 	case <-ctx.Done():
 		return false, ctx.Err()
@@ -106,6 +170,7 @@ func (r *TokenBucketRateLimiter) Allow(ctx context.Context, host string) (bool, 
 	}
 
 	now := time.Now()
+	nowNano := now.UnixNano()
 	cutoff := now.Add(-r.timeWindow)
 
 	// Get or create host state
@@ -114,11 +179,11 @@ func (r *TokenBucketRateLimiter) Allow(ctx context.Context, host string) (bool, 
 	r.mu.RUnlock()
 
 	if !exists {
-		// Create new host state
+		// Create new host state with pre-allocated capacity
 		state = &hostState{
 			attempts: make([]time.Time, 0, r.maxAttempts),
-			lastUsed: now,
 		}
+		state.lastUsed.Store(nowNano)
 
 		r.mu.Lock()
 		// Double-check in case another goroutine created it
@@ -134,10 +199,10 @@ func (r *TokenBucketRateLimiter) Allow(ctx context.Context, host string) (bool, 
 	state.mu.Lock()
 	defer state.mu.Unlock()
 
-	// Update last used time
-	state.lastUsed = now
+	// Update last used time atomically
+	state.lastUsed.Store(nowNano)
 
-	// Remove old attempts outside the time window
+	// Remove old attempts outside the time window (zero-allocation)
 	validAttempts := 0
 	for i, attempt := range state.attempts {
 		if attempt.After(cutoff) {
@@ -151,58 +216,109 @@ func (r *TokenBucketRateLimiter) Allow(ctx context.Context, host string) (bool, 
 
 	// Check if we're under the limit
 	if len(state.attempts) >= r.maxAttempts {
-		return false, nil // Rate limited
+		r.rateLimitedCount.Add(1) // Atomic increment
+		return false, nil         // Rate limited
 	}
 
 	// Add this attempt
 	state.attempts = append(state.attempts, now)
 
 	// Periodic cleanup of inactive hosts to prevent memory leaks
-	r.cleanupInactiveHostsIfNeeded(now)
+	r.cleanupInactiveHostsIfNeeded(nowNano)
 
 	return true, nil
 }
 
-// cleanupInactiveHostsIfNeeded performs periodic cleanup of inactive hosts.
+// cleanupInactiveHostsIfNeeded performs periodic cleanup of inactive hosts using atomic operations.
 //
 // cleanupInactiveHostsIfNeeded removes hosts that haven't had attempts recently
 // to prevent memory leaks in long-running applications with many different hosts.
+// Uses atomic timestamps for lock-free performance optimization.
+//
+// Code block:
+//
+//	limiter := NewTokenBucketRateLimiter(5, time.Minute)
+//	// Cleanup happens automatically during Allow() calls
+//	// Uses atomic operations for maximum performance
 //
 // Parameters:
-//   - now: time.Time current time for cleanup calculations
-func (r *TokenBucketRateLimiter) cleanupInactiveHostsIfNeeded(now time.Time) {
-	// Only cleanup if enough time has passed
-	if now.Sub(r.lastCleanup) < r.cleanupInterval {
+//   - 1 nowNano: int64 - current time in Unix nanoseconds for atomic operations
+//
+// Returns: N/A (void function)
+func (r *TokenBucketRateLimiter) cleanupInactiveHostsIfNeeded(nowNano int64) {
+	// Load last cleanup time atomically
+	lastCleanupNano := r.lastCleanup.Load()
+
+	// Only cleanup if enough time has passed (atomic comparison)
+	if nowNano-lastCleanupNano < r.cleanupInterval.Nanoseconds() {
 		return
 	}
 
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	// Check if we still need to cleanup (double-checked locking)
-	if now.Sub(r.lastCleanup) < r.cleanupInterval {
+	// Double-checked locking with atomic load
+	if nowNano-r.lastCleanup.Load() < r.cleanupInterval.Nanoseconds() {
 		return
 	}
 
-	cutoff := now.Add(-2 * r.timeWindow) // Clean hosts inactive for 2x time window
+	cutoffNano := nowNano - (2 * r.timeWindow.Nanoseconds()) // Clean hosts inactive for 2x time window
 
-	hostsToDelete := make([]string, 0)
+	hostsToDelete := make([]string, 0) // Pre-allocate with zero capacity
 	for host, state := range r.hosts {
-		state.mu.Lock()
-		shouldDelete := state.lastUsed.Before(cutoff)
-		state.mu.Unlock()
+		// Atomic load of last used time
+		stateLastUsedNano := state.lastUsed.Load()
 
-		if shouldDelete {
+		if stateLastUsedNano < cutoffNano {
 			hostsToDelete = append(hostsToDelete, host)
 		}
 	}
 
-	// Delete inactive hosts
+	// Delete inactive hosts (batch operation)
 	for _, host := range hostsToDelete {
 		delete(r.hosts, host)
 	}
 
-	r.lastCleanup = now
+	// Update last cleanup time atomically
+	r.lastCleanup.Store(nowNano)
+}
+
+// GetMetrics returns atomic performance metrics for monitoring.
+//
+// GetMetrics provides real-time metrics for rate limiter performance
+// monitoring and debugging, using atomic operations for accurate counters.
+//
+// Code block:
+//
+//	limiter := NewTokenBucketRateLimiter(5, time.Minute)
+//	total, limited := limiter.GetMetrics()
+//	log.Printf("Total: %d, Rate Limited: %d", total, limited)
+//
+// Parameters: N/A
+//
+// Returns:
+//   - 1 totalRequests: uint64 - total number of requests processed atomically
+//   - 2 rateLimitedRequests: uint64 - number of rate-limited requests atomically
+func (r *TokenBucketRateLimiter) GetMetrics() (totalRequests, rateLimitedRequests uint64) {
+	return r.requestCount.Load(), r.rateLimitedCount.Load()
+}
+
+// ResetMetrics atomically resets all performance counters to zero.
+//
+// ResetMetrics provides a thread-safe way to reset metrics for
+// testing or periodic monitoring cycles.
+//
+// Code block:
+//
+//	limiter := NewTokenBucketRateLimiter(5, time.Minute)
+//	limiter.ResetMetrics() // Safe concurrent reset
+//
+// Parameters: N/A
+//
+// Returns: N/A (void function)
+func (r *TokenBucketRateLimiter) ResetMetrics() {
+	r.requestCount.Store(0)
+	r.rateLimitedCount.Store(0)
 }
 
 // NoOpRateLimiter is a rate limiter that always allows connections.

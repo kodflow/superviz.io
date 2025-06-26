@@ -3,6 +3,7 @@ package common
 import (
 	"context"
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -252,6 +253,77 @@ func TestCommandExecutor_Execute_WriteError(t *testing.T) {
 
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "failed to write to output")
+}
+
+// Tests for BaseHandler
+
+func TestNewBaseHandler(t *testing.T) {
+	client := &mockSSHClient{}
+	handler := NewBaseHandler(client)
+
+	require.NotNil(t, handler)
+	assert.Equal(t, client, handler.client)
+	assert.NotNil(t, handler.sudo)
+}
+
+func TestBaseHandler_ExecuteSetup_Success(t *testing.T) {
+	client := &mockSSHClient{}
+
+	// Mock sudo detection
+	client.On("Execute", mock.Anything, "test -w /etc/apt/sources.list.d/").Return(nil).Once()
+
+	// Mock command execution
+	client.On("Execute", mock.Anything, "command1").Return(nil).Once()
+	client.On("Execute", mock.Anything, "command2").Return(nil).Once()
+
+	handler := NewBaseHandler(client)
+
+	// Use a mock writer to capture output
+	var output strings.Builder
+	commands := []string{"command1", "command2"}
+
+	err := handler.ExecuteSetup(context.Background(), &output, "Setting up test...", commands)
+
+	assert.NoError(t, err)
+	assert.Contains(t, output.String(), "Setting up test...")
+	client.AssertExpectations(t)
+}
+
+func TestBaseHandler_ExecuteSetup_Basic(t *testing.T) {
+	client := &mockSSHClient{}
+
+	// Simple success case
+	client.On("Execute", mock.Anything, mock.AnythingOfType("string")).Return(nil).Times(3) // sudo check + 2 commands
+
+	handler := NewBaseHandler(client)
+
+	var output strings.Builder
+	commands := []string{"echo hello", "echo world"}
+
+	err := handler.ExecuteSetup(context.Background(), &output, "Setting up...", commands)
+
+	assert.NoError(t, err)
+	assert.Contains(t, output.String(), "Setting up...")
+	client.AssertExpectations(t)
+}
+
+func TestBaseHandler_ExecuteSetup_CommandExecutionError(t *testing.T) {
+	client := &mockSSHClient{}
+
+	// Mock sudo detection success then command failure
+	client.On("Execute", mock.Anything, "test -w /etc/apt/sources.list.d/").Return(nil).Once()
+	client.On("Execute", mock.Anything, "failing-command").Return(errors.New("command failed")).Once()
+
+	handler := NewBaseHandler(client)
+
+	var output strings.Builder
+	commands := []string{"failing-command"}
+
+	err := handler.ExecuteSetup(context.Background(), &output, "Test setup", commands)
+
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "command failed")
+	client.AssertExpectations(t)
 }
 
 // Test helpers
