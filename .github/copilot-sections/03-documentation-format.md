@@ -1,5 +1,21 @@
 ## Mandatory Documentation Format
 
+### Language Requirement
+
+**ALL comments, documentation, and code must be written in English ONLY.**
+
+- **Godoc comments**: MUST be in English
+- **Inline comments**: MUST be in English
+- **Variable names**: MUST use English words
+- **Function names**: MUST use English words
+- **Error messages**: MUST be in English
+- **Log messages**: MUST be in English
+- **Test names**: MUST be in English
+
+**No exceptions.** French, or any other language, is strictly forbidden in code.
+
+### Documentation Format
+
 Every exported symbol MUST use this exact format:
 
 ```go

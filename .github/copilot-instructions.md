@@ -63,6 +63,7 @@ Wait for explicit user approval before executing ANY edits.
 ## Go 1.24+ Ultra-Performance Standards
 
 ### Go 1.24 Core Features (Mandatory)
+
 ```go
 // Generic type aliases - NEW in 1.24
 type DataProcessor[T any] interface {
@@ -780,6 +781,22 @@ func processRequest(w http.ResponseWriter, r *http.Request) {
 [0;34m[INFO][0m Processing section: 03-documentation-format.md
 ## Mandatory Documentation Format
 
+### Language Requirement
+
+**ALL comments, documentation, and code must be written in English ONLY.**
+
+- **Godoc comments**: MUST be in English
+- **Inline comments**: MUST be in English
+- **Variable names**: MUST use English words
+- **Function names**: MUST use English words
+- **Error messages**: MUST be in English
+- **Log messages**: MUST be in English
+- **Test names**: MUST be in English
+
+**No exceptions.** French, or any other language, is strictly forbidden in code.
+
+### Documentation Format
+
 Every exported symbol MUST use this exact format:
 
 ```go
@@ -919,12 +936,11 @@ func ProcessFiles(files ...string) error {
 func NewService(config *Config, logger Logger) *ServiceManager {
     // Implementation
 }
-````
+```
 
 ---
 
 [0;34m[INFO][0m Processing section: 04-optimization-workflow.md
-
 # Optimization Workflow (go-perfbook Integration)
 
 ## Decision Framework
@@ -1275,7 +1291,6 @@ Every optimization suggestion must demonstrate understanding of:
 ---
 
 [0;34m[INFO][0m Processing section: 05-cpu-optimization.md
-
 ## CPU Optimization
 
 ### Branch Prediction Optimization
@@ -1548,7 +1563,6 @@ func writeFiles(files map[string][]byte) error {
 ---
 
 [0;34m[INFO][0m Processing section: 06-disk-optimization.md
-
 ## Disk Optimization (Zero I/O Priority)
 
 ### Zero I/O Strategy
@@ -1904,7 +1918,6 @@ func processBatch(batch []os.DirEntry) {
 ---
 
 [0;34m[INFO][0m Processing section: 07-memory-optimization.md
-
 ## Memory Optimization
 
 ### Space-Time Trade-offs (go-perfbook Pattern)
@@ -2773,7 +2786,6 @@ func (f *PackedFlags) Clear(flag PackedFlags) {
 ---
 
 [0;34m[INFO][0m Processing section: 08-code-quality.md
-
 ## Code Quality and Security
 
 ### Required Tools (Must Pass)
@@ -3093,7 +3105,6 @@ func parallelSort(data []int) {
 ---
 
 [0;34m[INFO][0m Processing section: 09-test-coverage.md
-
 ## 100% Test Coverage with Timeouts
 
 ### Mandatory Test Structure
@@ -3271,7 +3282,6 @@ func TestServiceWithMock(t *testing.T) {
 ---
 
 [0;34m[INFO][0m Processing section: 10-review-checklist.md
-
 ## Copilot Review Checklist
 
 ### Optimization Framework Review (go-perfbook)
@@ -3363,7 +3373,6 @@ func TestServiceWithMock(t *testing.T) {
 ---
 
 [0;34m[INFO][0m Processing section: 11-summary.md
-
 ## Summary
 
 Copilot must operate as an ultra-performance Go 1.24+ expert with **intelligent optimization framework** based on go-perfbook principles and production-proven patterns:
@@ -3410,7 +3419,6 @@ Every suggestion must be measurably better in performance, security, and maintai
 ---
 
 [0;34m[INFO][0m Processing section: 12-go-design-patterns.md
-
 ## Go Design Patterns Documentation Standards
 
 ### The 5 Essential Patterns for Real Go Projects
@@ -3758,7 +3766,6 @@ All examples follow our Godoc standards with code blocks, parameters, and return
 ---
 
 [0;34m[INFO][0m Processing section: 13-production-scale-patterns.md
-
 # Production-Scale Patterns from Real-World Articles
 
 ## Anti-Patterns from Real Production Issues
@@ -4686,7 +4693,4 @@ func (s *Server) handleRequest(w http.ResponseWriter, r *http.Request) {
 ```
 
 Ces patterns de production sont **éprouvés à 2M+ utilisateurs** et complètent parfaitement notre framework d'optimisation go-perfbook. Ils se concentrent sur les **goulots d'étranglement réels** rencontrés en production : connection pooling, batch operations, type safety, worker pools, et memory management.
-
-```
-
-```
+````
