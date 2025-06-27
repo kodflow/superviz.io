@@ -1,0 +1,16 @@
+# Optimize Docker build context for devcontainer
+# Include only necessary files
+
+# Exclude everything except what we need
+!zshrc
+!.p10k.zsh
+!Dockerfile
+!devcontainer.json
+
+# Exclude common unneeded files
+*.log
+*.tmp
+cache/
+tmp/
+.git
+node_modules/
