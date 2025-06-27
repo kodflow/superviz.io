@@ -15,7 +15,7 @@ func TestFunctionName(t *testing.T) {
     // ALWAYS set test timeout
     ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
     defer cancel()
-    
+
     tests := []struct {
         name    string
         input   string
@@ -38,26 +38,26 @@ func TestFunctionName(t *testing.T) {
             timeout: 100 * time.Millisecond,
         },
     }
-    
+
     for _, tt := range tests {
         t.Run(tt.name, func(t *testing.T) {
             t.Helper()
-            
+
             // Per-test timeout
             testCtx, testCancel := context.WithTimeout(ctx, tt.timeout)
             defer testCancel()
-            
+
             // Use require for fatal assertions
             require.NotNil(t, testCtx)
-            
+
             got, err := FunctionName(testCtx, tt.input)
-            
+
             if tt.wantErr {
                 require.Error(t, err)
                 assert.Empty(t, got)
                 return
             }
-            
+
             require.NoError(t, err)
             assert.Equal(t, tt.want, got)
         })
@@ -66,6 +66,7 @@ func TestFunctionName(t *testing.T) {
 ```
 
 ### Concurrent Test Safety
+
 ```go
 // Service represents our service for testing
 type Service struct {
@@ -90,41 +91,41 @@ func (s *Service) ProcessData(ctx context.Context, key string, data []byte) erro
 
 func TestConcurrentAccess(t *testing.T) {
     t.Parallel()
-    
+
     ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
     defer cancel()
-    
+
     const numGoroutines = 100
     var wg sync.WaitGroup
     errors := make(chan error, numGoroutines)
-    
+
     service := NewService(nil) // Using nil storage for this test
-    
+
     for i := 0; i < numGoroutines; i++ {
         wg.Add(1)
         go func(id int) {
             defer wg.Done()
-            
+
             select {
             case <-ctx.Done():
                 errors <- ctx.Err()
                 return
             default:
             }
-            
+
             if err := service.Process(ctx, fmt.Sprintf("data-%d", id)); err != nil {
                 errors <- err
             }
         }(i)
     }
-    
+
     // Wait with timeout
     done := make(chan struct{})
     go func() {
         wg.Wait()
         close(done)
     }()
-    
+
     select {
     case <-done:
         close(errors)
@@ -139,6 +140,7 @@ func TestConcurrentAccess(t *testing.T) {
 ```
 
 ### Mock Generation (100% Coverage)
+
 ```go
 //go:generate mockgen -source=interfaces.go -destination=mocks/mock_interfaces.go
 
@@ -152,19 +154,19 @@ type Storage interface {
 func TestServiceWithMock(t *testing.T) {
     ctrl := gomock.NewController(t)
     defer ctrl.Finish()
-    
+
     mockStorage := mocks.NewMockStorage(ctrl)
     service := NewService(mockStorage)
-    
+
     ctx, cancel := context.WithTimeout(context.Background(), time.Second)
     defer cancel()
-    
+
     // Setup expectations
     mockStorage.EXPECT().
         Save(gomock.Any(), "test-key", gomock.Any()).
         Return(nil).
         Times(1)
-    
+
     err := service.ProcessData(ctx, "test-key", []byte("test-data"))
     require.NoError(t, err)
 }

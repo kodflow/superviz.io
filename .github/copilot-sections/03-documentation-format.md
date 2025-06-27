@@ -27,7 +27,7 @@ func FunctionName(input string, count int, opts *Options) (string, error) {
 // TypeName Description of the type and its purpose
 type TypeName struct {
     Field1 string       // Description of field 1
-    Field2 atomic.Int64 // Description of field 2  
+    Field2 atomic.Int64 // Description of field 2
     mu     sync.RWMutex // Description of field 3
 }
 
@@ -139,4 +139,4 @@ func ProcessFiles(files ...string) error {
 func NewService(config *Config, logger Logger) *ServiceManager {
     // Implementation
 }
-````
+```

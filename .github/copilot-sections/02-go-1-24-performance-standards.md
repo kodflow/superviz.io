@@ -1,6 +1,7 @@
 ## Go 1.24+ Ultra-Performance Standards
 
 ### Go 1.24 Core Features (Mandatory)
+
 ```go
 // Generic type aliases - NEW in 1.24
 type DataProcessor[T any] interface {
@@ -18,13 +19,13 @@ func processFilesSecurely(rootPath string) error {
         return fmt.Errorf("failed to open root directory %q: %w", rootPath, err)
     }
     defer root.Close()
-    
+
     file, err := root.Create("output.dat")
     if err != nil {
         return fmt.Errorf("failed to create file: %w", err)
     }
     defer file.Close()
-    
+
     return nil
 }
 
@@ -32,7 +33,7 @@ func processFilesSecurely(rootPath string) error {
 func BenchmarkProcessor(b *testing.B) {
     processor := NewProcessor()
     data := generateTestData()
-    
+
     for b.Loop() {
         processor.Process(data)
     }
@@ -67,11 +68,11 @@ func NewSmartCache() *SmartCache {
 func (c *SmartCache) Set(key string, item CacheItem) {
     c.mutex.Lock()
     defer c.mutex.Unlock()
-    
+
     // Allocate in arena for memory efficiency
     allocated := arena.New[CacheItem](c.arena)
     *allocated = item
-    
+
     // Store weak reference - allows GC when memory pressure high
     c.cache[key] = arena.MakeWeak[CacheItem](allocated)
 }
@@ -80,21 +81,21 @@ func (c *SmartCache) Get(key string) (CacheItem, bool) {
     c.mutex.RLock()
     weak, exists := c.cache[key]
     c.mutex.RUnlock()
-    
+
     if !exists {
         return CacheItem{}, false
     }
-    
+
     // Try to get strong reference
     if strong := weak.Strong(); strong != nil {
         return *strong, true
     }
-    
+
     // Item was garbage collected
     c.mutex.Lock()
     delete(c.cache, key)
     c.mutex.Unlock()
-    
+
     return CacheItem{}, false
 }
 
@@ -102,7 +103,7 @@ func (c *SmartCache) Get(key string) (CacheItem, bool) {
 func BenchmarkProcessorOptimal(b *testing.B) {
     processor := NewProcessor()
     data := generateTestData()
-    
+
     b.ResetTimer()
     for b.Loop() { // More accurate timing than old for-loop
         processor.Process(data)
@@ -155,7 +156,7 @@ func (s *Store) Items() iter.Seq2[string, *Item] {
     return func(yield func(string, *Item) bool) {
         s.mu.RLock()
         defer s.mu.RUnlock()
-        
+
         for k, v := range s.data {
             if !yield(k, v) {
                 return
@@ -184,8 +185,8 @@ builder.WriteString(part2)
 
 // Byte slice reuse with sync.Pool
 var bufPool = sync.Pool{
-    New: func() any { 
-        return make([]byte, 0, 4096) 
+    New: func() any {
+        return make([]byte, 0, 4096)
     },
 }
 
@@ -217,18 +218,18 @@ func BadAsyncOperation() {
 // ✅ GOOD: Supervised concurrency with context and error handling
 func GoodAsyncOperation(ctx context.Context) error {
     errChan := make(chan error, 1)
-    
+
     go func() {
         defer func() {
             if r := recover(); r != nil {
                 errChan <- fmt.Errorf("panic in async operation: %v", r)
             }
         }()
-        
+
         err := riskyOperation()
         errChan <- err
     }()
-    
+
     select {
     case err := <-errChan:
         return err
@@ -242,11 +243,11 @@ type SupervisedWorkerPool struct {
     workers   int
     workChan  chan Work
     resultChan chan Result
-    
+
     ctx       context.Context
     cancel    context.CancelFunc
     wg        sync.WaitGroup
-    
+
     // Observability
     activeJobs atomic.Int64
     totalJobs  atomic.Int64
@@ -255,7 +256,7 @@ type SupervisedWorkerPool struct {
 
 func NewSupervisedWorkerPool(workers int) *SupervisedWorkerPool {
     ctx, cancel := context.WithCancel(context.Background())
-    
+
     pool := &SupervisedWorkerPool{
         workers:    workers,
         workChan:   make(chan Work, workers*2),
@@ -263,25 +264,25 @@ func NewSupervisedWorkerPool(workers int) *SupervisedWorkerPool {
         ctx:        ctx,
         cancel:     cancel,
     }
-    
+
     // Start supervised workers
     for i := 0; i < workers; i++ {
         pool.wg.Add(1)
         go pool.supervisedWorker(i)
     }
-    
+
     return pool
 }
 
 func (p *SupervisedWorkerPool) supervisedWorker(id int) {
     defer p.wg.Done()
-    
+
     for {
         select {
         case work := <-p.workChan:
             p.activeJobs.Add(1)
             p.totalJobs.Add(1)
-            
+
             func() {
                 defer func() {
                     p.activeJobs.Add(-1)
@@ -290,18 +291,18 @@ func (p *SupervisedWorkerPool) supervisedWorker(id int) {
                         log.Printf("Worker %d recovered from panic: %v", id, r)
                     }
                 }()
-                
+
                 result := work.Execute()
                 if result.Error != nil {
                     p.errors.Add(1)
                 }
-                
+
                 select {
                 case p.resultChan <- result:
                 case <-p.ctx.Done():
                 }
             }()
-            
+
         case <-p.ctx.Done():
             return
         }
@@ -321,13 +322,13 @@ func (p *SupervisedWorkerPool) Submit(work Work) error {
 
 func (p *SupervisedWorkerPool) Shutdown(timeout time.Duration) error {
     p.cancel()
-    
+
     done := make(chan struct{})
     go func() {
         p.wg.Wait()
         close(done)
     }()
-    
+
     select {
     case <-done:
         return nil
@@ -353,11 +354,11 @@ func (w *Worker) Start(ctx context.Context) error {
     if !w.started.CompareAndSwap(false, true) {
         return ErrAlreadyStarted
     }
-    
+
     go func() {
         defer w.started.Store(false)
         defer close(w.done) // Signal completion
-        
+
         for {
             select {
             case msg := <-w.input:
@@ -369,7 +370,7 @@ func (w *Worker) Start(ctx context.Context) error {
             }
         }
     }()
-    
+
     return nil
 }
 
@@ -381,7 +382,7 @@ func (w *Worker) Stop() error {
     case <-time.After(time.Second):
         return ErrShutdownTimeout
     }
-    
+
     select {
     case <-w.done:
         return nil // Clean shutdown
@@ -402,14 +403,14 @@ func optimizeDataProcessing(data []Record) []Result {
     if cached := checkCache(data); cached != nil {
         return cached // Skip processing entirely
     }
-    
+
     // Question 2: Is this the best algorithm?
     if len(data) < 100 {
         return simpleLinearProcess(data) // O(n) but low constant factor
     } else {
         return efficientDivideConquer(data) // O(n log n) but higher constant factor
     }
-    
+
     // Question 3: Best implementation handled in individual functions
 }
 ```
@@ -478,7 +479,7 @@ func sortAdaptive(data []int) {
     if isAlreadySorted(data) {
         return // O(n) check saves O(n log n) work
     }
-    
+
     if len(data) < 12 {
         insertionSort(data) // Fastest for small arrays
     } else if isAlmostSorted(data) {
@@ -632,7 +633,7 @@ type BatchInserter struct {
 
 func NewBatchInserter(db *sql.DB, batchSize int) *BatchInserter {
     stmt, _ := db.Prepare("INSERT INTO users (id, name, email) VALUES ($1, $2, $3)")
-    
+
     bi := &BatchInserter{
         db:        db,
         stmt:      stmt,
@@ -640,18 +641,18 @@ func NewBatchInserter(db *sql.DB, batchSize int) *BatchInserter {
         pending:   make([]User, 0, batchSize),
         timer:     time.NewTimer(time.Second), // Flush every second
     }
-    
+
     go bi.flushPeriodically()
     return bi
 }
 
 func (bi *BatchInserter) Add(user User) error {
     bi.pending = append(bi.pending, user)
-    
+
     if len(bi.pending) >= bi.batchSize {
         return bi.flush()
     }
-    
+
     // Reset timer for periodic flush
     bi.timer.Reset(time.Second)
     return nil
@@ -661,23 +662,23 @@ func (bi *BatchInserter) flush() error {
     if len(bi.pending) == 0 {
         return nil
     }
-    
+
     tx, err := bi.db.Begin()
     if err != nil {
         return err
     }
     defer tx.Rollback()
-    
+
     for _, user := range bi.pending {
         if _, err := tx.Stmt(bi.stmt).Exec(user.ID, user.Name, user.Email); err != nil {
             return err
         }
     }
-    
+
     if err := tx.Commit(); err != nil {
         return err
     }
-    
+
     bi.pending = bi.pending[:0] // Reset slice, keep capacity
     return nil
 }
@@ -706,7 +707,7 @@ func processRequest(w http.ResponseWriter, r *http.Request) {
         buf = buf[:0] // Reset length, keep capacity
         bufferPool.Put(buf)
     }()
-    
+
     // Use buf for processing
     buf = append(buf, r.Header.Get("Content-Type")...)
     // ... processing logic

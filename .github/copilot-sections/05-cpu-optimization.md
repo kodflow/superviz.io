@@ -1,6 +1,7 @@
 ## CPU Optimization
 
 ### Branch Prediction Optimization
+
 - **Likelihood-ordered conditionals**: Place most likely conditions first
 - **Avoid unpredictable branches**: Use branchless programming when possible
 - **Profile-guided optimization**: Use `go build -pgo` when available
@@ -62,7 +63,7 @@ func expensiveValidation(input string) error {
     if len(input) > maxLength {
         return ErrTooLong
     }
-    
+
     // Expensive regex check last
     if !complexPattern.MatchString(input) {
         return ErrInvalidFormat
@@ -102,7 +103,7 @@ type User struct {
 type Counter struct {
     value atomic.Uint64
     _     [7]uint64 // Padding to prevent false sharing
-    
+
     // Related non-atomic fields grouped together
     name     string
     category string
@@ -116,7 +117,7 @@ func processItems(items []Item) {
     for i := range items {
         items[i].Process()
     }
-    
+
     // Avoid: Random memory access through pointers
     // for _, item := range itemPointers {
     //     item.Process()
@@ -129,7 +130,7 @@ func processUsersByLocation(users []User) {
     sort.Slice(users, func(i, j int) bool {
         return users[i].LocationID < users[j].LocationID
     })
-    
+
     // Now process sequentially - much better cache usage
     for _, user := range users {
         processUserByLocation(user)
@@ -155,7 +156,7 @@ func addVectors(a, b, result []float64) {
     if len(a) != len(b) || len(a) != len(result) {
         panic("slice length mismatch")
     }
-    
+
     // Simple loop - Go compiler will vectorize this
     for i := range a {
         result[i] = a[i] + b[i]
@@ -171,7 +172,7 @@ func processBatches(data []Item) {
         if end > len(data) {
             end = len(data)
         }
-        
+
         // Process batch - better cache locality
         processBatch(data[i:end])
     }
@@ -224,7 +225,7 @@ func NewWorkerPool(numWorkers int) *WorkerPool {
     if numWorkers <= 0 {
         numWorkers = runtime.NumCPU()
     }
-    
+
     return &WorkerPool{
         workers:    numWorkers,
         workChan:   make(chan Work, numWorkers*2), // Buffered to prevent blocking
@@ -238,11 +239,11 @@ func writeFiles(files map[string][]byte) error {
     // for name, data := range files {
     //     os.WriteFile(name, data, 0644)
     // }
-    
+
     // Good: Batch with async I/O
     var wg sync.WaitGroup
     errChan := make(chan error, len(files))
-    
+
     for name, data := range files {
         wg.Add(1)
         go func(name string, data []byte) {
@@ -252,16 +253,16 @@ func writeFiles(files map[string][]byte) error {
             }
         }(name, data)
     }
-    
+
     wg.Wait()
     close(errChan)
-    
+
     for err := range errChan {
         if err != nil {
             return err
         }
     }
-    
+
     return nil
 }
 ```

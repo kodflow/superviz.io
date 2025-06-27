@@ -243,7 +243,7 @@ func (em *EventManager) Subscribe(observer Observer) {
 func (em *EventManager) Publish(event Event) {
     em.mu.RLock()
     defer em.mu.RUnlock()
-    
+
     for _, observer := range em.observers {
         go observer.HandleEvent(event) // Asynchronous notification
     }
@@ -281,7 +281,7 @@ type UserService struct {
 //  logger := &ConsoleLogger{}
 //  repo := &DatabaseRepository{}
 //  service := NewUserService(logger, repo)
-//  
+//
 //  err := service.CreateUser("John Doe")
 //  if err != nil {
 //      log.Fatal(err)
@@ -315,14 +315,14 @@ func NewUserService(logger Logger, repo Repository) *UserService {
 //   - 1 error - nil if creation successful, error otherwise
 func (s *UserService) CreateUser(name string) error {
     s.logger.Info(fmt.Sprintf("Creating user: %s", name))
-    
+
     user := map[string]string{"name": name}
     err := s.repo.Save(user)
     if err != nil {
         s.logger.Error(fmt.Sprintf("Save failed: %v", err))
         return err
     }
-    
+
     s.logger.Info("User created successfully")
     return nil
 }

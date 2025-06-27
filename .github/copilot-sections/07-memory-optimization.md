@@ -49,12 +49,12 @@ func (tp *TimeParser) Parse(value, format string) (time.Time, error) {
     if format == tp.lastFormat {
         return time.Parse(tp.lastLayout, value)
     }
-    
+
     // Expensive format compilation
     layout := compileFormat(format)
     tp.lastFormat = format
     tp.lastLayout = layout
-    
+
     return time.Parse(layout, value)
 }
 
@@ -74,7 +74,7 @@ func (si *StringInterner) Intern(s string) string {
         si.stats.Add(1) // Deduplication hit
         return interned
     }
-    
+
     si.strings[s] = s
     return s
 }
@@ -175,12 +175,12 @@ func searchData(data []Item, target string) int {
         }
         return -1
     }
-    
+
     // Binary search for larger datasets (sorted data required)
     sort.Slice(data, func(i, j int) bool {
         return data[i].Name < data[j].Name
     })
-    
+
     return sort.Search(len(data), func(i int) bool {
         return data[i].Name >= target
     })
@@ -194,7 +194,7 @@ type HybridMap struct {
 
 func (h *HybridMap) Get(key string) (string, bool) {
     bucket := h.buckets[hash(key)%len(h.buckets)]
-    
+
     // Linear search within bucket (small buckets = cache friendly)
     for _, kv := range bucket {
         if kv.Key == key {
@@ -215,13 +215,14 @@ func (si *StringInterner) Intern(s string) string {
         si.stats.Add(1) // Deduplication hit
         return interned
     }
-    
+
     si.strings[s] = s
     return s
 }
 ```
 
 ### Zero-Allocation Patterns
+
 - **Pre-allocation with exact capacity**: Always specify slice/map capacity
 - **String building optimization**: Use strings.Builder with pre-growth
 - **Byte slice reuse**: Implement sync.Pool for buffer reuse
@@ -232,12 +233,12 @@ func (si *StringInterner) Intern(s string) string {
 func processItems(source []Item) []ProcessedItem {
     // Good: Pre-allocate with known capacity
     results := make([]ProcessedItem, 0, len(source))
-    
+
     for _, item := range source {
         processed := processItem(item)
         results = append(results, processed)
     }
-    
+
     return results
 }
 
@@ -247,20 +248,20 @@ func buildString(parts []string) string {
     for _, part := range parts {
         totalLen += len(part)
     }
-    
+
     var builder strings.Builder
     builder.Grow(totalLen) // ALWAYS pre-grow
-    
+
     for _, part := range parts {
         builder.WriteString(part)
     }
-    
+
     return builder.String()
 }
 
 // Byte slice reuse with sync.Pool
 var bufferPool = sync.Pool{
-    New: func() any { 
+    New: func() any {
         return make([]byte, 0, 4096) // 4KB initial capacity
     },
 }
@@ -271,10 +272,10 @@ func processWithBuffer() []byte {
         buf = buf[:0] // Reset length, keep capacity
         bufferPool.Put(buf)
     }()
-    
+
     // Use buf for processing
     buf = append(buf, someData...)
-    
+
     // Return copy to avoid pool corruption
     result := make([]byte, len(buf))
     copy(result, buf)
@@ -283,6 +284,7 @@ func processWithBuffer() []byte {
 ```
 
 ### Memory Pool Management
+
 - **Object pools**: Reuse expensive-to-create objects
 - **Worker pools**: Prevent unlimited goroutine creation
 - **Connection pools**: Reuse network connections and database handles
@@ -295,7 +297,7 @@ type MultiLevelPool struct {
     small  sync.Pool // < 1KB
     medium sync.Pool // 1KB - 64KB
     large  sync.Pool // > 64KB
-    
+
     stats struct {
         smallHits  atomic.Uint64
         mediumHits atomic.Uint64
@@ -369,7 +371,7 @@ func processData(data []byte) error {
         processor.Reset() // Clear sensitive data
         processorPool.Put(processor)
     }()
-    
+
     return processor.Process(data)
 }
 
@@ -392,13 +394,13 @@ func NewWorkerPool(maxWorkers int) *WorkerPool {
 func (wp *WorkerPool) Submit(work Work) {
     wp.semaphore <- struct{}{} // Acquire
     wp.wg.Add(1)
-    
+
     go func() {
         defer func() {
             <-wp.semaphore // Release
             wp.wg.Done()
         }()
-        
+
         work.Execute()
     }()
 }
@@ -418,16 +420,16 @@ type AllocationTracker struct {
     deallocations atomic.Uint64
     currentBytes  atomic.Uint64
     peakBytes     atomic.Uint64
-    
+
     // Allocation pattern tracking
     smallAllocs  atomic.Uint64 // < 1KB
     mediumAllocs atomic.Uint64 // 1KB - 1MB
     largeAllocs  atomic.Uint64 // > 1MB
-    
+
     // Pressure thresholds
     warningThreshold uint64
     criticalThreshold uint64
-    
+
     // Callbacks for pressure events
     onWarning  func(stats AllocationStats)
     onCritical func(stats AllocationStats)
@@ -453,7 +455,7 @@ func (at *AllocationTracker) TrackAllocation(size uint64) {
     // Update counters
     at.allocations.Add(1)
     newCurrent := at.currentBytes.Add(size)
-    
+
     // Update peak if necessary
     for {
         currentPeak := at.peakBytes.Load()
@@ -464,7 +466,7 @@ func (at *AllocationTracker) TrackAllocation(size uint64) {
             break
         }
     }
-    
+
     // Track allocation size pattern
     switch {
     case size < 1024:
@@ -474,7 +476,7 @@ func (at *AllocationTracker) TrackAllocation(size uint64) {
     default:
         at.largeAllocs.Add(1)
     }
-    
+
     // Check pressure thresholds
     at.checkPressure(newCurrent)
 }
@@ -497,7 +499,7 @@ func (at *AllocationTracker) GetStats() AllocationStats {
     if totalAllocs == 0 {
         totalAllocs = 1 // Avoid division by zero
     }
-    
+
     return AllocationStats{
         Current:     at.currentBytes.Load(),
         Peak:        at.peakBytes.Load(),
@@ -551,21 +553,21 @@ func (tbp *TrackedBufferPool) Put(buf []byte) {
 - **Operation counting**: Track active operations for clean shutdown
 - **Resource pooling**: Share expensive resources across contexts
 
-```go
+````go
 // Advanced context manager with resource tracking
 type ContextManager struct {
     activeOperations atomic.Int64
     maxOperations    int64
-    
+
     // Dynamic timeout calculation
     baseTimeout     time.Duration
     loadFactor      atomic.Uint64 // 0-100, represents system load percentage
     timeoutMultiplier float64
-    
+
     // Resource pools
     resourcePools map[string]*ResourcePool
     poolMutex     sync.RWMutex
-    
+
     // Shutdown coordination
     shutdownChan chan struct{}
     shutdownOnce sync.Once
@@ -575,7 +577,7 @@ type ResourcePool struct {
     resources chan interface{}
     factory   func() interface{}
     cleanup   func(interface{})
-    
+
     created atomic.Int64
     inUse   atomic.Int64
     maxSize int
@@ -598,14 +600,14 @@ func (cm *ContextManager) WithOperation(ctx context.Context) (context.Context, f
         cm.activeOperations.Add(-1)
         return nil, nil, fmt.Errorf("maximum operations exceeded: %d", cm.maxOperations)
     }
-    
+
     // Calculate dynamic timeout based on load
     load := float64(cm.loadFactor.Load()) / 100.0
     timeout := time.Duration(float64(cm.baseTimeout) * (1.0 + load*cm.timeoutMultiplier))
-    
+
     // Create context with dynamic timeout
     ctx, cancel := context.WithTimeout(ctx, timeout)
-    
+
     // Check for shutdown
     select {
     case <-cm.shutdownChan:
@@ -614,13 +616,13 @@ func (cm *ContextManager) WithOperation(ctx context.Context) (context.Context, f
         return nil, nil, fmt.Errorf("system is shutting down")
     default:
     }
-    
+
     // Return cleanup function
     cleanup := func() {
         cancel()
         cm.activeOperations.Add(-1)
     }
-    
+
     return ctx, cleanup, nil
 }
 
@@ -628,21 +630,21 @@ func (cm *ContextManager) GetResource(ctx context.Context, poolName string) (int
     cm.poolMutex.RLock()
     pool, exists := cm.resourcePools[poolName]
     cm.poolMutex.RUnlock()
-    
+
     if !exists {
         return nil, nil, fmt.Errorf("resource pool %s not found", poolName)
     }
-    
+
     select {
     case resource := <-pool.resources:
         pool.inUse.Add(1)
-        
+
         release := func() {
             pool.inUse.Add(-1)
             if pool.cleanup != nil {
                 pool.cleanup(resource)
             }
-            
+
             select {
             case pool.resources <- resource:
                 // Resource returned to pool
@@ -650,26 +652,26 @@ func (cm *ContextManager) GetResource(ctx context.Context, poolName string) (int
                 // Pool is full, discard resource
             }
         }
-        
+
         return resource, release, nil
-        
+
     case <-ctx.Done():
         return nil, nil, ctx.Err()
-        
+
     default:
         // Pool is empty, try to create new resource
         if pool.created.Load() < int64(pool.maxSize) {
             pool.created.Add(1)
             pool.inUse.Add(1)
-            
+
             resource := pool.factory()
-            
+
             release := func() {
                 pool.inUse.Add(-1)
                 if pool.cleanup != nil {
                     pool.cleanup(resource)
                 }
-                
+
                 select {
                 case pool.resources <- resource:
                     // Resource returned to pool
@@ -678,10 +680,10 @@ func (cm *ContextManager) GetResource(ctx context.Context, poolName string) (int
                     pool.created.Add(-1)
                 }
             }
-            
+
             return resource, release, nil
         }
-        
+
         return nil, nil, fmt.Errorf("resource pool %s exhausted", poolName)
     }
 }
@@ -689,7 +691,7 @@ func (cm *ContextManager) GetResource(ctx context.Context, poolName string) (int
 func (cm *ContextManager) RegisterResourcePool(name string, maxSize int, factory func() interface{}, cleanup func(interface{})) {
     cm.poolMutex.Lock()
     defer cm.poolMutex.Unlock()
-    
+
     cm.resourcePools[name] = &ResourcePool{
         resources: make(chan interface{}, maxSize),
         factory:   factory,
@@ -711,7 +713,7 @@ func (cm *ContextManager) Shutdown(timeout time.Duration) error {
     cm.shutdownOnce.Do(func() {
         close(cm.shutdownChan)
     })
-    
+
     // Wait for active operations to complete
     deadline := time.Now().Add(timeout)
     for time.Now().Before(deadline) {
@@ -720,12 +722,12 @@ func (cm *ContextManager) Shutdown(timeout time.Duration) error {
         }
         time.Sleep(10 * time.Millisecond)
     }
-    
+
     remaining := cm.activeOperations.Load()
     if remaining > 0 {
         return fmt.Errorf("shutdown timeout: %d operations still active", remaining)
     }
-    
+
     return nil
 }
 
@@ -741,7 +743,7 @@ type MemoryMonitor struct {
     maxHeapSize   atomic.Uint64
     currentHeap   atomic.Uint64
     gcCount       atomic.Uint64
-    
+
     alertThreshold uint64
     alertCallback  func(stats runtime.MemStats)
 }
@@ -749,7 +751,7 @@ type MemoryMonitor struct {
 func (m *MemoryMonitor) Start(ctx context.Context) {
     ticker := time.NewTicker(30 * time.Second)
     defer ticker.Stop()
-    
+
     for {
         select {
         case <-ctx.Done():
@@ -757,10 +759,10 @@ func (m *MemoryMonitor) Start(ctx context.Context) {
         case <-ticker.C:
             var stats runtime.MemStats
             runtime.ReadMemStats(&stats)
-            
+
             m.currentHeap.Store(stats.HeapInuse)
             m.gcCount.Store(uint64(stats.NumGC))
-            
+
             // Update max heap if current is higher
             for {
                 currentMax := m.maxHeapSize.Load()
@@ -771,7 +773,7 @@ func (m *MemoryMonitor) Start(ctx context.Context) {
                     break
                 }
             }
-            
+
             // Alert if threshold exceeded
             if stats.HeapInuse > m.alertThreshold && m.alertCallback != nil {
                 m.alertCallback(stats)
@@ -784,15 +786,15 @@ func (m *MemoryMonitor) Start(ctx context.Context) {
 func (m *MemoryMonitor) ForceGCIfNeeded() {
     var stats runtime.MemStats
     runtime.ReadMemStats(&stats)
-    
+
     // Force GC if heap is above threshold and growing
-    if stats.HeapInuse > m.alertThreshold && 
+    if stats.HeapInuse > m.alertThreshold &&
        stats.HeapInuse > stats.HeapReleased*2 {
         runtime.GC()
         runtime.GC() // Double GC to ensure cleanup
     }
 }
-```
+````
 
 ### Memory-Efficient Data Structures
 
@@ -830,7 +832,7 @@ func (si *StringInterner) Intern(s string) string {
         si.stats.Add(1) // Deduplication hit
         return interned.(string)
     }
-    
+
     // Store and return the original string
     si.strings.Store(s, s)
     return s

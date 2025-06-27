@@ -21,18 +21,18 @@ func SendWelcomeEmail(user User) {
 // ✅ GOOD: Supervised concurrency with context and error handling
 func SendWelcomeEmailSafe(ctx context.Context, user User) error {
     errChan := make(chan error, 1)
-    
+
     go func() {
         defer func() {
             if r := recover(); r != nil {
                 errChan <- fmt.Errorf("panic in email sender: %v", r)
             }
         }()
-        
+
         err := smtp.Send(user.Email, "Welcome!")
         errChan <- err
     }()
-    
+
     select {
     case err := <-errChan:
         return err
@@ -53,10 +53,10 @@ func (s *EmailService) SendWelcomeEmail(ctx context.Context, user User) error {
         Template: "welcome",
         Data:     user,
     }
-    
+
     result := s.workerPool.Submit(ctx, task)
     s.metrics.RecordSend(result.Error == nil)
-    
+
     return result.Error
 }
 ```
@@ -93,7 +93,7 @@ type LargeUserProfile struct {
 func BenchmarkPointerVsValue(b *testing.B) {
     configs := make([]SmallConfig, 1000)
     configPtrs := make([]*SmallConfig, 1000)
-    
+
     b.Run("Value", func(b *testing.B) {
         for i := 0; i < b.N; i++ {
             for _, config := range configs {
@@ -101,7 +101,7 @@ func BenchmarkPointerVsValue(b *testing.B) {
             }
         }
     })
-    
+
     b.Run("Pointer", func(b *testing.B) {
         for i := 0; i < b.N; i++ {
             for _, config := range configPtrs {
@@ -122,7 +122,7 @@ type LatencyOptimizedCache struct {
     data        sync.Map
     predictions map[string]float64
     mutex       sync.RWMutex
-    
+
     // Real-time metrics
     hits        atomic.Uint64
     misses      atomic.Uint64
@@ -135,16 +135,16 @@ func (c *LatencyOptimizedCache) Get(key string) (interface{}, bool) {
         latency := uint64(time.Since(start).Nanoseconds())
         c.updateAvgLatency(latency)
     }()
-    
+
     if value, ok := c.data.Load(key); ok {
         c.hits.Add(1)
-        
+
         // Predictive prefetching for related data
         go c.prefetchRelated(key)
-        
+
         return value, true
     }
-    
+
     c.misses.Add(1)
     return nil, false
 }
@@ -153,7 +153,7 @@ func (c *LatencyOptimizedCache) prefetchRelated(key string) {
     c.mutex.RLock()
     score, exists := c.predictions[key]
     c.mutex.RUnlock()
-    
+
     if exists && score > 0.7 { // High probability threshold
         relatedKeys := c.getRelatedKeys(key)
         for _, relKey := range relatedKeys {
@@ -204,21 +204,21 @@ func NewProductionHTTPClient() *http.Client {
         MaxIdleConns:        100,              // Connection pool size
         MaxIdleConnsPerHost: 30,               // Per-host connection limit
         IdleConnTimeout:     90 * time.Second, // Keep-alive timeout
-        
+
         // TCP-level optimizations
         DisableKeepAlives:   false,
         DisableCompression:  false,
-        
+
         // TLS optimization
         TLSHandshakeTimeout: 10 * time.Second,
-        
+
         // DNS and connection timeouts
         DialContext: (&net.Dialer{
             Timeout:   30 * time.Second,
             KeepAlive: 30 * time.Second,
         }).DialContext,
     }
-    
+
     return &http.Client{
         Transport: transport,
         Timeout:   30 * time.Second, // Total request timeout
@@ -230,16 +230,16 @@ func NewProductionServer(handler http.Handler) *http.Server {
     return &http.Server{
         Addr:    ":8080",
         Handler: handler,
-        
+
         // Prevent slowloris attacks
         ReadTimeout:       15 * time.Second,
         ReadHeaderTimeout: 10 * time.Second,
         WriteTimeout:      15 * time.Second,
         IdleTimeout:       60 * time.Second,
-        
+
         // Connection limits
         MaxHeaderBytes: 1 << 20, // 1MB
-        
+
         // Error logging
         ErrorLog: log.New(os.Stderr, "HTTP: ", log.LstdFlags),
     }
@@ -254,10 +254,10 @@ type BatchWriter struct {
     db          *sql.DB
     batchSize   int
     flushPeriod time.Duration
-    
+
     pending     []BatchItem
     pendingMutex sync.Mutex
-    
+
     flushChan   chan struct{}
     stopChan    chan struct{}
     wg          sync.WaitGroup
@@ -278,33 +278,33 @@ func NewBatchWriter(db *sql.DB, batchSize int) *BatchWriter {
         flushChan:   make(chan struct{}, 1),
         stopChan:    make(chan struct{}),
     }
-    
+
     bw.wg.Add(1)
     go bw.flushWorker()
-    
+
     return bw
 }
 
 func (bw *BatchWriter) Execute(sql string, args ...interface{}) error {
     resultChan := make(chan error, 1)
-    
+
     bw.pendingMutex.Lock()
     bw.pending = append(bw.pending, BatchItem{
         SQL:    sql,
         Args:   args,
         Result: resultChan,
     })
-    
+
     shouldFlush := len(bw.pending) >= bw.batchSize
     bw.pendingMutex.Unlock()
-    
+
     if shouldFlush {
         select {
         case bw.flushChan <- struct{}{}:
         default: // Don't block if flush is already queued
         }
     }
-    
+
     return <-resultChan
 }
 
@@ -312,7 +312,7 @@ func (bw *BatchWriter) flushWorker() {
     defer bw.wg.Done()
     ticker := time.NewTicker(bw.flushPeriod)
     defer ticker.Stop()
-    
+
     for {
         select {
         case <-bw.flushChan:
@@ -332,12 +332,12 @@ func (bw *BatchWriter) flush() {
         bw.pendingMutex.Unlock()
         return
     }
-    
+
     batch := make([]BatchItem, len(bw.pending))
     copy(batch, bw.pending)
     bw.pending = bw.pending[:0] // Reset slice
     bw.pendingMutex.Unlock()
-    
+
     // Execute all items in transaction
     tx, err := bw.db.Begin()
     if err != nil {
@@ -347,12 +347,12 @@ func (bw *BatchWriter) flush() {
         }
         return
     }
-    
+
     for _, item := range batch {
         _, execErr := tx.Exec(item.SQL, item.Args...)
         item.Result <- execErr
     }
-    
+
     if err := tx.Commit(); err != nil {
         tx.Rollback()
     }
@@ -367,20 +367,20 @@ func NewProductionServer(handler http.Handler, port string) *http.Server {
     return &http.Server{
         Addr:    ":" + port,
         Handler: handler,
-        
+
         // Prevent slow client attacks
         ReadTimeout:    10 * time.Second,  // Time to read request
         ReadHeaderTimeout: 5 * time.Second, // Time to read headers only
-        
+
         // Prevent slow response attacks
         WriteTimeout:   10 * time.Second,  // Time to write response
-        
+
         // Keep-alive timeout
         IdleTimeout:    120 * time.Second, // Keep-alive idle timeout
-        
+
         // Prevent large header attacks
         MaxHeaderBytes: 1 << 20, // 1MB max headers
-        
+
         // Error logging
         ErrorLog: log.New(os.Stderr, "HTTP-SERVER ", log.LstdFlags),
     }
@@ -392,15 +392,15 @@ func (s *Server) Shutdown(ctx context.Context) error {
     if err := s.httpServer.Shutdown(ctx); err != nil {
         return fmt.Errorf("server shutdown failed: %w", err)
     }
-    
+
     // Wait for background workers
     s.workerPool.Stop()
-    
+
     // Close database connections
     if err := s.db.Close(); err != nil {
         return fmt.Errorf("database close failed: %w", err)
     }
-    
+
     return nil
 }
 ```
@@ -416,7 +416,7 @@ type BatchInserter struct {
     stmt         *sql.Stmt
     batchSize    int
     flushTimeout time.Duration
-    
+
     mu      sync.Mutex
     pending []BatchItem
     timer   *time.Timer
@@ -431,13 +431,13 @@ type BatchItem struct {
 
 func NewBatchInserter(db *sql.DB, batchSize int, flushTimeout time.Duration) *BatchInserter {
     stmt, err := db.Prepare(`
-        INSERT INTO items (id, data, type, created_at) 
+        INSERT INTO items (id, data, type, created_at)
         VALUES ($1, $2, $3, $4)
     `)
     if err != nil {
         panic(fmt.Sprintf("failed to prepare batch statement: %v", err))
     }
-    
+
     bi := &BatchInserter{
         db:           db,
         stmt:         stmt,
@@ -446,7 +446,7 @@ func NewBatchInserter(db *sql.DB, batchSize int, flushTimeout time.Duration) *Ba
         pending:      make([]BatchItem, 0, batchSize),
         timer:        time.NewTimer(flushTimeout),
     }
-    
+
     go bi.flushPeriodically()
     return bi
 }
@@ -455,23 +455,23 @@ func (bi *BatchInserter) Add(item BatchItem) error {
     if bi.closed.Load() {
         return ErrBatcherClosed
     }
-    
+
     bi.mu.Lock()
     defer bi.mu.Unlock()
-    
+
     bi.pending = append(bi.pending, item)
-    
+
     // Flush when batch is full
     if len(bi.pending) >= bi.batchSize {
         return bi.flushLocked()
     }
-    
+
     // Reset timer for periodic flush
     if !bi.timer.Stop() {
         <-bi.timer.C
     }
     bi.timer.Reset(bi.flushTimeout)
-    
+
     return nil
 }
 
@@ -479,27 +479,27 @@ func (bi *BatchInserter) flushLocked() error {
     if len(bi.pending) == 0 {
         return nil
     }
-    
+
     // Use transaction for atomic batch
     tx, err := bi.db.Begin()
     if err != nil {
         return fmt.Errorf("failed to begin transaction: %w", err)
     }
     defer tx.Rollback()
-    
+
     txStmt := tx.Stmt(bi.stmt)
     now := time.Now()
-    
+
     for _, item := range bi.pending {
         if _, err := txStmt.Exec(item.ID, item.Data, item.Type, now); err != nil {
             return fmt.Errorf("failed to execute batch item: %w", err)
         }
     }
-    
+
     if err := tx.Commit(); err != nil {
         return fmt.Errorf("failed to commit batch: %w", err)
     }
-    
+
     // Reset pending slice (keep capacity)
     bi.pending = bi.pending[:0]
     return nil
@@ -523,24 +523,24 @@ func BulkInsertWithCopy(db *sql.DB, items []BatchItem) error {
         return err
     }
     defer tx.Rollback()
-    
+
     stmt, err := tx.Prepare(pq.CopyIn("items", "id", "data", "type", "created_at"))
     if err != nil {
         return err
     }
     defer stmt.Close()
-    
+
     now := time.Now()
     for _, item := range items {
         if _, err := stmt.Exec(item.ID, item.Data, item.Type, now); err != nil {
             return err
         }
     }
-    
+
     if _, err := stmt.Exec(); err != nil {
         return err
     }
-    
+
     return tx.Commit()
 }
 ```
@@ -561,18 +561,18 @@ func ConfigureDBPool(db *sql.DB) {
 func (s *Service) HealthCheck(ctx context.Context) error {
     ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
     defer cancel()
-    
+
     if err := s.db.PingContext(ctx); err != nil {
         return fmt.Errorf("database ping failed: %w", err)
     }
-    
+
     // Validate connection pool state
     stats := s.db.Stats()
     if stats.OpenConnections > stats.MaxOpenConnections*8/10 {
-        return fmt.Errorf("connection pool near capacity: %d/%d", 
+        return fmt.Errorf("connection pool near capacity: %d/%d",
             stats.OpenConnections, stats.MaxOpenConnections)
     }
-    
+
     return nil
 }
 ```
@@ -613,19 +613,19 @@ type UserMetadata struct {
 // Fast JSON decoding with object reuse
 func DecodeUser(r io.Reader) (*User, error) {
     user := userPool.Get().(*User)
-    
+
     decoder := jsonDecoderPool.Get().(*json.Decoder)
     decoder.Reset(r)
-    
+
     err := decoder.Decode(user)
-    
+
     jsonDecoderPool.Put(decoder)
-    
+
     if err != nil {
         userPool.Put(user)
         return nil, fmt.Errorf("failed to decode user: %w", err)
     }
-    
+
     return user, nil
 }
 
@@ -655,11 +655,11 @@ func processUser(user *User) error {
     if user.ID == 0 {
         return ErrInvalidUserID
     }
-    
+
     if user.Email == "" {
         return ErrMissingEmail
     }
-    
+
     return validateUserData(user)
 }
 ```
@@ -675,11 +675,11 @@ type WorkerPool struct {
     workerFunc   func(context.Context, interface{}) error
     jobQueue     chan Job
     workerSem    chan struct{} // Semaphore for worker limit
-    
+
     wg           sync.WaitGroup
     ctx          context.Context
     cancel       context.CancelFunc
-    
+
     // Metrics
     processed    atomic.Uint64
     errors       atomic.Uint64
@@ -694,7 +694,7 @@ type Job struct {
 
 func NewWorkerPool(maxWorkers int, queueSize int, workerFunc func(context.Context, interface{}) error) *WorkerPool {
     ctx, cancel := context.WithCancel(context.Background())
-    
+
     return &WorkerPool{
         maxWorkers: maxWorkers,
         workerFunc: workerFunc,
@@ -714,25 +714,25 @@ func (wp *WorkerPool) Start() {
 
 func (wp *WorkerPool) worker() {
     defer wp.wg.Done()
-    
+
     for {
         select {
         case job := <-wp.jobQueue:
             wp.queueSize.Add(-1)
-            
+
             // Acquire worker semaphore
             wp.workerSem <- struct{}{}
-            
+
             if err := wp.workerFunc(job.Context, job.Data); err != nil {
                 wp.errors.Add(1)
                 log.Printf("Worker error for job %s: %v", job.ID, err)
             } else {
                 wp.processed.Add(1)
             }
-            
+
             // Release worker semaphore
             <-wp.workerSem
-            
+
         case <-wp.ctx.Done():
             return
         }
@@ -753,14 +753,14 @@ func (wp *WorkerPool) Submit(job Job) error {
 
 func (wp *WorkerPool) Stop(timeout time.Duration) error {
     wp.cancel()
-    
+
     // Wait for workers to finish with timeout
     done := make(chan struct{})
     go func() {
         wp.wg.Wait()
         close(done)
     }()
-    
+
     select {
     case <-done:
         return nil
@@ -792,12 +792,12 @@ func NewRateLimiter(rps int) *RateLimiter {
         ticker: time.NewTicker(time.Second / time.Duration(rps)),
         done:   make(chan struct{}),
     }
-    
+
     // Pre-fill bucket
     for i := 0; i < rps; i++ {
         rl.tokens <- struct{}{}
     }
-    
+
     go rl.refillTokens()
     return rl
 }
@@ -843,9 +843,9 @@ func (rl *RateLimiter) Wait(ctx context.Context) error {
 // Multi-size buffer pool for different use cases
 type BufferPool struct {
     small  sync.Pool // 1KB buffers
-    medium sync.Pool // 16KB buffers  
+    medium sync.Pool // 16KB buffers
     large  sync.Pool // 64KB buffers
-    
+
     stats struct {
         smallHits  atomic.Uint64
         mediumHits atomic.Uint64
@@ -908,7 +908,7 @@ func (bp *BufferPool) Put(buf []byte) {
 func (s *Server) handleRequest(w http.ResponseWriter, r *http.Request) {
     buf := s.bufferPool.Get(1024)
     defer s.bufferPool.Put(buf)
-    
+
     // Read request body
     buf = buf[:cap(buf)]
     n, err := r.Body.Read(buf)
@@ -917,7 +917,7 @@ func (s *Server) handleRequest(w http.ResponseWriter, r *http.Request) {
         return
     }
     buf = buf[:n]
-    
+
     // Process request...
     response := s.processRequest(buf)
     w.Write(response)

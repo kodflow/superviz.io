@@ -1,6 +1,7 @@
 ## Code Quality and Security
 
 ### Required Tools (Must Pass)
+
 - `gofmt -s` (format and simplify)
 - `goimports` (organize imports)
 - `golangci-lint run --config .golangci.yml` (comprehensive linting)
@@ -11,6 +12,7 @@
 - `gosec ./...` (security scanning)
 
 ### Coverage Requirements
+
 ```bash
 # Minimum 100% coverage for all packages
 go test -coverprofile=coverage.out ./...
@@ -18,6 +20,7 @@ go tool cover -func=coverage.out | grep "total:" | awk '{if ($3+0 < 100) exit 1}
 ```
 
 ### Input Validation (Zero-Trust)
+
 ```go
 // ALWAYS validate ALL inputs
 func ProcessUser(name string, age int, email string) error {
@@ -29,17 +32,17 @@ func ProcessUser(name string, age int, email string) error {
     if !isAlphaNumeric(name) {
         return errors.New("name contains invalid characters")
     }
-    
+
     // Numeric validation with overflow protection
     if age < 0 || age > 150 {
         return fmt.Errorf("invalid age: must be 0-150, got %d", age)
     }
-    
+
     // Email validation (basic)
     if !emailRegex.MatchString(email) {
         return errors.New("invalid email format")
     }
-    
+
     return nil
 }
 
@@ -57,6 +60,7 @@ func isAlphaNumeric(s string) bool {
 ```
 
 ### Cryptographic Security
+
 ```go
 // NEVER use math/rand for security
 func GenerateToken() (string, error) {
@@ -80,13 +84,14 @@ func ProcessSecret(secret []byte) error {
             secret[i] = 0
         }
     }()
-    
+
     // Process secret...
     return nil
 }
 ```
 
 ### Command Injection Prevention
+
 ```go
 // NEVER trust user input in shell commands
 func ExecuteCommand(userInput string) error {
@@ -94,16 +99,16 @@ func ExecuteCommand(userInput string) error {
     if !isValidCommand(userInput) {
         return errors.New("invalid command format")
     }
-    
+
     // Use exec.Command with separate args (not shell)
     cmd := exec.Command("safe-binary", sanitizeArg(userInput))
     cmd.Env = []string{} // Empty environment
-    
+
     output, err := cmd.CombinedOutput()
     if err != nil {
         return fmt.Errorf("command failed: %w", err)
     }
-    
+
     log.Printf("Command output: %s", output)
     return nil
 }
@@ -126,6 +131,7 @@ func sanitizeArg(input string) string {
 ```
 
 ### Error Handling Best Practices
+
 ```go
 // ALWAYS wrap errors with context
 func ProcessFile(filename string) error {
@@ -133,15 +139,15 @@ func ProcessFile(filename string) error {
     if err != nil {
         return fmt.Errorf("failed to read file %q: %w", filename, err)
     }
-    
+
     if err := validateFileData(data); err != nil {
         return fmt.Errorf("invalid data in file %q: %w", filename, err)
     }
-    
+
     if err := processData(data); err != nil {
         return fmt.Errorf("failed to process data from file %q: %w", filename, err)
     }
-    
+
     return nil
 }
 
@@ -167,17 +173,17 @@ func processData(data []byte) error {
 // Error aggregation
 func ProcessMultipleFiles(filenames []string) error {
     var errs []error
-    
+
     for _, filename := range filenames {
         if err := ProcessFile(filename); err != nil {
             errs = append(errs, err)
         }
     }
-    
+
     if len(errs) > 0 {
         return errors.Join(errs...)
     }
-    
+
     return nil
 }
 ```
@@ -215,14 +221,14 @@ func optimizeDataProcessing(data []Record) []Result {
             return cached // Skip processing entirely
         }
     }
-    
+
     // Question 2: Is this the best algorithm?
     if len(data) < 100 {
         return simpleLinearProcess(data) // O(n) but low constant factor
     } else {
         return efficientDivideConquer(data) // O(n log n) but high constant factor
     }
-    
+
     // Question 3: Best implementation handled in individual functions
 }
 
@@ -261,12 +267,12 @@ func fastStringEquals(a, b string) bool {
     if len(a) != len(b) {
         return false
     }
-    
+
     // Early exit for same pointer (constant factor improvement)
     if len(a) > 0 && len(b) > 0 && &a[0] == &b[0] {
         return true
     }
-    
+
     return a == b
 }
 

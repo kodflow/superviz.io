@@ -80,13 +80,13 @@ func processFilesSecurely(rootPath string) error {
         return fmt.Errorf("failed to open root directory %q: %w", rootPath, err)
     }
     defer root.Close()
-    
+
     file, err := root.Create("output.dat")
     if err != nil {
         return fmt.Errorf("failed to create file: %w", err)
     }
     defer file.Close()
-    
+
     return nil
 }
 
@@ -94,7 +94,7 @@ func processFilesSecurely(rootPath string) error {
 func BenchmarkProcessor(b *testing.B) {
     processor := NewProcessor()
     data := generateTestData()
-    
+
     for b.Loop() {
         processor.Process(data)
     }
@@ -129,11 +129,11 @@ func NewSmartCache() *SmartCache {
 func (c *SmartCache) Set(key string, item CacheItem) {
     c.mutex.Lock()
     defer c.mutex.Unlock()
-    
+
     // Allocate in arena for memory efficiency
     allocated := arena.New[CacheItem](c.arena)
     *allocated = item
-    
+
     // Store weak reference - allows GC when memory pressure high
     c.cache[key] = arena.MakeWeak[CacheItem](allocated)
 }
@@ -142,21 +142,21 @@ func (c *SmartCache) Get(key string) (CacheItem, bool) {
     c.mutex.RLock()
     weak, exists := c.cache[key]
     c.mutex.RUnlock()
-    
+
     if !exists {
         return CacheItem{}, false
     }
-    
+
     // Try to get strong reference
     if strong := weak.Strong(); strong != nil {
         return *strong, true
     }
-    
+
     // Item was garbage collected
     c.mutex.Lock()
     delete(c.cache, key)
     c.mutex.Unlock()
-    
+
     return CacheItem{}, false
 }
 
@@ -164,7 +164,7 @@ func (c *SmartCache) Get(key string) (CacheItem, bool) {
 func BenchmarkProcessorOptimal(b *testing.B) {
     processor := NewProcessor()
     data := generateTestData()
-    
+
     b.ResetTimer()
     for b.Loop() { // More accurate timing than old for-loop
         processor.Process(data)
@@ -217,7 +217,7 @@ func (s *Store) Items() iter.Seq2[string, *Item] {
     return func(yield func(string, *Item) bool) {
         s.mu.RLock()
         defer s.mu.RUnlock()
-        
+
         for k, v := range s.data {
             if !yield(k, v) {
                 return
@@ -246,8 +246,8 @@ builder.WriteString(part2)
 
 // Byte slice reuse with sync.Pool
 var bufPool = sync.Pool{
-    New: func() any { 
-        return make([]byte, 0, 4096) 
+    New: func() any {
+        return make([]byte, 0, 4096)
     },
 }
 
@@ -279,18 +279,18 @@ func BadAsyncOperation() {
 // ✅ GOOD: Supervised concurrency with context and error handling
 func GoodAsyncOperation(ctx context.Context) error {
     errChan := make(chan error, 1)
-    
+
     go func() {
         defer func() {
             if r := recover(); r != nil {
                 errChan <- fmt.Errorf("panic in async operation: %v", r)
             }
         }()
-        
+
         err := riskyOperation()
         errChan <- err
     }()
-    
+
     select {
     case err := <-errChan:
         return err
@@ -304,11 +304,11 @@ type SupervisedWorkerPool struct {
     workers   int
     workChan  chan Work
     resultChan chan Result
-    
+
     ctx       context.Context
     cancel    context.CancelFunc
     wg        sync.WaitGroup
-    
+
     // Observability
     activeJobs atomic.Int64
     totalJobs  atomic.Int64
@@ -317,7 +317,7 @@ type SupervisedWorkerPool struct {
 
 func NewSupervisedWorkerPool(workers int) *SupervisedWorkerPool {
     ctx, cancel := context.WithCancel(context.Background())
-    
+
     pool := &SupervisedWorkerPool{
         workers:    workers,
         workChan:   make(chan Work, workers*2),
@@ -325,25 +325,25 @@ func NewSupervisedWorkerPool(workers int) *SupervisedWorkerPool {
         ctx:        ctx,
         cancel:     cancel,
     }
-    
+
     // Start supervised workers
     for i := 0; i < workers; i++ {
         pool.wg.Add(1)
         go pool.supervisedWorker(i)
     }
-    
+
     return pool
 }
 
 func (p *SupervisedWorkerPool) supervisedWorker(id int) {
     defer p.wg.Done()
-    
+
     for {
         select {
         case work := <-p.workChan:
             p.activeJobs.Add(1)
             p.totalJobs.Add(1)
-            
+
             func() {
                 defer func() {
                     p.activeJobs.Add(-1)
@@ -352,18 +352,18 @@ func (p *SupervisedWorkerPool) supervisedWorker(id int) {
                         log.Printf("Worker %d recovered from panic: %v", id, r)
                     }
                 }()
-                
+
                 result := work.Execute()
                 if result.Error != nil {
                     p.errors.Add(1)
                 }
-                
+
                 select {
                 case p.resultChan <- result:
                 case <-p.ctx.Done():
                 }
             }()
-            
+
         case <-p.ctx.Done():
             return
         }
@@ -383,13 +383,13 @@ func (p *SupervisedWorkerPool) Submit(work Work) error {
 
 func (p *SupervisedWorkerPool) Shutdown(timeout time.Duration) error {
     p.cancel()
-    
+
     done := make(chan struct{})
     go func() {
         p.wg.Wait()
         close(done)
     }()
-    
+
     select {
     case <-done:
         return nil
@@ -415,11 +415,11 @@ func (w *Worker) Start(ctx context.Context) error {
     if !w.started.CompareAndSwap(false, true) {
         return ErrAlreadyStarted
     }
-    
+
     go func() {
         defer w.started.Store(false)
         defer close(w.done) // Signal completion
-        
+
         for {
             select {
             case msg := <-w.input:
@@ -431,7 +431,7 @@ func (w *Worker) Start(ctx context.Context) error {
             }
         }
     }()
-    
+
     return nil
 }
 
@@ -443,7 +443,7 @@ func (w *Worker) Stop() error {
     case <-time.After(time.Second):
         return ErrShutdownTimeout
     }
-    
+
     select {
     case <-w.done:
         return nil // Clean shutdown
@@ -464,14 +464,14 @@ func optimizeDataProcessing(data []Record) []Result {
     if cached := checkCache(data); cached != nil {
         return cached // Skip processing entirely
     }
-    
+
     // Question 2: Is this the best algorithm?
     if len(data) < 100 {
         return simpleLinearProcess(data) // O(n) but low constant factor
     } else {
         return efficientDivideConquer(data) // O(n log n) but higher constant factor
     }
-    
+
     // Question 3: Best implementation handled in individual functions
 }
 ```
@@ -540,7 +540,7 @@ func sortAdaptive(data []int) {
     if isAlreadySorted(data) {
         return // O(n) check saves O(n log n) work
     }
-    
+
     if len(data) < 12 {
         insertionSort(data) // Fastest for small arrays
     } else if isAlmostSorted(data) {
@@ -694,7 +694,7 @@ type BatchInserter struct {
 
 func NewBatchInserter(db *sql.DB, batchSize int) *BatchInserter {
     stmt, _ := db.Prepare("INSERT INTO users (id, name, email) VALUES ($1, $2, $3)")
-    
+
     bi := &BatchInserter{
         db:        db,
         stmt:      stmt,
@@ -702,18 +702,18 @@ func NewBatchInserter(db *sql.DB, batchSize int) *BatchInserter {
         pending:   make([]User, 0, batchSize),
         timer:     time.NewTimer(time.Second), // Flush every second
     }
-    
+
     go bi.flushPeriodically()
     return bi
 }
 
 func (bi *BatchInserter) Add(user User) error {
     bi.pending = append(bi.pending, user)
-    
+
     if len(bi.pending) >= bi.batchSize {
         return bi.flush()
     }
-    
+
     // Reset timer for periodic flush
     bi.timer.Reset(time.Second)
     return nil
@@ -723,23 +723,23 @@ func (bi *BatchInserter) flush() error {
     if len(bi.pending) == 0 {
         return nil
     }
-    
+
     tx, err := bi.db.Begin()
     if err != nil {
         return err
     }
     defer tx.Rollback()
-    
+
     for _, user := range bi.pending {
         if _, err := tx.Stmt(bi.stmt).Exec(user.ID, user.Name, user.Email); err != nil {
             return err
         }
     }
-    
+
     if err := tx.Commit(); err != nil {
         return err
     }
-    
+
     bi.pending = bi.pending[:0] // Reset slice, keep capacity
     return nil
 }
@@ -768,7 +768,7 @@ func processRequest(w http.ResponseWriter, r *http.Request) {
         buf = buf[:0] // Reset length, keep capacity
         bufferPool.Put(buf)
     }()
-    
+
     // Use buf for processing
     buf = append(buf, r.Header.Get("Content-Type")...)
     // ... processing logic
@@ -807,7 +807,7 @@ func FunctionName(input string, count int, opts *Options) (string, error) {
 // TypeName Description of the type and its purpose
 type TypeName struct {
     Field1 string       // Description of field 1
-    Field2 atomic.Int64 // Description of field 2  
+    Field2 atomic.Int64 // Description of field 2
     mu     sync.RWMutex // Description of field 3
 }
 
@@ -924,6 +924,7 @@ func NewService(config *Config, logger Logger) *ServiceManager {
 ---
 
 [0;34m[INFO][0m Processing section: 04-optimization-workflow.md
+
 # Optimization Workflow (go-perfbook Integration)
 
 ## Decision Framework
@@ -939,19 +940,19 @@ func optimizeProcess(data []Record) []Result {
     if len(data) == 0 {
         return nil // Fast path for empty input
     }
-    
+
     // Check cache - fastest code is never run
     if cached := checkCache(data); cached != nil {
         return cached
     }
-    
+
     // Question 2: Best algorithm for this input size?
     if len(data) < 100 {
         return linearProcess(data) // O(n) but low constant factor
     } else {
         return divideConquer(data) // O(n log n) but justified for large inputs
     }
-    
+
     // Question 3: Best implementation handled in specific functions
 }
 ```
@@ -970,13 +971,13 @@ func searchOptimal(data []Item, target string) int {
             }
         }
         return -1
-        
+
     case len(data) <= 1000:
         // Binary search: requires sorted data, O(log n)
         return sort.Search(len(data), func(i int) bool {
             return data[i].Name >= target
         })
-        
+
     default:
         // Hash lookup: O(1) average, worth setup cost for large datasets
         return buildHashAndSearch(data, target)
@@ -989,7 +990,7 @@ func sortAdaptive(data []int) {
     if isAlreadySorted(data) {
         return // O(n) check saves O(n log n) work
     }
-    
+
     // Question 2: Best algorithm for this data?
     switch {
     case len(data) < 12:
@@ -1016,12 +1017,12 @@ func validateInput(input string) error {
         // Fast path for valid input
         return nil
     }
-    
+
     // Less common cases
     if len(input) > maxLength {
         return ErrTooLong
     }
-    
+
     return ErrEmpty
 }
 
@@ -1042,7 +1043,7 @@ func processStates(states []State) {
     actions[StateInit] = handleInit
     actions[StateProcess] = handleProcess
     actions[StateDone] = handleDone
-    
+
     for i, state := range states {
         states[i] = actions[state.Type](state) // No branch prediction needed
     }
@@ -1058,10 +1059,10 @@ type OptimizedStruct struct {
     counter atomic.Uint64   // 8 bytes
     flags   uint32          // 4 bytes
     active  bool           // 1 byte + 3 padding = 8 bytes total
-    
+
     // Separate cache line for atomic to prevent false sharing
     _       [7]uint64      // Padding to 64-byte boundary
-    
+
     // Cold data last (rarely accessed)
     name        string     // 16 bytes
     description string     // 16 bytes
@@ -1074,7 +1075,7 @@ type VectorizedData struct {
     ids        []uint64    // All IDs together for vectorization
     timestamps []uint64    // All timestamps together
     values     []float64   // All values together for SIMD
-    
+
     // Single allocation for better cache locality
     storage []byte         // Backing store for all arrays
 }
@@ -1083,12 +1084,12 @@ func NewVectorizedData(capacity int) *VectorizedData {
     // Calculate total memory needed
     totalSize := capacity * (8 + 8 + 8) // uint64 + uint64 + float64
     storage := make([]byte, totalSize)
-    
+
     // Slice the backing store
     ids := (*[1 << 30]uint64)(unsafe.Pointer(&storage[0]))[:capacity:capacity]
     timestamps := (*[1 << 30]uint64)(unsafe.Pointer(&storage[capacity*8]))[:capacity:capacity]
     values := (*[1 << 30]float64)(unsafe.Pointer(&storage[capacity*16]))[:capacity:capacity]
-    
+
     return &VectorizedData{
         ids:        ids,
         timestamps: timestamps,
@@ -1109,7 +1110,7 @@ type TimeParser struct {
     lastFormat string
     lastTime   time.Time
     lastLayout string
-    
+
     // Statistics for adaptive behavior
     cacheHits   atomic.Uint64
     cacheMisses atomic.Uint64
@@ -1121,23 +1122,23 @@ func (tp *TimeParser) Parse(value, format string) (time.Time, error) {
         tp.cacheHits.Add(1)
         return tp.lastTime, nil
     }
-    
+
     // Question 2: Is there a faster algorithm for this specific format?
     if isStandardFormat(format) {
         return parseOptimized(value, format)
     }
-    
+
     // Question 3: Best implementation of general parser
     tp.cacheMisses.Add(1)
     layout := compileFormat(format)
     tp.lastFormat = format
     tp.lastLayout = layout
-    
+
     result, err := time.Parse(layout, value)
     if err == nil {
         tp.lastTime = result
     }
-    
+
     return result, err
 }
 
@@ -1147,7 +1148,7 @@ func parseLogTimestamp(s string) (time.Time, error) {
     if len(s) != 19 {
         return time.Time{}, ErrInvalidFormat
     }
-    
+
     // Extract components using fixed offsets (no regex, no general parsing)
     year := parseInt4(s[0:4])
     month := parseInt2(s[5:7])
@@ -1155,7 +1156,7 @@ func parseLogTimestamp(s string) (time.Time, error) {
     hour := parseInt2(s[11:13])
     minute := parseInt2(s[14:16])
     second := parseInt2(s[17:19])
-    
+
     return time.Date(year, time.Month(month), day, hour, minute, second, 0, time.UTC), nil
 }
 ```
@@ -1168,14 +1169,14 @@ type AdaptiveCache struct {
     // Level 1: Single-item cache (90% hit rate for temporal locality)
     lastKey   string
     lastValue interface{}
-    
+
     // Level 2: Small LRU cache (8% additional hit rate)
     recent map[string]*cacheEntry
     lru    *list.List
-    
+
     // Level 3: Bloom filter for negative lookups (remaining 2%)
     bloom *BloomFilter
-    
+
     // Statistics for monitoring effectiveness
     l1Hits atomic.Uint64
     l2Hits atomic.Uint64
@@ -1188,7 +1189,7 @@ func (ac *AdaptiveCache) Get(key string) (interface{}, bool) {
         ac.l1Hits.Add(1)
         return ac.lastValue, true
     }
-    
+
     // Level 2: Check LRU cache
     if entry, exists := ac.recent[key]; exists {
         ac.l2Hits.Add(1)
@@ -1197,13 +1198,13 @@ func (ac *AdaptiveCache) Get(key string) (interface{}, bool) {
         ac.lastValue = entry.value
         return entry.value, true
     }
-    
+
     // Level 3: Check bloom filter before expensive lookup
     if !ac.bloom.MightContain([]byte(key)) {
         ac.misses.Add(1)
         return nil, false // Definitely not present
     }
-    
+
     // Expensive lookup only if bloom filter says "maybe"
     return ac.expensiveLookup(key)
 }
@@ -1219,18 +1220,18 @@ type PerformanceMetrics struct {
     operationCount atomic.Uint64
     totalDuration  atomic.Uint64 // nanoseconds
     slowCalls      atomic.Uint64 // calls > threshold
-    
+
     histogram [10]atomic.Uint64 // latency distribution
 }
 
 func (pm *PerformanceMetrics) RecordOperation(duration time.Duration) {
     pm.operationCount.Add(1)
     pm.totalDuration.Add(uint64(duration))
-    
+
     if duration > slowThreshold {
         pm.slowCalls.Add(1)
     }
-    
+
     // Update histogram
     bucket := min(9, int(duration.Milliseconds()))
     pm.histogram[bucket].Add(1)
@@ -1241,14 +1242,14 @@ func (s *Service) processData(data []byte) error {
     start := time.Now()
     defer func() {
         s.metrics.RecordOperation(time.Since(start))
-        
+
         // Adaptive algorithm selection based on performance
         avgDuration := s.metrics.AverageDuration()
         if avgDuration > degradationThreshold {
             s.switchToFasterAlgorithm()
         }
     }()
-    
+
     return s.algorithm.Process(data)
 }
 ```
@@ -1264,6 +1265,7 @@ This workflow ensures optimizations are:
 5. **Holistic**: Consider entire system impact, not just local optimizations
 
 Every optimization suggestion must demonstrate understanding of:
+
 - Where we are on the space-time trade-off curve
 - Input size characteristics and their performance implications
 - Constant factors vs algorithmic complexity
@@ -1273,9 +1275,11 @@ Every optimization suggestion must demonstrate understanding of:
 ---
 
 [0;34m[INFO][0m Processing section: 05-cpu-optimization.md
+
 ## CPU Optimization
 
 ### Branch Prediction Optimization
+
 - **Likelihood-ordered conditionals**: Place most likely conditions first
 - **Avoid unpredictable branches**: Use branchless programming when possible
 - **Profile-guided optimization**: Use `go build -pgo` when available
@@ -1337,7 +1341,7 @@ func expensiveValidation(input string) error {
     if len(input) > maxLength {
         return ErrTooLong
     }
-    
+
     // Expensive regex check last
     if !complexPattern.MatchString(input) {
         return ErrInvalidFormat
@@ -1377,7 +1381,7 @@ type User struct {
 type Counter struct {
     value atomic.Uint64
     _     [7]uint64 // Padding to prevent false sharing
-    
+
     // Related non-atomic fields grouped together
     name     string
     category string
@@ -1391,7 +1395,7 @@ func processItems(items []Item) {
     for i := range items {
         items[i].Process()
     }
-    
+
     // Avoid: Random memory access through pointers
     // for _, item := range itemPointers {
     //     item.Process()
@@ -1404,7 +1408,7 @@ func processUsersByLocation(users []User) {
     sort.Slice(users, func(i, j int) bool {
         return users[i].LocationID < users[j].LocationID
     })
-    
+
     // Now process sequentially - much better cache usage
     for _, user := range users {
         processUserByLocation(user)
@@ -1430,7 +1434,7 @@ func addVectors(a, b, result []float64) {
     if len(a) != len(b) || len(a) != len(result) {
         panic("slice length mismatch")
     }
-    
+
     // Simple loop - Go compiler will vectorize this
     for i := range a {
         result[i] = a[i] + b[i]
@@ -1446,7 +1450,7 @@ func processBatches(data []Item) {
         if end > len(data) {
             end = len(data)
         }
-        
+
         // Process batch - better cache locality
         processBatch(data[i:end])
     }
@@ -1499,7 +1503,7 @@ func NewWorkerPool(numWorkers int) *WorkerPool {
     if numWorkers <= 0 {
         numWorkers = runtime.NumCPU()
     }
-    
+
     return &WorkerPool{
         workers:    numWorkers,
         workChan:   make(chan Work, numWorkers*2), // Buffered to prevent blocking
@@ -1513,11 +1517,11 @@ func writeFiles(files map[string][]byte) error {
     // for name, data := range files {
     //     os.WriteFile(name, data, 0644)
     // }
-    
+
     // Good: Batch with async I/O
     var wg sync.WaitGroup
     errChan := make(chan error, len(files))
-    
+
     for name, data := range files {
         wg.Add(1)
         go func(name string, data []byte) {
@@ -1527,16 +1531,16 @@ func writeFiles(files map[string][]byte) error {
             }
         }(name, data)
     }
-    
+
     wg.Wait()
     close(errChan)
-    
+
     for err := range errChan {
         if err != nil {
             return err
         }
     }
-    
+
     return nil
 }
 ```
@@ -1544,9 +1548,11 @@ func writeFiles(files map[string][]byte) error {
 ---
 
 [0;34m[INFO][0m Processing section: 06-disk-optimization.md
+
 ## Disk Optimization (Zero I/O Priority)
 
 ### Zero I/O Strategy
+
 - **Memory-first approach**: Keep everything in memory when possible
 - **Lazy loading**: Load data only when absolutely necessary
 - **In-memory caching**: Use sync.Map, atomic values, or custom caches
@@ -1577,32 +1583,33 @@ func (c *MemoryCache) Get(key string) ([]byte, bool) {
 // Avoid disk I/O by pre-loading everything at startup
 func NewServiceWithPreload(dataDir string) (*Service, error) {
     cache := &MemoryCache{}
-    
+
     // Pre-load all data into memory at startup
     err := filepath.Walk(dataDir, func(path string, info os.FileInfo, err error) error {
         if err != nil || info.IsDir() {
             return err
         }
-        
+
         data, err := os.ReadFile(path)
         if err != nil {
             return err
         }
-        
+
         key := strings.TrimPrefix(path, dataDir)
         cache.data.Store(key, data)
         return nil
     })
-    
+
     if err != nil {
         return nil, fmt.Errorf("failed to preload data: %w", err)
     }
-    
+
     return &Service{cache: cache}, nil
 }
 ```
 
 ### Memory-Mapped Files (When I/O Required)
+
 - **Use mmap for large files**: Avoid read() syscalls
 - **Read-only mappings**: For configuration and static data
 - **Sequential access patterns**: Optimize for page faults
@@ -1615,24 +1622,25 @@ func readLargeFileOptimal(filename string) ([]byte, error) {
         return nil, err
     }
     defer file.Close()
-    
+
     stat, err := file.Stat()
     if err != nil {
         return nil, err
     }
-    
+
     // For large files, use mmap to avoid copying data
     if stat.Size() > 1024*1024 { // > 1MB
-        return syscall.Mmap(int(file.Fd()), 0, int(stat.Size()), 
+        return syscall.Mmap(int(file.Fd()), 0, int(stat.Size()),
             syscall.PROT_READ, syscall.MAP_SHARED)
     }
-    
+
     // For small files, regular read is fine
     return io.ReadAll(file)
 }
 ```
 
 ### Buffered I/O Optimization
+
 - **Large buffer sizes**: Reduce syscall frequency
 - **Write batching**: Accumulate writes before flushing
 - **Async I/O patterns**: Use goroutines for I/O operations
@@ -1643,7 +1651,7 @@ type OptimalWriter struct {
     file   *os.File
     buffer *bufio.Writer
     size   int64
-    
+
     // Async flushing
     flushChan chan struct{}
     doneChan  chan struct{}
@@ -1654,20 +1662,20 @@ func NewOptimalWriter(filename string) (*OptimalWriter, error) {
     if err != nil {
         return nil, err
     }
-    
+
     // Large buffer to reduce syscalls (64KB)
     buffer := bufio.NewWriterSize(file, 64*1024)
-    
+
     w := &OptimalWriter{
         file:      file,
         buffer:    buffer,
         flushChan: make(chan struct{}, 1),
         doneChan:  make(chan struct{}),
     }
-    
+
     // Async flush goroutine
     go w.asyncFlusher()
-    
+
     return w, nil
 }
 
@@ -1676,9 +1684,9 @@ func (w *OptimalWriter) Write(data []byte) error {
     if err != nil {
         return err
     }
-    
+
     atomic.AddInt64(&w.size, int64(n))
-    
+
     // Trigger async flush if buffer is getting full
     if w.buffer.Available() < len(data) {
         select {
@@ -1686,14 +1694,14 @@ func (w *OptimalWriter) Write(data []byte) error {
         default: // Don't block if flush is already pending
         }
     }
-    
+
     return nil
 }
 
 func (w *OptimalWriter) asyncFlusher() {
     ticker := time.NewTicker(time.Second) // Periodic flush
     defer ticker.Stop()
-    
+
     for {
         select {
         case <-w.flushChan:
@@ -1709,6 +1717,7 @@ func (w *OptimalWriter) asyncFlusher() {
 ```
 
 ### Directory and File System Optimization
+
 - **Minimize stat() calls**: Cache file information
 - **Batch directory operations**: Use ReadDir instead of multiple Stat calls
 - **Avoid file existence checks**: Use direct open with error handling
@@ -1721,17 +1730,17 @@ func processDirectoryOptimal(dirPath string) error {
     if err != nil {
         return err
     }
-    
+
     for _, entry := range entries {
         info, err := entry.Info()
         if err != nil {
             continue
         }
-        
+
         // Process file info without additional stat calls
         processFileInfo(info)
     }
-    
+
     return nil
 }
 
@@ -1746,14 +1755,14 @@ func processFileInfo(info os.FileInfo) {
 func writeFileOptimal(filename string, data []byte) error {
     // Bad: Check if file exists first
     // if _, err := os.Stat(filename); os.IsNotExist(err) { ... }
-    
+
     // Good: Direct open, handle error appropriately
     file, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
     if err != nil {
         return fmt.Errorf("failed to create file: %w", err)
     }
     defer file.Close()
-    
+
     _, err = file.Write(data)
     return err
 }
@@ -1763,7 +1772,7 @@ func writeFileOptimal(filename string, data []byte) error {
 ### Batching Strategies (go-perfbook Pattern)
 
 - **Reduce syscall overhead**: Batch multiple operations into single calls
-- **Amortize expensive operations**: Spread cost across multiple requests  
+- **Amortize expensive operations**: Spread cost across multiple requests
 - **Buffer size optimization**: Find sweet spot between memory usage and I/O efficiency
 - **Async batching**: Use background goroutines to batch operations
 
@@ -1775,7 +1784,7 @@ type BatchWriter struct {
     pending  [][]byte
     maxBatch int
     timeout  time.Duration
-    
+
     flushChan chan struct{}
     stopChan  chan struct{}
 }
@@ -1785,7 +1794,7 @@ func NewBatchWriter(filename string, maxBatch int) (*BatchWriter, error) {
     if err != nil {
         return nil, err
     }
-    
+
     bw := &BatchWriter{
         file:      file,
         buffer:    make([]byte, 0, 64*1024), // 64KB buffer
@@ -1795,7 +1804,7 @@ func NewBatchWriter(filename string, maxBatch int) (*BatchWriter, error) {
         flushChan: make(chan struct{}, 1),
         stopChan:  make(chan struct{}),
     }
-    
+
     go bw.batchProcessor()
     return bw, nil
 }
@@ -1803,7 +1812,7 @@ func NewBatchWriter(filename string, maxBatch int) (*BatchWriter, error) {
 func (bw *BatchWriter) Write(data []byte) error {
     // Add to pending batch
     bw.pending = append(bw.pending, data)
-    
+
     // Trigger flush if batch is full
     if len(bw.pending) >= bw.maxBatch {
         select {
@@ -1811,14 +1820,14 @@ func (bw *BatchWriter) Write(data []byte) error {
         default: // Don't block if flush already pending
         }
     }
-    
+
     return nil
 }
 
 func (bw *BatchWriter) batchProcessor() {
     ticker := time.NewTicker(bw.timeout)
     defer ticker.Stop()
-    
+
     for {
         select {
         case <-bw.flushChan:
@@ -1838,16 +1847,16 @@ func (bw *BatchWriter) flush() {
     if len(bw.pending) == 0 {
         return
     }
-    
+
     // Combine all pending writes into single buffer
     bw.buffer = bw.buffer[:0]
     for _, data := range bw.pending {
         bw.buffer = append(bw.buffer, data...)
     }
-    
+
     // Single syscall for all writes
     bw.file.Write(bw.buffer)
-    
+
     // Clear pending
     bw.pending = bw.pending[:0]
 }
@@ -1859,23 +1868,23 @@ func processDirectoryEfficient(dirPath string) error {
     if err != nil {
         return err
     }
-    
+
     // Batch process entries
     batch := make([]os.DirEntry, 0, 100)
     for _, entry := range entries {
         batch = append(batch, entry)
-        
+
         if len(batch) >= 100 {
             processBatch(batch)
             batch = batch[:0]
         }
     }
-    
+
     // Process remaining entries
     if len(batch) > 0 {
         processBatch(batch)
     }
-    
+
     return nil
 }
 
@@ -1890,11 +1899,12 @@ func processBatch(batch []os.DirEntry) {
         }
     }
 }
-````
+```
 
 ---
 
 [0;34m[INFO][0m Processing section: 07-memory-optimization.md
+
 ## Memory Optimization
 
 ### Space-Time Trade-offs (go-perfbook Pattern)
@@ -1946,12 +1956,12 @@ func (tp *TimeParser) Parse(value, format string) (time.Time, error) {
     if format == tp.lastFormat {
         return time.Parse(tp.lastLayout, value)
     }
-    
+
     // Expensive format compilation
     layout := compileFormat(format)
     tp.lastFormat = format
     tp.lastLayout = layout
-    
+
     return time.Parse(layout, value)
 }
 
@@ -1971,7 +1981,7 @@ func (si *StringInterner) Intern(s string) string {
         si.stats.Add(1) // Deduplication hit
         return interned
     }
-    
+
     si.strings[s] = s
     return s
 }
@@ -2072,12 +2082,12 @@ func searchData(data []Item, target string) int {
         }
         return -1
     }
-    
+
     // Binary search for larger datasets (sorted data required)
     sort.Slice(data, func(i, j int) bool {
         return data[i].Name < data[j].Name
     })
-    
+
     return sort.Search(len(data), func(i int) bool {
         return data[i].Name >= target
     })
@@ -2091,7 +2101,7 @@ type HybridMap struct {
 
 func (h *HybridMap) Get(key string) (string, bool) {
     bucket := h.buckets[hash(key)%len(h.buckets)]
-    
+
     // Linear search within bucket (small buckets = cache friendly)
     for _, kv := range bucket {
         if kv.Key == key {
@@ -2112,13 +2122,14 @@ func (si *StringInterner) Intern(s string) string {
         si.stats.Add(1) // Deduplication hit
         return interned
     }
-    
+
     si.strings[s] = s
     return s
 }
 ```
 
 ### Zero-Allocation Patterns
+
 - **Pre-allocation with exact capacity**: Always specify slice/map capacity
 - **String building optimization**: Use strings.Builder with pre-growth
 - **Byte slice reuse**: Implement sync.Pool for buffer reuse
@@ -2129,12 +2140,12 @@ func (si *StringInterner) Intern(s string) string {
 func processItems(source []Item) []ProcessedItem {
     // Good: Pre-allocate with known capacity
     results := make([]ProcessedItem, 0, len(source))
-    
+
     for _, item := range source {
         processed := processItem(item)
         results = append(results, processed)
     }
-    
+
     return results
 }
 
@@ -2144,20 +2155,20 @@ func buildString(parts []string) string {
     for _, part := range parts {
         totalLen += len(part)
     }
-    
+
     var builder strings.Builder
     builder.Grow(totalLen) // ALWAYS pre-grow
-    
+
     for _, part := range parts {
         builder.WriteString(part)
     }
-    
+
     return builder.String()
 }
 
 // Byte slice reuse with sync.Pool
 var bufferPool = sync.Pool{
-    New: func() any { 
+    New: func() any {
         return make([]byte, 0, 4096) // 4KB initial capacity
     },
 }
@@ -2168,10 +2179,10 @@ func processWithBuffer() []byte {
         buf = buf[:0] // Reset length, keep capacity
         bufferPool.Put(buf)
     }()
-    
+
     // Use buf for processing
     buf = append(buf, someData...)
-    
+
     // Return copy to avoid pool corruption
     result := make([]byte, len(buf))
     copy(result, buf)
@@ -2180,6 +2191,7 @@ func processWithBuffer() []byte {
 ```
 
 ### Memory Pool Management
+
 - **Object pools**: Reuse expensive-to-create objects
 - **Worker pools**: Prevent unlimited goroutine creation
 - **Connection pools**: Reuse network connections and database handles
@@ -2192,7 +2204,7 @@ type MultiLevelPool struct {
     small  sync.Pool // < 1KB
     medium sync.Pool // 1KB - 64KB
     large  sync.Pool // > 64KB
-    
+
     stats struct {
         smallHits  atomic.Uint64
         mediumHits atomic.Uint64
@@ -2266,7 +2278,7 @@ func processData(data []byte) error {
         processor.Reset() // Clear sensitive data
         processorPool.Put(processor)
     }()
-    
+
     return processor.Process(data)
 }
 
@@ -2289,13 +2301,13 @@ func NewWorkerPool(maxWorkers int) *WorkerPool {
 func (wp *WorkerPool) Submit(work Work) {
     wp.semaphore <- struct{}{} // Acquire
     wp.wg.Add(1)
-    
+
     go func() {
         defer func() {
             <-wp.semaphore // Release
             wp.wg.Done()
         }()
-        
+
         work.Execute()
     }()
 }
@@ -2315,16 +2327,16 @@ type AllocationTracker struct {
     deallocations atomic.Uint64
     currentBytes  atomic.Uint64
     peakBytes     atomic.Uint64
-    
+
     // Allocation pattern tracking
     smallAllocs  atomic.Uint64 // < 1KB
     mediumAllocs atomic.Uint64 // 1KB - 1MB
     largeAllocs  atomic.Uint64 // > 1MB
-    
+
     // Pressure thresholds
     warningThreshold uint64
     criticalThreshold uint64
-    
+
     // Callbacks for pressure events
     onWarning  func(stats AllocationStats)
     onCritical func(stats AllocationStats)
@@ -2350,7 +2362,7 @@ func (at *AllocationTracker) TrackAllocation(size uint64) {
     // Update counters
     at.allocations.Add(1)
     newCurrent := at.currentBytes.Add(size)
-    
+
     // Update peak if necessary
     for {
         currentPeak := at.peakBytes.Load()
@@ -2361,7 +2373,7 @@ func (at *AllocationTracker) TrackAllocation(size uint64) {
             break
         }
     }
-    
+
     // Track allocation size pattern
     switch {
     case size < 1024:
@@ -2371,7 +2383,7 @@ func (at *AllocationTracker) TrackAllocation(size uint64) {
     default:
         at.largeAllocs.Add(1)
     }
-    
+
     // Check pressure thresholds
     at.checkPressure(newCurrent)
 }
@@ -2394,7 +2406,7 @@ func (at *AllocationTracker) GetStats() AllocationStats {
     if totalAllocs == 0 {
         totalAllocs = 1 // Avoid division by zero
     }
-    
+
     return AllocationStats{
         Current:     at.currentBytes.Load(),
         Peak:        at.peakBytes.Load(),
@@ -2448,21 +2460,21 @@ func (tbp *TrackedBufferPool) Put(buf []byte) {
 - **Operation counting**: Track active operations for clean shutdown
 - **Resource pooling**: Share expensive resources across contexts
 
-```go
+````go
 // Advanced context manager with resource tracking
 type ContextManager struct {
     activeOperations atomic.Int64
     maxOperations    int64
-    
+
     // Dynamic timeout calculation
     baseTimeout     time.Duration
     loadFactor      atomic.Uint64 // 0-100, represents system load percentage
     timeoutMultiplier float64
-    
+
     // Resource pools
     resourcePools map[string]*ResourcePool
     poolMutex     sync.RWMutex
-    
+
     // Shutdown coordination
     shutdownChan chan struct{}
     shutdownOnce sync.Once
@@ -2472,7 +2484,7 @@ type ResourcePool struct {
     resources chan interface{}
     factory   func() interface{}
     cleanup   func(interface{})
-    
+
     created atomic.Int64
     inUse   atomic.Int64
     maxSize int
@@ -2495,14 +2507,14 @@ func (cm *ContextManager) WithOperation(ctx context.Context) (context.Context, f
         cm.activeOperations.Add(-1)
         return nil, nil, fmt.Errorf("maximum operations exceeded: %d", cm.maxOperations)
     }
-    
+
     // Calculate dynamic timeout based on load
     load := float64(cm.loadFactor.Load()) / 100.0
     timeout := time.Duration(float64(cm.baseTimeout) * (1.0 + load*cm.timeoutMultiplier))
-    
+
     // Create context with dynamic timeout
     ctx, cancel := context.WithTimeout(ctx, timeout)
-    
+
     // Check for shutdown
     select {
     case <-cm.shutdownChan:
@@ -2511,13 +2523,13 @@ func (cm *ContextManager) WithOperation(ctx context.Context) (context.Context, f
         return nil, nil, fmt.Errorf("system is shutting down")
     default:
     }
-    
+
     // Return cleanup function
     cleanup := func() {
         cancel()
         cm.activeOperations.Add(-1)
     }
-    
+
     return ctx, cleanup, nil
 }
 
@@ -2525,21 +2537,21 @@ func (cm *ContextManager) GetResource(ctx context.Context, poolName string) (int
     cm.poolMutex.RLock()
     pool, exists := cm.resourcePools[poolName]
     cm.poolMutex.RUnlock()
-    
+
     if !exists {
         return nil, nil, fmt.Errorf("resource pool %s not found", poolName)
     }
-    
+
     select {
     case resource := <-pool.resources:
         pool.inUse.Add(1)
-        
+
         release := func() {
             pool.inUse.Add(-1)
             if pool.cleanup != nil {
                 pool.cleanup(resource)
             }
-            
+
             select {
             case pool.resources <- resource:
                 // Resource returned to pool
@@ -2547,26 +2559,26 @@ func (cm *ContextManager) GetResource(ctx context.Context, poolName string) (int
                 // Pool is full, discard resource
             }
         }
-        
+
         return resource, release, nil
-        
+
     case <-ctx.Done():
         return nil, nil, ctx.Err()
-        
+
     default:
         // Pool is empty, try to create new resource
         if pool.created.Load() < int64(pool.maxSize) {
             pool.created.Add(1)
             pool.inUse.Add(1)
-            
+
             resource := pool.factory()
-            
+
             release := func() {
                 pool.inUse.Add(-1)
                 if pool.cleanup != nil {
                     pool.cleanup(resource)
                 }
-                
+
                 select {
                 case pool.resources <- resource:
                     // Resource returned to pool
@@ -2575,10 +2587,10 @@ func (cm *ContextManager) GetResource(ctx context.Context, poolName string) (int
                     pool.created.Add(-1)
                 }
             }
-            
+
             return resource, release, nil
         }
-        
+
         return nil, nil, fmt.Errorf("resource pool %s exhausted", poolName)
     }
 }
@@ -2586,7 +2598,7 @@ func (cm *ContextManager) GetResource(ctx context.Context, poolName string) (int
 func (cm *ContextManager) RegisterResourcePool(name string, maxSize int, factory func() interface{}, cleanup func(interface{})) {
     cm.poolMutex.Lock()
     defer cm.poolMutex.Unlock()
-    
+
     cm.resourcePools[name] = &ResourcePool{
         resources: make(chan interface{}, maxSize),
         factory:   factory,
@@ -2608,7 +2620,7 @@ func (cm *ContextManager) Shutdown(timeout time.Duration) error {
     cm.shutdownOnce.Do(func() {
         close(cm.shutdownChan)
     })
-    
+
     // Wait for active operations to complete
     deadline := time.Now().Add(timeout)
     for time.Now().Before(deadline) {
@@ -2617,12 +2629,12 @@ func (cm *ContextManager) Shutdown(timeout time.Duration) error {
         }
         time.Sleep(10 * time.Millisecond)
     }
-    
+
     remaining := cm.activeOperations.Load()
     if remaining > 0 {
         return fmt.Errorf("shutdown timeout: %d operations still active", remaining)
     }
-    
+
     return nil
 }
 
@@ -2638,7 +2650,7 @@ type MemoryMonitor struct {
     maxHeapSize   atomic.Uint64
     currentHeap   atomic.Uint64
     gcCount       atomic.Uint64
-    
+
     alertThreshold uint64
     alertCallback  func(stats runtime.MemStats)
 }
@@ -2646,7 +2658,7 @@ type MemoryMonitor struct {
 func (m *MemoryMonitor) Start(ctx context.Context) {
     ticker := time.NewTicker(30 * time.Second)
     defer ticker.Stop()
-    
+
     for {
         select {
         case <-ctx.Done():
@@ -2654,10 +2666,10 @@ func (m *MemoryMonitor) Start(ctx context.Context) {
         case <-ticker.C:
             var stats runtime.MemStats
             runtime.ReadMemStats(&stats)
-            
+
             m.currentHeap.Store(stats.HeapInuse)
             m.gcCount.Store(uint64(stats.NumGC))
-            
+
             // Update max heap if current is higher
             for {
                 currentMax := m.maxHeapSize.Load()
@@ -2668,7 +2680,7 @@ func (m *MemoryMonitor) Start(ctx context.Context) {
                     break
                 }
             }
-            
+
             // Alert if threshold exceeded
             if stats.HeapInuse > m.alertThreshold && m.alertCallback != nil {
                 m.alertCallback(stats)
@@ -2681,15 +2693,15 @@ func (m *MemoryMonitor) Start(ctx context.Context) {
 func (m *MemoryMonitor) ForceGCIfNeeded() {
     var stats runtime.MemStats
     runtime.ReadMemStats(&stats)
-    
+
     // Force GC if heap is above threshold and growing
-    if stats.HeapInuse > m.alertThreshold && 
+    if stats.HeapInuse > m.alertThreshold &&
        stats.HeapInuse > stats.HeapReleased*2 {
         runtime.GC()
         runtime.GC() // Double GC to ensure cleanup
     }
 }
-```
+````
 
 ### Memory-Efficient Data Structures
 
@@ -2727,7 +2739,7 @@ func (si *StringInterner) Intern(s string) string {
         si.stats.Add(1) // Deduplication hit
         return interned.(string)
     }
-    
+
     // Store and return the original string
     si.strings.Store(s, s)
     return s
@@ -2761,9 +2773,11 @@ func (f *PackedFlags) Clear(flag PackedFlags) {
 ---
 
 [0;34m[INFO][0m Processing section: 08-code-quality.md
+
 ## Code Quality and Security
 
 ### Required Tools (Must Pass)
+
 - `gofmt -s` (format and simplify)
 - `goimports` (organize imports)
 - `golangci-lint run --config .golangci.yml` (comprehensive linting)
@@ -2774,6 +2788,7 @@ func (f *PackedFlags) Clear(flag PackedFlags) {
 - `gosec ./...` (security scanning)
 
 ### Coverage Requirements
+
 ```bash
 # Minimum 100% coverage for all packages
 go test -coverprofile=coverage.out ./...
@@ -2781,6 +2796,7 @@ go tool cover -func=coverage.out | grep "total:" | awk '{if ($3+0 < 100) exit 1}
 ```
 
 ### Input Validation (Zero-Trust)
+
 ```go
 // ALWAYS validate ALL inputs
 func ProcessUser(name string, age int, email string) error {
@@ -2792,17 +2808,17 @@ func ProcessUser(name string, age int, email string) error {
     if !isAlphaNumeric(name) {
         return errors.New("name contains invalid characters")
     }
-    
+
     // Numeric validation with overflow protection
     if age < 0 || age > 150 {
         return fmt.Errorf("invalid age: must be 0-150, got %d", age)
     }
-    
+
     // Email validation (basic)
     if !emailRegex.MatchString(email) {
         return errors.New("invalid email format")
     }
-    
+
     return nil
 }
 
@@ -2820,6 +2836,7 @@ func isAlphaNumeric(s string) bool {
 ```
 
 ### Cryptographic Security
+
 ```go
 // NEVER use math/rand for security
 func GenerateToken() (string, error) {
@@ -2843,13 +2860,14 @@ func ProcessSecret(secret []byte) error {
             secret[i] = 0
         }
     }()
-    
+
     // Process secret...
     return nil
 }
 ```
 
 ### Command Injection Prevention
+
 ```go
 // NEVER trust user input in shell commands
 func ExecuteCommand(userInput string) error {
@@ -2857,16 +2875,16 @@ func ExecuteCommand(userInput string) error {
     if !isValidCommand(userInput) {
         return errors.New("invalid command format")
     }
-    
+
     // Use exec.Command with separate args (not shell)
     cmd := exec.Command("safe-binary", sanitizeArg(userInput))
     cmd.Env = []string{} // Empty environment
-    
+
     output, err := cmd.CombinedOutput()
     if err != nil {
         return fmt.Errorf("command failed: %w", err)
     }
-    
+
     log.Printf("Command output: %s", output)
     return nil
 }
@@ -2889,6 +2907,7 @@ func sanitizeArg(input string) string {
 ```
 
 ### Error Handling Best Practices
+
 ```go
 // ALWAYS wrap errors with context
 func ProcessFile(filename string) error {
@@ -2896,15 +2915,15 @@ func ProcessFile(filename string) error {
     if err != nil {
         return fmt.Errorf("failed to read file %q: %w", filename, err)
     }
-    
+
     if err := validateFileData(data); err != nil {
         return fmt.Errorf("invalid data in file %q: %w", filename, err)
     }
-    
+
     if err := processData(data); err != nil {
         return fmt.Errorf("failed to process data from file %q: %w", filename, err)
     }
-    
+
     return nil
 }
 
@@ -2930,17 +2949,17 @@ func processData(data []byte) error {
 // Error aggregation
 func ProcessMultipleFiles(filenames []string) error {
     var errs []error
-    
+
     for _, filename := range filenames {
         if err := ProcessFile(filename); err != nil {
             errs = append(errs, err)
         }
     }
-    
+
     if len(errs) > 0 {
         return errors.Join(errs...)
     }
-    
+
     return nil
 }
 ```
@@ -2978,14 +2997,14 @@ func optimizeDataProcessing(data []Record) []Result {
             return cached // Skip processing entirely
         }
     }
-    
+
     // Question 2: Is this the best algorithm?
     if len(data) < 100 {
         return simpleLinearProcess(data) // O(n) but low constant factor
     } else {
         return efficientDivideConquer(data) // O(n log n) but high constant factor
     }
-    
+
     // Question 3: Best implementation handled in individual functions
 }
 
@@ -3024,12 +3043,12 @@ func fastStringEquals(a, b string) bool {
     if len(a) != len(b) {
         return false
     }
-    
+
     // Early exit for same pointer (constant factor improvement)
     if len(a) > 0 && len(b) > 0 && &a[0] == &b[0] {
         return true
     }
-    
+
     return a == b
 }
 
@@ -3074,6 +3093,7 @@ func parallelSort(data []int) {
 ---
 
 [0;34m[INFO][0m Processing section: 09-test-coverage.md
+
 ## 100% Test Coverage with Timeouts
 
 ### Mandatory Test Structure
@@ -3091,7 +3111,7 @@ func TestFunctionName(t *testing.T) {
     // ALWAYS set test timeout
     ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
     defer cancel()
-    
+
     tests := []struct {
         name    string
         input   string
@@ -3114,26 +3134,26 @@ func TestFunctionName(t *testing.T) {
             timeout: 100 * time.Millisecond,
         },
     }
-    
+
     for _, tt := range tests {
         t.Run(tt.name, func(t *testing.T) {
             t.Helper()
-            
+
             // Per-test timeout
             testCtx, testCancel := context.WithTimeout(ctx, tt.timeout)
             defer testCancel()
-            
+
             // Use require for fatal assertions
             require.NotNil(t, testCtx)
-            
+
             got, err := FunctionName(testCtx, tt.input)
-            
+
             if tt.wantErr {
                 require.Error(t, err)
                 assert.Empty(t, got)
                 return
             }
-            
+
             require.NoError(t, err)
             assert.Equal(t, tt.want, got)
         })
@@ -3142,6 +3162,7 @@ func TestFunctionName(t *testing.T) {
 ```
 
 ### Concurrent Test Safety
+
 ```go
 // Service represents our service for testing
 type Service struct {
@@ -3166,41 +3187,41 @@ func (s *Service) ProcessData(ctx context.Context, key string, data []byte) erro
 
 func TestConcurrentAccess(t *testing.T) {
     t.Parallel()
-    
+
     ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
     defer cancel()
-    
+
     const numGoroutines = 100
     var wg sync.WaitGroup
     errors := make(chan error, numGoroutines)
-    
+
     service := NewService(nil) // Using nil storage for this test
-    
+
     for i := 0; i < numGoroutines; i++ {
         wg.Add(1)
         go func(id int) {
             defer wg.Done()
-            
+
             select {
             case <-ctx.Done():
                 errors <- ctx.Err()
                 return
             default:
             }
-            
+
             if err := service.Process(ctx, fmt.Sprintf("data-%d", id)); err != nil {
                 errors <- err
             }
         }(i)
     }
-    
+
     // Wait with timeout
     done := make(chan struct{})
     go func() {
         wg.Wait()
         close(done)
     }()
-    
+
     select {
     case <-done:
         close(errors)
@@ -3215,6 +3236,7 @@ func TestConcurrentAccess(t *testing.T) {
 ```
 
 ### Mock Generation (100% Coverage)
+
 ```go
 //go:generate mockgen -source=interfaces.go -destination=mocks/mock_interfaces.go
 
@@ -3228,19 +3250,19 @@ type Storage interface {
 func TestServiceWithMock(t *testing.T) {
     ctrl := gomock.NewController(t)
     defer ctrl.Finish()
-    
+
     mockStorage := mocks.NewMockStorage(ctrl)
     service := NewService(mockStorage)
-    
+
     ctx, cancel := context.WithTimeout(context.Background(), time.Second)
     defer cancel()
-    
+
     // Setup expectations
     mockStorage.EXPECT().
         Save(gomock.Any(), "test-key", gomock.Any()).
         Return(nil).
         Times(1)
-    
+
     err := service.ProcessData(ctx, "test-key", []byte("test-data"))
     require.NoError(t, err)
 }
@@ -3249,9 +3271,11 @@ func TestServiceWithMock(t *testing.T) {
 ---
 
 [0;34m[INFO][0m Processing section: 10-review-checklist.md
+
 ## Copilot Review Checklist
 
 ### Optimization Framework Review (go-perfbook)
+
 - [ ] **Three Questions Applied**: (1) Eliminate work (2) Best algorithm (3) Best implementation
 - [ ] **Input size consideration**: Algorithm choice matches realistic data sizes
 - [ ] **Space-time trade-offs**: Understand position on memory/performance curve
@@ -3259,6 +3283,7 @@ func TestServiceWithMock(t *testing.T) {
 - [ ] **Specialization justified**: Custom implementations only when demonstrably better
 
 ### Performance Review
+
 - [ ] All counters use atomic operations
 - [ ] Zero-allocation patterns implemented
 - [ ] Memory pre-allocation where possible
@@ -3269,6 +3294,7 @@ func TestServiceWithMock(t *testing.T) {
 - [ ] Size-aware algorithm selection
 
 ### Advanced Optimization Patterns
+
 - [ ] **Polyalgorithm implementation**: Adaptive algorithm selection based on input
 - [ ] **Cache hierarchy**: Single-item cache, LRU, bloom filters where appropriate
 - [ ] **Memory layout**: SoA vs AoS choice justified, cache-line padding implemented
@@ -3276,6 +3302,7 @@ func TestServiceWithMock(t *testing.T) {
 - [ ] **Vectorization-friendly**: Data structures enable compiler auto-vectorization
 
 ### Production Scale Patterns (2M+ Users Proven)
+
 - [ ] **HTTP client pooling**: Global HTTP client with connection pooling configured
 - [ ] **Server timeouts**: ReadTimeout, WriteTimeout, IdleTimeout properly set
 - [ ] **Database batching**: Batch operations instead of individual inserts/updates
@@ -3285,6 +3312,7 @@ func TestServiceWithMock(t *testing.T) {
 - [ ] **Structured responses**: Consistent API response format with metadata
 
 ### Concurrency Anti-Pattern Prevention
+
 - [ ] **No fire-and-forget goroutines**: All `go func(){}()` have supervision
 - [ ] **Structured concurrency**: Context, error handling, panic recovery mandatory
 - [ ] **Worker pool patterns**: Bounded concurrency instead of unlimited goroutines
@@ -3293,6 +3321,7 @@ func TestServiceWithMock(t *testing.T) {
 - [ ] **Context propagation**: All long-running operations accept context.Context
 
 ### Memory Optimization (Pointer vs Value Awareness)
+
 - [ ] **Conscious pointer decisions**: Pointers only for large structs or optional fields
 - [ ] **Value types for small data**: bool, int, time.Time as values not pointers
 - [ ] **GC-friendly patterns**: Fewer pointers, stack allocation preferred
@@ -3307,6 +3336,7 @@ func TestServiceWithMock(t *testing.T) {
 - [ ] **Health checks**: Database and service health validation
 
 ### Security Review
+
 - [ ] All inputs validated
 - [ ] No math/rand for security purposes
 - [ ] Proper error handling without information leakage
@@ -3314,6 +3344,7 @@ func TestServiceWithMock(t *testing.T) {
 - [ ] Secure memory handling for sensitive data
 
 ### Testing Review
+
 - [ ] 100% test coverage achieved
 - [ ] All tests have timeouts
 - [ ] Concurrent tests for race conditions
@@ -3322,6 +3353,7 @@ func TestServiceWithMock(t *testing.T) {
 - [ ] Performance regression tests
 
 ### Code Quality Review
+
 - [ ] Proper Godoc format with code blocks
 - [ ] Channel safety patterns
 - [ ] Context usage for cancellation
@@ -3331,6 +3363,7 @@ func TestServiceWithMock(t *testing.T) {
 ---
 
 [0;34m[INFO][0m Processing section: 11-summary.md
+
 ## Summary
 
 Copilot must operate as an ultra-performance Go 1.24+ expert with **intelligent optimization framework** based on go-perfbook principles and production-proven patterns:
@@ -3377,6 +3410,7 @@ Every suggestion must be measurably better in performance, security, and maintai
 ---
 
 [0;34m[INFO][0m Processing section: 12-go-design-patterns.md
+
 ## Go Design Patterns Documentation Standards
 
 ### The 5 Essential Patterns for Real Go Projects
@@ -3622,7 +3656,7 @@ func (em *EventManager) Subscribe(observer Observer) {
 func (em *EventManager) Publish(event Event) {
     em.mu.RLock()
     defer em.mu.RUnlock()
-    
+
     for _, observer := range em.observers {
         go observer.HandleEvent(event) // Asynchronous notification
     }
@@ -3660,7 +3694,7 @@ type UserService struct {
 //  logger := &ConsoleLogger{}
 //  repo := &DatabaseRepository{}
 //  service := NewUserService(logger, repo)
-//  
+//
 //  err := service.CreateUser("John Doe")
 //  if err != nil {
 //      log.Fatal(err)
@@ -3694,14 +3728,14 @@ func NewUserService(logger Logger, repo Repository) *UserService {
 //   - 1 error - nil if creation successful, error otherwise
 func (s *UserService) CreateUser(name string) error {
     s.logger.Info(fmt.Sprintf("Creating user: %s", name))
-    
+
     user := map[string]string{"name": name}
     err := s.repo.Save(user)
     if err != nil {
         s.logger.Error(fmt.Sprintf("Save failed: %v", err))
         return err
     }
-    
+
     s.logger.Info("User created successfully")
     return nil
 }
@@ -3724,6 +3758,7 @@ All examples follow our Godoc standards with code blocks, parameters, and return
 ---
 
 [0;34m[INFO][0m Processing section: 13-production-scale-patterns.md
+
 # Production-Scale Patterns from Real-World Articles
 
 ## Anti-Patterns from Real Production Issues
@@ -3747,18 +3782,18 @@ func SendWelcomeEmail(user User) {
 // ✅ GOOD: Supervised concurrency with context and error handling
 func SendWelcomeEmailSafe(ctx context.Context, user User) error {
     errChan := make(chan error, 1)
-    
+
     go func() {
         defer func() {
             if r := recover(); r != nil {
                 errChan <- fmt.Errorf("panic in email sender: %v", r)
             }
         }()
-        
+
         err := smtp.Send(user.Email, "Welcome!")
         errChan <- err
     }()
-    
+
     select {
     case err := <-errChan:
         return err
@@ -3779,10 +3814,10 @@ func (s *EmailService) SendWelcomeEmail(ctx context.Context, user User) error {
         Template: "welcome",
         Data:     user,
     }
-    
+
     result := s.workerPool.Submit(ctx, task)
     s.metrics.RecordSend(result.Error == nil)
-    
+
     return result.Error
 }
 ```
@@ -3819,7 +3854,7 @@ type LargeUserProfile struct {
 func BenchmarkPointerVsValue(b *testing.B) {
     configs := make([]SmallConfig, 1000)
     configPtrs := make([]*SmallConfig, 1000)
-    
+
     b.Run("Value", func(b *testing.B) {
         for i := 0; i < b.N; i++ {
             for _, config := range configs {
@@ -3827,7 +3862,7 @@ func BenchmarkPointerVsValue(b *testing.B) {
             }
         }
     })
-    
+
     b.Run("Pointer", func(b *testing.B) {
         for i := 0; i < b.N; i++ {
             for _, config := range configPtrs {
@@ -3848,7 +3883,7 @@ type LatencyOptimizedCache struct {
     data        sync.Map
     predictions map[string]float64
     mutex       sync.RWMutex
-    
+
     // Real-time metrics
     hits        atomic.Uint64
     misses      atomic.Uint64
@@ -3861,16 +3896,16 @@ func (c *LatencyOptimizedCache) Get(key string) (interface{}, bool) {
         latency := uint64(time.Since(start).Nanoseconds())
         c.updateAvgLatency(latency)
     }()
-    
+
     if value, ok := c.data.Load(key); ok {
         c.hits.Add(1)
-        
+
         // Predictive prefetching for related data
         go c.prefetchRelated(key)
-        
+
         return value, true
     }
-    
+
     c.misses.Add(1)
     return nil, false
 }
@@ -3879,7 +3914,7 @@ func (c *LatencyOptimizedCache) prefetchRelated(key string) {
     c.mutex.RLock()
     score, exists := c.predictions[key]
     c.mutex.RUnlock()
-    
+
     if exists && score > 0.7 { // High probability threshold
         relatedKeys := c.getRelatedKeys(key)
         for _, relKey := range relatedKeys {
@@ -3930,21 +3965,21 @@ func NewProductionHTTPClient() *http.Client {
         MaxIdleConns:        100,              // Connection pool size
         MaxIdleConnsPerHost: 30,               // Per-host connection limit
         IdleConnTimeout:     90 * time.Second, // Keep-alive timeout
-        
+
         // TCP-level optimizations
         DisableKeepAlives:   false,
         DisableCompression:  false,
-        
+
         // TLS optimization
         TLSHandshakeTimeout: 10 * time.Second,
-        
+
         // DNS and connection timeouts
         DialContext: (&net.Dialer{
             Timeout:   30 * time.Second,
             KeepAlive: 30 * time.Second,
         }).DialContext,
     }
-    
+
     return &http.Client{
         Transport: transport,
         Timeout:   30 * time.Second, // Total request timeout
@@ -3956,16 +3991,16 @@ func NewProductionServer(handler http.Handler) *http.Server {
     return &http.Server{
         Addr:    ":8080",
         Handler: handler,
-        
+
         // Prevent slowloris attacks
         ReadTimeout:       15 * time.Second,
         ReadHeaderTimeout: 10 * time.Second,
         WriteTimeout:      15 * time.Second,
         IdleTimeout:       60 * time.Second,
-        
+
         // Connection limits
         MaxHeaderBytes: 1 << 20, // 1MB
-        
+
         // Error logging
         ErrorLog: log.New(os.Stderr, "HTTP: ", log.LstdFlags),
     }
@@ -3980,10 +4015,10 @@ type BatchWriter struct {
     db          *sql.DB
     batchSize   int
     flushPeriod time.Duration
-    
+
     pending     []BatchItem
     pendingMutex sync.Mutex
-    
+
     flushChan   chan struct{}
     stopChan    chan struct{}
     wg          sync.WaitGroup
@@ -4004,33 +4039,33 @@ func NewBatchWriter(db *sql.DB, batchSize int) *BatchWriter {
         flushChan:   make(chan struct{}, 1),
         stopChan:    make(chan struct{}),
     }
-    
+
     bw.wg.Add(1)
     go bw.flushWorker()
-    
+
     return bw
 }
 
 func (bw *BatchWriter) Execute(sql string, args ...interface{}) error {
     resultChan := make(chan error, 1)
-    
+
     bw.pendingMutex.Lock()
     bw.pending = append(bw.pending, BatchItem{
         SQL:    sql,
         Args:   args,
         Result: resultChan,
     })
-    
+
     shouldFlush := len(bw.pending) >= bw.batchSize
     bw.pendingMutex.Unlock()
-    
+
     if shouldFlush {
         select {
         case bw.flushChan <- struct{}{}:
         default: // Don't block if flush is already queued
         }
     }
-    
+
     return <-resultChan
 }
 
@@ -4038,7 +4073,7 @@ func (bw *BatchWriter) flushWorker() {
     defer bw.wg.Done()
     ticker := time.NewTicker(bw.flushPeriod)
     defer ticker.Stop()
-    
+
     for {
         select {
         case <-bw.flushChan:
@@ -4058,12 +4093,12 @@ func (bw *BatchWriter) flush() {
         bw.pendingMutex.Unlock()
         return
     }
-    
+
     batch := make([]BatchItem, len(bw.pending))
     copy(batch, bw.pending)
     bw.pending = bw.pending[:0] // Reset slice
     bw.pendingMutex.Unlock()
-    
+
     // Execute all items in transaction
     tx, err := bw.db.Begin()
     if err != nil {
@@ -4073,12 +4108,12 @@ func (bw *BatchWriter) flush() {
         }
         return
     }
-    
+
     for _, item := range batch {
         _, execErr := tx.Exec(item.SQL, item.Args...)
         item.Result <- execErr
     }
-    
+
     if err := tx.Commit(); err != nil {
         tx.Rollback()
     }
@@ -4093,20 +4128,20 @@ func NewProductionServer(handler http.Handler, port string) *http.Server {
     return &http.Server{
         Addr:    ":" + port,
         Handler: handler,
-        
+
         // Prevent slow client attacks
         ReadTimeout:    10 * time.Second,  // Time to read request
         ReadHeaderTimeout: 5 * time.Second, // Time to read headers only
-        
+
         // Prevent slow response attacks
         WriteTimeout:   10 * time.Second,  // Time to write response
-        
+
         // Keep-alive timeout
         IdleTimeout:    120 * time.Second, // Keep-alive idle timeout
-        
+
         // Prevent large header attacks
         MaxHeaderBytes: 1 << 20, // 1MB max headers
-        
+
         // Error logging
         ErrorLog: log.New(os.Stderr, "HTTP-SERVER ", log.LstdFlags),
     }
@@ -4118,15 +4153,15 @@ func (s *Server) Shutdown(ctx context.Context) error {
     if err := s.httpServer.Shutdown(ctx); err != nil {
         return fmt.Errorf("server shutdown failed: %w", err)
     }
-    
+
     // Wait for background workers
     s.workerPool.Stop()
-    
+
     // Close database connections
     if err := s.db.Close(); err != nil {
         return fmt.Errorf("database close failed: %w", err)
     }
-    
+
     return nil
 }
 ```
@@ -4142,7 +4177,7 @@ type BatchInserter struct {
     stmt         *sql.Stmt
     batchSize    int
     flushTimeout time.Duration
-    
+
     mu      sync.Mutex
     pending []BatchItem
     timer   *time.Timer
@@ -4157,13 +4192,13 @@ type BatchItem struct {
 
 func NewBatchInserter(db *sql.DB, batchSize int, flushTimeout time.Duration) *BatchInserter {
     stmt, err := db.Prepare(`
-        INSERT INTO items (id, data, type, created_at) 
+        INSERT INTO items (id, data, type, created_at)
         VALUES ($1, $2, $3, $4)
     `)
     if err != nil {
         panic(fmt.Sprintf("failed to prepare batch statement: %v", err))
     }
-    
+
     bi := &BatchInserter{
         db:           db,
         stmt:         stmt,
@@ -4172,7 +4207,7 @@ func NewBatchInserter(db *sql.DB, batchSize int, flushTimeout time.Duration) *Ba
         pending:      make([]BatchItem, 0, batchSize),
         timer:        time.NewTimer(flushTimeout),
     }
-    
+
     go bi.flushPeriodically()
     return bi
 }
@@ -4181,23 +4216,23 @@ func (bi *BatchInserter) Add(item BatchItem) error {
     if bi.closed.Load() {
         return ErrBatcherClosed
     }
-    
+
     bi.mu.Lock()
     defer bi.mu.Unlock()
-    
+
     bi.pending = append(bi.pending, item)
-    
+
     // Flush when batch is full
     if len(bi.pending) >= bi.batchSize {
         return bi.flushLocked()
     }
-    
+
     // Reset timer for periodic flush
     if !bi.timer.Stop() {
         <-bi.timer.C
     }
     bi.timer.Reset(bi.flushTimeout)
-    
+
     return nil
 }
 
@@ -4205,27 +4240,27 @@ func (bi *BatchInserter) flushLocked() error {
     if len(bi.pending) == 0 {
         return nil
     }
-    
+
     // Use transaction for atomic batch
     tx, err := bi.db.Begin()
     if err != nil {
         return fmt.Errorf("failed to begin transaction: %w", err)
     }
     defer tx.Rollback()
-    
+
     txStmt := tx.Stmt(bi.stmt)
     now := time.Now()
-    
+
     for _, item := range bi.pending {
         if _, err := txStmt.Exec(item.ID, item.Data, item.Type, now); err != nil {
             return fmt.Errorf("failed to execute batch item: %w", err)
         }
     }
-    
+
     if err := tx.Commit(); err != nil {
         return fmt.Errorf("failed to commit batch: %w", err)
     }
-    
+
     // Reset pending slice (keep capacity)
     bi.pending = bi.pending[:0]
     return nil
@@ -4249,24 +4284,24 @@ func BulkInsertWithCopy(db *sql.DB, items []BatchItem) error {
         return err
     }
     defer tx.Rollback()
-    
+
     stmt, err := tx.Prepare(pq.CopyIn("items", "id", "data", "type", "created_at"))
     if err != nil {
         return err
     }
     defer stmt.Close()
-    
+
     now := time.Now()
     for _, item := range items {
         if _, err := stmt.Exec(item.ID, item.Data, item.Type, now); err != nil {
             return err
         }
     }
-    
+
     if _, err := stmt.Exec(); err != nil {
         return err
     }
-    
+
     return tx.Commit()
 }
 ```
@@ -4287,18 +4322,18 @@ func ConfigureDBPool(db *sql.DB) {
 func (s *Service) HealthCheck(ctx context.Context) error {
     ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
     defer cancel()
-    
+
     if err := s.db.PingContext(ctx); err != nil {
         return fmt.Errorf("database ping failed: %w", err)
     }
-    
+
     // Validate connection pool state
     stats := s.db.Stats()
     if stats.OpenConnections > stats.MaxOpenConnections*8/10 {
-        return fmt.Errorf("connection pool near capacity: %d/%d", 
+        return fmt.Errorf("connection pool near capacity: %d/%d",
             stats.OpenConnections, stats.MaxOpenConnections)
     }
-    
+
     return nil
 }
 ```
@@ -4339,19 +4374,19 @@ type UserMetadata struct {
 // Fast JSON decoding with object reuse
 func DecodeUser(r io.Reader) (*User, error) {
     user := userPool.Get().(*User)
-    
+
     decoder := jsonDecoderPool.Get().(*json.Decoder)
     decoder.Reset(r)
-    
+
     err := decoder.Decode(user)
-    
+
     jsonDecoderPool.Put(decoder)
-    
+
     if err != nil {
         userPool.Put(user)
         return nil, fmt.Errorf("failed to decode user: %w", err)
     }
-    
+
     return user, nil
 }
 
@@ -4381,11 +4416,11 @@ func processUser(user *User) error {
     if user.ID == 0 {
         return ErrInvalidUserID
     }
-    
+
     if user.Email == "" {
         return ErrMissingEmail
     }
-    
+
     return validateUserData(user)
 }
 ```
@@ -4401,11 +4436,11 @@ type WorkerPool struct {
     workerFunc   func(context.Context, interface{}) error
     jobQueue     chan Job
     workerSem    chan struct{} // Semaphore for worker limit
-    
+
     wg           sync.WaitGroup
     ctx          context.Context
     cancel       context.CancelFunc
-    
+
     // Metrics
     processed    atomic.Uint64
     errors       atomic.Uint64
@@ -4420,7 +4455,7 @@ type Job struct {
 
 func NewWorkerPool(maxWorkers int, queueSize int, workerFunc func(context.Context, interface{}) error) *WorkerPool {
     ctx, cancel := context.WithCancel(context.Background())
-    
+
     return &WorkerPool{
         maxWorkers: maxWorkers,
         workerFunc: workerFunc,
@@ -4440,25 +4475,25 @@ func (wp *WorkerPool) Start() {
 
 func (wp *WorkerPool) worker() {
     defer wp.wg.Done()
-    
+
     for {
         select {
         case job := <-wp.jobQueue:
             wp.queueSize.Add(-1)
-            
+
             // Acquire worker semaphore
             wp.workerSem <- struct{}{}
-            
+
             if err := wp.workerFunc(job.Context, job.Data); err != nil {
                 wp.errors.Add(1)
                 log.Printf("Worker error for job %s: %v", job.ID, err)
             } else {
                 wp.processed.Add(1)
             }
-            
+
             // Release worker semaphore
             <-wp.workerSem
-            
+
         case <-wp.ctx.Done():
             return
         }
@@ -4479,14 +4514,14 @@ func (wp *WorkerPool) Submit(job Job) error {
 
 func (wp *WorkerPool) Stop(timeout time.Duration) error {
     wp.cancel()
-    
+
     // Wait for workers to finish with timeout
     done := make(chan struct{})
     go func() {
         wp.wg.Wait()
         close(done)
     }()
-    
+
     select {
     case <-done:
         return nil
@@ -4518,12 +4553,12 @@ func NewRateLimiter(rps int) *RateLimiter {
         ticker: time.NewTicker(time.Second / time.Duration(rps)),
         done:   make(chan struct{}),
     }
-    
+
     // Pre-fill bucket
     for i := 0; i < rps; i++ {
         rl.tokens <- struct{}{}
     }
-    
+
     go rl.refillTokens()
     return rl
 }
@@ -4569,9 +4604,9 @@ func (rl *RateLimiter) Wait(ctx context.Context) error {
 // Multi-size buffer pool for different use cases
 type BufferPool struct {
     small  sync.Pool // 1KB buffers
-    medium sync.Pool // 16KB buffers  
+    medium sync.Pool // 16KB buffers
     large  sync.Pool // 64KB buffers
-    
+
     stats struct {
         smallHits  atomic.Uint64
         mediumHits atomic.Uint64
@@ -4634,7 +4669,7 @@ func (bp *BufferPool) Put(buf []byte) {
 func (s *Server) handleRequest(w http.ResponseWriter, r *http.Request) {
     buf := s.bufferPool.Get(1024)
     defer s.bufferPool.Put(buf)
-    
+
     // Read request body
     buf = buf[:cap(buf)]
     n, err := r.Body.Read(buf)
@@ -4643,7 +4678,7 @@ func (s *Server) handleRequest(w http.ResponseWriter, r *http.Request) {
         return
     }
     buf = buf[:n]
-    
+
     // Process request...
     response := s.processRequest(buf)
     w.Write(response)
@@ -4651,4 +4686,7 @@ func (s *Server) handleRequest(w http.ResponseWriter, r *http.Request) {
 ```
 
 Ces patterns de production sont **éprouvés à 2M+ utilisateurs** et complètent parfaitement notre framework d'optimisation go-perfbook. Ils se concentrent sur les **goulots d'étranglement réels** rencontrés en production : connection pooling, batch operations, type safety, worker pools, et memory management.
-````
+
+```
+
+```
