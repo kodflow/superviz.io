@@ -19,6 +19,12 @@
 - [ ] Batching strategies for I/O operations
 - [ ] Size-aware algorithm selection
 
+### Benchmarking Review (Only When Requested)
+
+- [ ] **Benchmark creation**: Only when user explicitly requests performance measurement
+- [ ] **Benchmark quality**: Proper setup, teardown, and realistic data when created
+- [ ] **Performance validation**: Memory and CPU measurements when benchmarking is requested
+
 ### Advanced Optimization Patterns
 
 - [ ] **Polyalgorithm implementation**: Adaptive algorithm selection based on input

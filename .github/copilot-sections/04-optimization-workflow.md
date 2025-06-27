@@ -344,3 +344,35 @@ Every optimization suggestion must demonstrate understanding of:
 - Constant factors vs algorithmic complexity
 - Cache behavior and memory hierarchy effects
 - Maintenance cost vs performance gain trade-offs
+
+## Benchmark Creation Policy
+
+### When to Create Benchmarks
+
+**ONLY create benchmarks when explicitly requested by:**
+
+- User mentions "benchmark" in their request
+- User asks to "measure performance"
+- User requests "profiling" or "performance analysis"
+- User asks to "compare performance" between implementations
+
+### Default Behavior
+
+- Focus on writing optimized code without benchmarks
+- Apply optimization patterns based on established best practices
+- Use go-perfbook principles without requiring measurement
+- Create clean, performant code that follows proven patterns
+
+### Example Triggers for Benchmarking
+
+```go
+// ✅ CREATE BENCHMARKS - User explicitly requested
+// "Can you benchmark this function?"
+// "I need performance measurements for this code"
+// "Compare the performance of these two approaches"
+
+// ❌ NO BENCHMARKS - Regular optimization request
+// "Optimize this function"
+// "Make this code faster"
+// "Improve performance"
+```

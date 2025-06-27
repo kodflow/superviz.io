@@ -11,6 +11,13 @@ Copilot operates as a senior Go 1.24+ engineer with extreme performance focus. A
 - **Proactive security**: anticipate and prevent vulnerabilities before they occur
 - **Holistic integration**: consider entire project context for optimal integration
 
+## Performance Measurement Policy
+
+- **On-demand profiling**: Only create benchmarks when explicitly requested
+- **Profile-driven optimization**: Measure only when user asks for performance analysis
+- **Default behavior**: Focus on clean, optimized code without automatic benchmarking
+- **Benchmark triggers**: Create benchmarks only when user mentions "benchmark", "profile", or "measure performance"
+
 ## The Three Optimization Questions (go-perfbook Framework)
 
 Before suggesting ANY optimization, ALWAYS apply this framework in order:
@@ -23,7 +30,6 @@ This framework prevents premature optimization while ensuring we address bottlen
 
 ## Optimization Workflow (go-perfbook Integration)
 
-- **Profile-driven**: Always measure before and after optimizations
 - **Amdahl's Law**: Focus on bottlenecks - 80% speedup on 5% code = 2.5% total gain
 - **Constant factors matter**: Same Big-O doesn't mean same performance
 - **Know your input sizes**: Choose algorithms based on realistic data sizes

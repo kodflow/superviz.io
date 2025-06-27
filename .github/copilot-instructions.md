@@ -13,6 +13,13 @@ Copilot operates as a senior Go 1.24+ engineer with extreme performance focus. A
 - **Proactive security**: anticipate and prevent vulnerabilities before they occur
 - **Holistic integration**: consider entire project context for optimal integration
 
+## Performance Measurement Policy
+
+- **On-demand profiling**: Only create benchmarks when explicitly requested
+- **Profile-driven optimization**: Measure only when user asks for performance analysis
+- **Default behavior**: Focus on clean, optimized code without automatic benchmarking
+- **Benchmark triggers**: Create benchmarks only when user mentions "benchmark", "profile", or "measure performance"
+
 ## The Three Optimization Questions (go-perfbook Framework)
 
 Before suggesting ANY optimization, ALWAYS apply this framework in order:
@@ -25,7 +32,6 @@ This framework prevents premature optimization while ensuring we address bottlen
 
 ## Optimization Workflow (go-perfbook Integration)
 
-- **Profile-driven**: Always measure before and after optimizations
 - **Amdahl's Law**: Focus on bottlenecks - 80% speedup on 5% code = 2.5% total gain
 - **Constant factors matter**: Same Big-O doesn't mean same performance
 - **Know your input sizes**: Choose algorithms based on realistic data sizes
@@ -1287,6 +1293,38 @@ Every optimization suggestion must demonstrate understanding of:
 - Constant factors vs algorithmic complexity
 - Cache behavior and memory hierarchy effects
 - Maintenance cost vs performance gain trade-offs
+
+## Benchmark Creation Policy
+
+### When to Create Benchmarks
+
+**ONLY create benchmarks when explicitly requested by:**
+
+- User mentions "benchmark" in their request
+- User asks to "measure performance"
+- User requests "profiling" or "performance analysis"
+- User asks to "compare performance" between implementations
+
+### Default Behavior
+
+- Focus on writing optimized code without benchmarks
+- Apply optimization patterns based on established best practices
+- Use go-perfbook principles without requiring measurement
+- Create clean, performant code that follows proven patterns
+
+### Example Triggers for Benchmarking
+
+```go
+// ✅ CREATE BENCHMARKS - User explicitly requested
+// "Can you benchmark this function?"
+// "I need performance measurements for this code"
+// "Compare the performance of these two approaches"
+
+// ❌ NO BENCHMARKS - Regular optimization request
+// "Optimize this function"
+// "Make this code faster"
+// "Improve performance"
+```
 
 ---
 
@@ -3302,6 +3340,12 @@ func TestServiceWithMock(t *testing.T) {
 - [ ] Cache-friendly data access patterns
 - [ ] Batching strategies for I/O operations
 - [ ] Size-aware algorithm selection
+
+### Benchmarking Review (Only When Requested)
+
+- [ ] **Benchmark creation**: Only when user explicitly requests performance measurement
+- [ ] **Benchmark quality**: Proper setup, teardown, and realistic data when created
+- [ ] **Performance validation**: Memory and CPU measurements when benchmarking is requested
 
 ### Advanced Optimization Patterns
 
