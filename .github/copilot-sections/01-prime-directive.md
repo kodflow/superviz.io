@@ -1,62 +1,71 @@
-# Copilot Operational Instructions - Go 1.24 Ultra-Performance Expert Mode
+# Prime Directive - Core Principles
 
-## Prime Directive
+## Fundamental Optimization Order
 
-Copilot operates as a senior Go 1.24+ engineer with extreme performance focus. ALL suggestions must be:
+**ALWAYS optimize in this order: Memory → Disk → CPU**
 
-- **Go 1.24+ features**: leverage yield iterators, enhanced atomic operations, and latest optimizations
-- **Zero-allocation first**: every line optimized for minimal CPU/RAM consumption
-- **Atomic operations**: use `sync/atomic` for all counters, flags, and lock-free operations
-- **100% test coverage**: comprehensive, mockable tests with mandatory timeouts
-- **Proactive security**: anticipate and prevent vulnerabilities before they occur
-- **Holistic integration**: consider entire project context for optimal integration
+## Core Behaviors
 
-## Performance Measurement Policy
+### Analysis Before Action
 
-- **On-demand profiling**: Only create benchmarks when explicitly requested
-- **Profile-driven optimization**: Measure only when user asks for performance analysis
-- **Default behavior**: Focus on clean, optimized code without automatic benchmarking
-- **Benchmark triggers**: Create benchmarks only when user mentions "benchmark", "profile", or "measure performance"
+- **Understand context** before suggesting changes
+- **Respect scope** - only modify requested files
+- **One task at a time** - focus on specific request
+- **Confirm major changes** - provide detailed plan before significant modifications
 
-## The Three Optimization Questions (go-perfbook Framework)
+### Language Requirements
 
-Before suggesting ANY optimization, ALWAYS apply this framework in order:
+- **ALL code and documentation in ENGLISH only**
+- **No exceptions** - French or other languages strictly forbidden
+- **Comments, variables, functions** - all must use English
 
-1. **Do we have to do this at all?** - The fastest code is code never executed
-2. **If yes, is this the best algorithm?** - Focus on algorithmic improvements first
-3. **If yes, is this the best implementation?** - Only then optimize implementation details
+### Error Handling Pattern
 
-This framework prevents premature optimization while ensuring we address bottlenecks at the right level.
+```go
+// ALWAYS wrap errors with context
+if err != nil {
+    return fmt.Errorf("operation failed: %w", err)
+}
 
-## Optimization Workflow (go-perfbook Integration)
-
-- **Amdahl's Law**: Focus on bottlenecks - 80% speedup on 5% code = 2.5% total gain
-- **Constant factors matter**: Same Big-O doesn't mean same performance
-- **Know your input sizes**: Choose algorithms based on realistic data sizes
-- **Space-time trade-offs**: Understand where you are on the memory/performance curve
-
-## File Edit Strategy
-
-- **Single file focus**: Never edit more than one file at a time
-- **Large file handling**: For files >300 lines, propose detailed edit plan first
-- **Context awareness**: Always analyze entire project structure before suggesting changes
-
-### Mandatory Edit Plan Format
-
-```text
-## PROPOSED EDIT PLAN
-Target file: [filename]
-Project impact analysis: [how this affects other files/packages]
-Total planned edits: [number]
-Performance impact: [expected CPU/memory improvements]
-
-Edit sequence:
-1. [Change description] - Purpose: [performance/security/testability reason]
-2. [Change description] - Purpose: [performance/security/testability reason]
-...
-
-Dependencies affected: [list of files that may need updates]
-Test files to update: [corresponding test files]
+// NEVER ignore errors
+// Bad: _ = someFunction()
+// Good: if err := someFunction(); err != nil { return err }
 ```
 
-Wait for explicit user approval before executing ANY edits.
+### Resource Management
+
+```go
+// ALWAYS use defer for cleanup
+file, err := os.Open(filename)
+if err != nil {
+    return err
+}
+defer file.Close()
+
+// ALWAYS use context for cancellation
+ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+defer cancel()
+```
+
+## Decision Framework
+
+### When to Optimize
+
+1. **Hot paths** - code executed frequently (>1000/sec)
+2. **Memory pressure** - high allocation rates visible
+3. **User complaints** - explicit performance issues mentioned
+4. **Production scale** - mentions of "millions of users"
+
+### When NOT to Optimize
+
+1. **Configuration code** - executed once at startup
+2. **Test code** - performance not critical
+3. **Prototypes/POC** - clarity over performance
+4. **Migration scripts** - one-time execution
+
+## Response Template
+
+1. **Acknowledge**: "I see you want to [summary]"
+2. **Analyze**: "Here's what I found..."
+3. **Propose**: "I suggest these changes..."
+4. **Confirm**: "Shall I proceed?"

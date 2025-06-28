@@ -1,4 +1,4 @@
-````instructions
+`````instructions
 [0;34m[INFO][0m Processing section: 01-prime-directive.md
 # Copilot Operational Instructions - Go 1.24 Ultra-Performance Expert Mode
 
@@ -2752,7 +2752,7 @@ func (m *MemoryMonitor) ForceGCIfNeeded() {
         runtime.GC() // Double GC to ensure cleanup
     }
 }
-````
+`````
 
 ### Memory-Efficient Data Structures
 
@@ -2824,6 +2824,7 @@ func (f *PackedFlags) Clear(flag PackedFlags) {
 ---
 
 [0;34m[INFO][0m Processing section: 08-code-quality.md
+
 ## Code Quality and Security
 
 ### Required Tools (Must Pass)
@@ -3143,6 +3144,7 @@ func parallelSort(data []int) {
 ---
 
 [0;34m[INFO][0m Processing section: 09-test-coverage.md
+
 ## 100% Test Coverage with Timeouts
 
 ### Mandatory Test Structure
@@ -3320,6 +3322,7 @@ func TestServiceWithMock(t *testing.T) {
 ---
 
 [0;34m[INFO][0m Processing section: 10-review-checklist.md
+
 ## Copilot Review Checklist
 
 ### Optimization Framework Review (go-perfbook)
@@ -3417,6 +3420,7 @@ func TestServiceWithMock(t *testing.T) {
 ---
 
 [0;34m[INFO][0m Processing section: 11-summary.md
+
 ## Summary
 
 Copilot must operate as an ultra-performance Go 1.24+ expert with **intelligent optimization framework** based on go-perfbook principles and production-proven patterns:
@@ -3463,6 +3467,7 @@ Every suggestion must be measurably better in performance, security, and maintai
 ---
 
 [0;34m[INFO][0m Processing section: 12-go-design-patterns.md
+
 ## Go Design Patterns Documentation Standards
 
 ### The 5 Essential Patterns for Real Go Projects
@@ -3810,6 +3815,7 @@ All examples follow our Godoc standards with code blocks, parameters, and return
 ---
 
 [0;34m[INFO][0m Processing section: 13-production-scale-patterns.md
+
 # Production-Scale Patterns from Real-World Articles
 
 ## Anti-Patterns from Real Production Issues
@@ -4737,4 +4743,7 @@ func (s *Server) handleRequest(w http.ResponseWriter, r *http.Request) {
 ```
 
 Ces patterns de production sont **éprouvés à 2M+ utilisateurs** et complètent parfaitement notre framework d'optimisation go-perfbook. Ils se concentrent sur les **goulots d'étranglement réels** rencontrés en production : connection pooling, batch operations, type safety, worker pools, et memory management.
-````
+
+```
+
+```
