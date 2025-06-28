@@ -2,6 +2,7 @@ package version_test
 
 import (
 	"bytes"
+	"encoding/json"
 	"strings"
 	"testing"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/kodflow/superviz.io/internal/services"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/require"
+	"gopkg.in/yaml.v3"
 )
 
 func newVersionCmdWithBuffer(buf *bytes.Buffer) *cobra.Command {
@@ -34,7 +36,7 @@ func TestGetCommand_Basic(t *testing.T) {
 
 	require.NotNil(t, cmd)
 	require.Equal(t, "version", cmd.Use)
-	require.Equal(t, "Print version information", cmd.Short)
+	require.Equal(t, "Print version information with flexible output formats", cmd.Short)
 }
 
 func TestGetCommandWithService_NilService(t *testing.T) {
@@ -281,4 +283,275 @@ type mockVersionProvider struct {
 
 func (m *mockVersionProvider) GetVersionInfo() providers.VersionInfo {
 	return m.info
+}
+
+// Tests for enhanced version command functionality
+
+func TestVersionCommand_JSONFormat(t *testing.T) {
+	t.Parallel()
+
+	// Reset singleton state for this test
+	providers.Reset()
+
+	// Create mock provider with known values
+	mockProvider := &mockVersionProvider{
+		info: providers.VersionInfo{
+			Version:   "1.2.3",
+			Commit:    "abc123",
+			BuiltAt:   "2024-01-01T12:00:00Z",
+			BuiltBy:   "test-user",
+			GoVersion: "go1.21.0",
+			OSArch:    "linux/amd64",
+		},
+	}
+
+	service := services.NewVersionService(mockProvider)
+	cmd := version.NewVersionCommand(service)
+
+	var buf bytes.Buffer
+	cmd.SetOut(&buf)
+	cmd.SetErr(&buf)
+	cmd.SetArgs([]string{"--format", "json"})
+
+	err := cmd.Execute()
+	require.NoError(t, err)
+
+	output := buf.String()
+	require.NotEmpty(t, output)
+
+	// Parse JSON to verify structure
+	var result map[string]interface{}
+	err = json.Unmarshal([]byte(output), &result)
+	require.NoError(t, err)
+
+	// Verify all expected fields are present with correct values
+	require.Equal(t, "1.2.3", result["version"])
+	require.Equal(t, "abc123", result["commit"])
+	require.Equal(t, "2024-01-01T12:00:00Z", result["built_at"])
+	require.Equal(t, "test-user", result["built_by"])
+	require.Equal(t, "go1.21.0", result["go_version"])
+	require.Equal(t, "linux/amd64", result["os_arch"])
+}
+
+func TestVersionCommand_YAMLFormat(t *testing.T) {
+	t.Parallel()
+
+	// Reset singleton state for this test
+	providers.Reset()
+
+	mockProvider := &mockVersionProvider{
+		info: providers.VersionInfo{
+			Version:   "1.2.3",
+			Commit:    "abc123",
+			BuiltAt:   "2024-01-01T12:00:00Z",
+			BuiltBy:   "test-user",
+			GoVersion: "go1.21.0",
+			OSArch:    "linux/amd64",
+		},
+	}
+
+	service := services.NewVersionService(mockProvider)
+	cmd := version.NewVersionCommand(service)
+
+	var buf bytes.Buffer
+	cmd.SetOut(&buf)
+	cmd.SetErr(&buf)
+	cmd.SetArgs([]string{"--format", "yaml"})
+
+	err := cmd.Execute()
+	require.NoError(t, err)
+
+	output := buf.String()
+	require.NotEmpty(t, output)
+
+	// Parse YAML to verify structure
+	var result map[string]interface{}
+	err = yaml.Unmarshal([]byte(output), &result)
+	require.NoError(t, err)
+
+	// Verify all expected fields are present with correct values
+	require.Equal(t, "1.2.3", result["version"])
+	require.Equal(t, "abc123", result["commit"])
+	require.Equal(t, "2024-01-01T12:00:00Z", result["built_at"])
+	require.Equal(t, "test-user", result["built_by"])
+	require.Equal(t, "go1.21.0", result["go_version"])
+	require.Equal(t, "linux/amd64", result["os_arch"])
+
+	// Verify YAML format contains proper field names
+	require.Contains(t, output, "version:")
+	require.Contains(t, output, "commit:")
+	require.Contains(t, output, "built_at:")
+	require.Contains(t, output, "built_by:")
+	require.Contains(t, output, "go_version:")
+	require.Contains(t, output, "os_arch:")
+}
+
+func TestVersionCommand_ShortFormat(t *testing.T) {
+	t.Parallel()
+
+	// Reset singleton state for this test
+	providers.Reset()
+
+	mockProvider := &mockVersionProvider{
+		info: providers.VersionInfo{
+			Version:   "1.2.3",
+			Commit:    "abc123",
+			BuiltAt:   "2024-01-01T12:00:00Z",
+			BuiltBy:   "test-user",
+			GoVersion: "go1.21.0",
+			OSArch:    "linux/amd64",
+		},
+	}
+
+	service := services.NewVersionService(mockProvider)
+	cmd := version.NewVersionCommand(service)
+
+	var buf bytes.Buffer
+	cmd.SetOut(&buf)
+	cmd.SetErr(&buf)
+	cmd.SetArgs([]string{"--format", "short"})
+
+	err := cmd.Execute()
+	require.NoError(t, err)
+
+	output := strings.TrimSpace(buf.String())
+	require.Equal(t, "1.2.3", output)
+
+	// Should be only the version, no other fields
+	require.NotContains(t, output, "Commit:")
+	require.NotContains(t, output, "Built at:")
+	require.NotContains(t, output, "Built by:")
+	require.NotContains(t, output, "Go version:")
+	require.NotContains(t, output, "OS/Arch:")
+}
+
+func TestVersionCommand_InvalidFormat(t *testing.T) {
+	t.Parallel()
+
+	cmd := version.NewVersionCommand(services.NewVersionService(nil))
+
+	var buf bytes.Buffer
+	cmd.SetOut(&buf)
+	cmd.SetErr(&buf)
+	cmd.SetArgs([]string{"--format", "invalid"})
+
+	err := cmd.Execute()
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "invalid output format: invalid")
+	require.Contains(t, err.Error(), "valid: default, json, yaml, short")
+}
+
+func TestVersionCommand_ShortFlag(t *testing.T) {
+	t.Parallel()
+
+	mockProvider := &mockVersionProvider{
+		info: providers.VersionInfo{
+			Version:   "1.2.3",
+			Commit:    "abc123",
+			BuiltAt:   "2024-01-01T12:00:00Z",
+			BuiltBy:   "test-user",
+			GoVersion: "go1.21.0",
+			OSArch:    "linux/amd64",
+		},
+	}
+
+	service := services.NewVersionService(mockProvider)
+	cmd := version.NewVersionCommand(service)
+
+	var buf bytes.Buffer
+	cmd.SetOut(&buf)
+	cmd.SetErr(&buf)
+	cmd.SetArgs([]string{"-f", "json"})
+
+	err := cmd.Execute()
+	require.NoError(t, err)
+
+	output := buf.String()
+	require.NotEmpty(t, output)
+
+	// Should be valid JSON
+	var result map[string]interface{}
+	err = json.Unmarshal([]byte(output), &result)
+	require.NoError(t, err)
+
+	// Verify basic fields are present
+	require.Equal(t, "1.2.3", result["version"])
+}
+
+func TestVersionCommand_CaseSensitiveFormat(t *testing.T) {
+	t.Parallel()
+
+	mockProvider := &mockVersionProvider{
+		info: providers.VersionInfo{
+			Version: "1.2.3",
+		},
+	}
+
+	service := services.NewVersionService(mockProvider)
+
+	testCases := []struct {
+		name   string
+		format string
+		valid  bool
+	}{
+		{"uppercase_json", "JSON", true},
+		{"lowercase_json", "json", true},
+		{"mixed_case_json", "Json", true},
+		{"uppercase_yaml", "YAML", true},
+		{"lowercase_yaml", "yaml", true},
+		{"mixed_case_yaml", "Yaml", true},
+		{"uppercase_short", "SHORT", true},
+		{"lowercase_short", "short", true},
+		{"mixed_case_default", "Default", true},
+		{"invalid_format", "xml", false},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			cmd := version.NewVersionCommand(service)
+
+			var buf bytes.Buffer
+			cmd.SetOut(&buf)
+			cmd.SetErr(&buf)
+			cmd.SetArgs([]string{"--format", tc.format})
+
+			err := cmd.Execute()
+			if tc.valid {
+				require.NoError(t, err)
+			} else {
+				require.Error(t, err)
+			}
+		})
+	}
+}
+
+func TestVersionCommand_EmptyService(t *testing.T) {
+	t.Parallel()
+
+	// Test that command works even with default service
+	cmd := version.GetCommand()
+
+	var buf bytes.Buffer
+	cmd.SetOut(&buf)
+	cmd.SetErr(&buf)
+	cmd.SetArgs([]string{"--format", "json"})
+
+	err := cmd.Execute()
+	require.NoError(t, err)
+
+	output := buf.String()
+	require.NotEmpty(t, output)
+
+	// Should be valid JSON
+	var result map[string]interface{}
+	err = json.Unmarshal([]byte(output), &result)
+	require.NoError(t, err)
+
+	// Should contain basic fields
+	require.Contains(t, result, "version")
+	require.Contains(t, result, "commit")
+	require.Contains(t, result, "built_at")
+	require.Contains(t, result, "built_by")
+	require.Contains(t, result, "go_version")
+	require.Contains(t, result, "os_arch")
 }

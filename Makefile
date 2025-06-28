@@ -54,4 +54,16 @@ run: ## Run the Go application
 
 generate-copilot: fmt ## Generate copilot instructions from sectioned files
 	echo "🔧 Generating copilot instructions..."
-	./scripts/generate-copilot.sh
+	{ \
+		echo '````instructions'; \
+		for file in .github/copilot-sections/*.md; do \
+			[ -f "$$file" ] || continue; \
+			[ "$$file" != ".github/copilot-sections/01-prime-directive.md" ] && printf "\n---\n\n"; \
+			if [ "$$(basename "$$file")" = "01-prime-directive.md" ]; then \
+				sed '1s/^## /# /' "$$file"; \
+			else \
+				cat "$$file"; \
+			fi; \
+		done; \
+		echo '````'; \
+	} > .github/copilot-instructions.md && echo "✅ Generated .github/copilot-instructions.md"
