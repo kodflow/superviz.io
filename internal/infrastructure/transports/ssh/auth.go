@@ -74,7 +74,12 @@ func (a *defaultAuthenticator) GetAuthMethods(ctx context.Context, config *Confi
 	if config.KeyPath != "" {
 		// Check cache first
 		if cached, ok := a.keyCache.Load(config.KeyPath); ok {
-			return []ssh.AuthMethod{ssh.PublicKeys(cached.(ssh.Signer))}, nil
+			// Safe type assertion with verification
+			if signer, ok := cached.(ssh.Signer); ok {
+				return []ssh.AuthMethod{ssh.PublicKeys(signer)}, nil
+			}
+			// Remove invalid cached entry
+			a.keyCache.Delete(config.KeyPath)
 		}
 
 		// Load and cache key
@@ -126,8 +131,15 @@ func (t *terminalPasswordReader) ReadPassword(prompt string) (string, error) {
 
 	fmt.Println() // Add newline after password input
 
-	// Convert and clear in one step
+	// Secure memory handling - avoid keeping password in memory longer than necessary
+	if len(password) == 0 {
+		return "", fmt.Errorf("empty password entered")
+	}
+
+	// Create result string and immediately clear the byte slice
 	result := string(password)
+
+	// Clear password from memory immediately
 	for i := range password {
 		password[i] = 0
 	}

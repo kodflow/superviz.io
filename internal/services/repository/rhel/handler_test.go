@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-// MockSSHClient mocks the SSH client interface
+// MockSSHClient mocks the SSH client
 type MockSSHClient struct {
 	mock.Mock
 }
@@ -291,6 +291,63 @@ func TestValidateURL(t *testing.T) {
 			expectErr: true,
 			errMsg:    "URL must use HTTPS scheme",
 		},
+		{
+			name:      "localhost URL",
+			url:       "https://localhost/repo/",
+			expectErr: true,
+			errMsg:    "localhost and loopback addresses are not allowed",
+		},
+		{
+			name:      "loopback IP 127.0.0.1",
+			url:       "https://127.0.0.1/repo/",
+			expectErr: true,
+			errMsg:    "localhost and loopback addresses are not allowed",
+		},
+		{
+			name:      "IPv6 loopback",
+			url:       "https://[::1]/repo/",
+			expectErr: true,
+			errMsg:    "localhost and loopback addresses are not allowed",
+		},
+		{
+			name:      "private IP 192.168.1.1",
+			url:       "https://192.168.1.1/repo/",
+			expectErr: true,
+			errMsg:    "private and loopback IP addresses are not allowed",
+		},
+		{
+			name:      "private IP 10.0.0.1",
+			url:       "https://10.0.0.1/repo/",
+			expectErr: true,
+			errMsg:    "private and loopback IP addresses are not allowed",
+		},
+		{
+			name:      "private IP 172.16.0.1",
+			url:       "https://172.16.0.1/repo/",
+			expectErr: true,
+			errMsg:    "private and loopback IP addresses are not allowed",
+		},
+		{
+			name:      "disallowed domain",
+			url:       "https://evil.com/repo/",
+			expectErr: true,
+			errMsg:    "domain evil.com is not in the allowed list",
+		},
+		{
+			name:      "allowed GitHub domain",
+			url:       "https://github.com/user/repo/",
+			expectErr: false,
+		},
+		{
+			name:      "allowed GitHub subdomain",
+			url:       "https://raw.githubusercontent.com/user/repo/main/file",
+			expectErr: false,
+		},
+		{
+			name:      "allowed superviz subdomain",
+			url:       "https://api.repo.superviz.io/rpm/",
+			expectErr: false,
+		},
 	}
 
 	for _, tc := range testCases {
@@ -319,9 +376,9 @@ func TestValidateRepoConfig(t *testing.T) {
 		{
 			name: "valid config",
 			config: &RepoConfig{
-				Name:      "Test Repo",
-				BaseURL:   "https://repo.example.com/rpm/",
-				GPGKeyURL: "https://repo.example.com/gpg-key",
+				Name:      "Test Repository",
+				BaseURL:   "https://repo.superviz.io/rpm/",
+				GPGKeyURL: "https://repo.superviz.io/gpg-key",
 				Enabled:   true,
 				GPGCheck:  true,
 			},
@@ -337,8 +394,8 @@ func TestValidateRepoConfig(t *testing.T) {
 			name: "empty name",
 			config: &RepoConfig{
 				Name:      "",
-				BaseURL:   "https://repo.example.com/rpm/",
-				GPGKeyURL: "https://repo.example.com/gpg-key",
+				BaseURL:   "https://repo.superviz.io/rpm/",
+				GPGKeyURL: "https://repo.superviz.io/gpg-key",
 			},
 			expectErr: true,
 			errMsg:    "repository name cannot be empty",
@@ -347,8 +404,8 @@ func TestValidateRepoConfig(t *testing.T) {
 			name: "whitespace only name",
 			config: &RepoConfig{
 				Name:      "   ",
-				BaseURL:   "https://repo.example.com/rpm/",
-				GPGKeyURL: "https://repo.example.com/gpg-key",
+				BaseURL:   "https://repo.superviz.io/rpm/",
+				GPGKeyURL: "https://repo.superviz.io/gpg-key",
 			},
 			expectErr: true,
 			errMsg:    "repository name cannot be empty",
@@ -367,7 +424,7 @@ func TestValidateRepoConfig(t *testing.T) {
 			name: "invalid GPG key URL",
 			config: &RepoConfig{
 				Name:      "Test Repo",
-				BaseURL:   "https://repo.example.com/rpm/",
+				BaseURL:   "https://repo.superviz.io/rpm/",
 				GPGKeyURL: "ftp://insecure.example.com/gpg-key",
 			},
 			expectErr: true,
@@ -394,8 +451,8 @@ func TestValidateRepoConfig(t *testing.T) {
 func TestGenerateRepoContent(t *testing.T) {
 	config := &RepoConfig{
 		Name:      "Test Repository",
-		BaseURL:   "https://repo.example.com/rpm/",
-		GPGKeyURL: "https://repo.example.com/gpg-key",
+		BaseURL:   "https://repo.superviz.io/rpm/",
+		GPGKeyURL: "https://repo.superviz.io/gpg-key",
 		Enabled:   true,
 		GPGCheck:  true,
 	}
@@ -407,17 +464,17 @@ func TestGenerateRepoContent(t *testing.T) {
 	// Check that all expected values are present
 	assert.Contains(t, content, "[superviz]")
 	assert.Contains(t, content, "name=Test Repository")
-	assert.Contains(t, content, "baseurl=https://repo.example.com/rpm/")
+	assert.Contains(t, content, "baseurl=https://repo.superviz.io/rpm/")
 	assert.Contains(t, content, "enabled=1")
 	assert.Contains(t, content, "gpgcheck=1")
-	assert.Contains(t, content, "gpgkey=https://repo.example.com/gpg-key")
+	assert.Contains(t, content, "gpgkey=https://repo.superviz.io/gpg-key")
 }
 
 func TestGenerateRepoContent_DisabledConfig(t *testing.T) {
 	config := &RepoConfig{
 		Name:      "Disabled Repository",
-		BaseURL:   "https://repo.example.com/rpm/",
-		GPGKeyURL: "https://repo.example.com/gpg-key",
+		BaseURL:   "https://repo.superviz.io/rpm/",
+		GPGKeyURL: "https://repo.superviz.io/gpg-key",
 		Enabled:   false,
 		GPGCheck:  false,
 	}
@@ -427,6 +484,48 @@ func TestGenerateRepoContent_DisabledConfig(t *testing.T) {
 	assert.NotEmpty(t, content)
 
 	// Check that disabled flags are set correctly
+	assert.Contains(t, content, "enabled=0")
+	assert.Contains(t, content, "gpgcheck=0")
+}
+
+// Test coverage for template execution errors (though unlikely with our simple template)
+func TestGenerateRepoContent_WithSpecialCharacters(t *testing.T) {
+	config := &RepoConfig{
+		Name:      "Repository with special chars & <test>",
+		BaseURL:   "https://repo.superviz.io/rpm/test%20dir/",
+		GPGKeyURL: "https://repo.superviz.io/gpg-key?version=1.0",
+		Enabled:   true,
+		GPGCheck:  true,
+	}
+
+	content, err := generateRepoContent(config)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, content)
+
+	// Check that special characters are handled properly
+	assert.Contains(t, content, "Repository with special chars & <test>")
+	assert.Contains(t, content, "https://repo.superviz.io/rpm/test%20dir/")
+	assert.Contains(t, content, "https://repo.superviz.io/gpg-key?version=1.0")
+}
+
+// Test edge cases for better coverage
+func TestGenerateRepoContent_EmptyValues(t *testing.T) {
+	config := &RepoConfig{
+		Name:      "",
+		BaseURL:   "",
+		GPGKeyURL: "",
+		Enabled:   false,
+		GPGCheck:  false,
+	}
+
+	content, err := generateRepoContent(config)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, content)
+
+	// Check that empty values are handled
+	assert.Contains(t, content, "name=")
+	assert.Contains(t, content, "baseurl=")
+	assert.Contains(t, content, "gpgkey=")
 	assert.Contains(t, content, "enabled=0")
 	assert.Contains(t, content, "gpgcheck=0")
 }
@@ -470,8 +569,8 @@ func TestNewHandlerWithProvider(t *testing.T) {
 	client := &MockSSHClient{}
 	provider := NewCustomRepoProvider(
 		"Test Repo",
-		"https://test.example.com/rpm/",
-		"https://test.example.com/gpg-key",
+		"https://repo.superviz.io/rpm/",
+		"https://repo.superviz.io/gpg-key",
 		true,
 		true,
 	)
@@ -488,8 +587,8 @@ func TestHandler_Setup_WithCustomProvider(t *testing.T) {
 	client := &MockSSHClient{}
 	provider := NewCustomRepoProvider(
 		"Custom Test Repository",
-		"https://custom.example.com/rpm/",
-		"https://custom.example.com/gpg-key",
+		"https://repo.superviz.io/rpm/",
+		"https://repo.superviz.io/gpg-key",
 		true,
 		true,
 	)
@@ -500,16 +599,16 @@ func TestHandler_Setup_WithCustomProvider(t *testing.T) {
 	// Mock repository setup commands without sudo
 	expectedRepoContent := `[superviz]
 name=Custom Test Repository
-baseurl=https://custom.example.com/rpm/
+baseurl=https://repo.superviz.io/rpm/
 enabled=1
 gpgcheck=1
-gpgkey=https://custom.example.com/gpg-key`
+gpgkey=https://repo.superviz.io/gpg-key`
 
 	expectedCommands := []string{
 		fmt.Sprintf("cat > /tmp/superviz.repo << 'EOF'\n%s\nEOF", expectedRepoContent),
 		"cp /tmp/superviz.repo /etc/yum.repos.d/superviz.repo",
 		"rm /tmp/superviz.repo",
-		"rpm --import https://custom.example.com/gpg-key",
+		"rpm --import https://repo.superviz.io/gpg-key",
 		"if command -v dnf >/dev/null 2>&1; then dnf clean all; elif command -v yum >/dev/null 2>&1; then yum clean all; fi",
 	}
 

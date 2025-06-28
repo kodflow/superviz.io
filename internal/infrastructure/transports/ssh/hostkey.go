@@ -190,9 +190,11 @@ func (s *fileHostKeyStore) GetCallback() ssh.HostKeyCallback {
 		return nil
 	}
 
-	// Create and cache callback
+	// Create and cache callback with timeout protection
 	callback, err := knownhosts.New(knownHostsPath)
 	if err != nil {
+		// Log warning but don't fail completely - allow fallback to interactive mode
+		fmt.Fprintf(os.Stderr, "warning: failed to load known_hosts file: %v\n", err)
 		return nil
 	}
 

@@ -114,48 +114,46 @@ func TestFprintlnIgnoreErr(t *testing.T) {
 	}
 }
 
-func TestMustFprint(t *testing.T) {
+func TestFprint(t *testing.T) {
 	t.Helper()
 
 	t.Run("successful write", func(t *testing.T) {
 		var buf bytes.Buffer
-		require.NotPanics(t, func() {
-			utils.MustFprint(&buf, "hello", " ", "world")
-		})
+		err := utils.Fprint(&buf, "hello", " ", "world")
+		require.NoError(t, err)
 		assert.Equal(t, "hello world", buf.String())
 	})
 
-	t.Run("panics on write error", func(t *testing.T) {
+	t.Run("returns error on write failure", func(t *testing.T) {
 		writer := &failingWriter{failAfter: 0}
-		assert.PanicsWithValue(t, "Fprint failed: write error", func() {
-			utils.MustFprint(writer, "hello")
-		})
+		err := utils.Fprint(writer, "hello")
+		require.Error(t, err)
+		assert.Equal(t, "write error", err.Error())
 	})
 }
 
-func TestMustFprintln(t *testing.T) {
+func TestFprintln(t *testing.T) {
 	t.Helper()
 
 	t.Run("successful write with newline", func(t *testing.T) {
 		var buf bytes.Buffer
-		require.NotPanics(t, func() {
-			utils.MustFprintln(&buf, "hello", " ", "world")
-		})
+		err := utils.Fprintln(&buf, "hello", " ", "world")
+		require.NoError(t, err)
 		assert.Equal(t, "hello world\n", buf.String())
 	})
 
-	t.Run("panics on args write error", func(t *testing.T) {
+	t.Run("returns error on args write failure", func(t *testing.T) {
 		writer := &failingWriter{failAfter: 0}
-		assert.PanicsWithValue(t, "Fprintln failed: write error", func() {
-			utils.MustFprintln(writer, "hello")
-		})
+		err := utils.Fprintln(writer, "hello")
+		require.Error(t, err)
+		assert.Equal(t, "write error", err.Error())
 	})
 
-	t.Run("panics on newline write error", func(t *testing.T) {
+	t.Run("returns error on newline write failure", func(t *testing.T) {
 		writer := &failingWriter{failAfter: 1}
-		assert.PanicsWithValue(t, "Fprintln write failed: write error", func() {
-			utils.MustFprintln(writer, "hello")
-		})
+		err := utils.Fprintln(writer, "hello")
+		require.Error(t, err)
+		assert.Equal(t, "write error", err.Error())
 	})
 }
 
@@ -224,60 +222,60 @@ func (w *failingWriter) Write(p []byte) (n int, err error) {
 	return len(p), nil
 }
 
-func TestWriteArgsChecked_ErrorPerType(t *testing.T) {
+func TestFprint_ErrorPerType(t *testing.T) {
 	tests := []struct {
-		name      string
-		arg       any
-		wantPanic string
+		name    string
+		arg     any
+		wantErr string
 	}{
 		{
-			name:      "string error",
-			arg:       "fail",
-			wantPanic: "Fprint failed: write error",
+			name:    "string error",
+			arg:     "fail",
+			wantErr: "write error",
 		},
 		{
-			name:      "[]byte error",
-			arg:       []byte("fail"),
-			wantPanic: "Fprint failed: write error",
+			name:    "[]byte error",
+			arg:     []byte("fail"),
+			wantErr: "write error",
 		},
 		{
-			name:      "int error",
-			arg:       42,
-			wantPanic: "Fprint failed: write error",
+			name:    "int error",
+			arg:     42,
+			wantErr: "write error",
 		},
 		{
-			name:      "int64 error",
-			arg:       int64(123456),
-			wantPanic: "Fprint failed: write error",
+			name:    "int64 error",
+			arg:     int64(123456),
+			wantErr: "write error",
 		},
 		{
-			name:      "bool error",
-			arg:       true,
-			wantPanic: "Fprint failed: write error",
+			name:    "bool error",
+			arg:     true,
+			wantErr: "write error",
 		},
 		{
-			name:      "rune error",
-			arg:       'x',
-			wantPanic: "Fprint failed: write error",
+			name:    "rune error",
+			arg:     'x',
+			wantErr: "write error",
 		},
 		{
-			name:      "byte error",
-			arg:       byte('Z'),
-			wantPanic: "Fprint failed: write error",
+			name:    "byte error",
+			arg:     byte('Z'),
+			wantErr: "write error",
 		},
 		{
-			name:      "fallback error",
-			arg:       struct{ foo string }{foo: "bar"},
-			wantPanic: "Fprint failed: write error",
+			name:    "fallback error",
+			arg:     struct{ foo string }{foo: "bar"},
+			wantErr: "write error",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			writer := &typedFailingWriter{failOn: tt.arg}
-			assert.PanicsWithValue(t, tt.wantPanic, func() {
-				utils.MustFprint(writer, tt.arg)
-			})
+			err := utils.Fprint(writer, tt.arg)
+			require.Error(t, err)
+			assert.Equal(t, tt.wantErr, err.Error())
 		})
 	}
 }

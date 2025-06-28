@@ -1,13 +1,20 @@
 {
-  "name": "Go DevContainer",
+  "name": "Go DevContainer ARM64",
   "build": {
-    "dockerfile": "Dockerfile"
+    "dockerfile": "Dockerfile",
+    "options": [
+      "--platform=linux/arm64"
+    ]
   },
+  "runArgs": [
+    "--platform=linux/arm64"
+  ],
   "postCreateCommand": "go mod tidy > /dev/null 2>&1",
   "remoteUser": "vscode",
   "mounts": [
-    "source=go-mod-cache,target=/go/pkg/mod,type=volume",
-    "source=go-build-cache,target=/root/.cache/go-build,type=volume"
+    "source=go-mod-cache-arm64,target=/home/vscode/go/pkg/mod,type=volume",
+    "source=go-build-cache-arm64,target=/home/vscode/.cache/go-build,type=volume",
+    "source=npm-cache-arm64,target=/home/vscode/.npm,type=volume"
   ],
   "customizations": {
     "vscode": {

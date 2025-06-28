@@ -12,7 +12,7 @@ import (
 // client implements the SSH client interface with dependency injection support.
 //
 // client provides a complete SSH client implementation that combines authentication,
-// host key management, and connection handling into a single cohesive interface.
+// host key management, connection handling, and rate limiting into a single cohesive interface.
 type client struct {
 	// conn holds the active SSH connection
 	conn Connection
@@ -24,12 +24,14 @@ type client struct {
 	hostKeyManager HostKeyManager
 	// dialer establishes network connections
 	dialer Dialer
+	// rateLimiter controls connection attempt frequency
+	rateLimiter RateLimiter
 }
 
 // ClientOptions contains options for creating a new SSH client.
 //
 // ClientOptions allows customization of client behavior through dependency injection
-// of authenticators, host key managers, and dialers.
+// of authenticators, host key managers, dialers, and rate limiters.
 type ClientOptions struct {
 	// Authenticator handles SSH authentication (optional, defaults to standard implementation)
 	Authenticator Authenticator
@@ -37,6 +39,8 @@ type ClientOptions struct {
 	HostKeyManager HostKeyManager
 	// Dialer handles network connection establishment (optional, defaults to standard implementation)
 	Dialer Dialer
+	// RateLimiter controls connection attempt rate limiting (optional, defaults to no limiting)
+	RateLimiter RateLimiter
 }
 
 // NewClient creates a new SSH client with the given options.
@@ -56,6 +60,7 @@ func NewClient(opts *ClientOptions) Client {
 			authenticator:  NewDefaultAuthenticator(),
 			hostKeyManager: NewDefaultHostKeyManager(),
 			dialer:         NewDefaultDialer(),
+			rateLimiter:    NewNoOpRateLimiter(),
 		}
 	}
 
@@ -64,6 +69,7 @@ func NewClient(opts *ClientOptions) Client {
 		authenticator:  opts.Authenticator,
 		hostKeyManager: opts.HostKeyManager,
 		dialer:         opts.Dialer,
+		rateLimiter:    opts.RateLimiter,
 	}
 
 	if c.authenticator == nil {
@@ -75,14 +81,18 @@ func NewClient(opts *ClientOptions) Client {
 	if c.dialer == nil {
 		c.dialer = NewDefaultDialer()
 	}
+	if c.rateLimiter == nil {
+		c.rateLimiter = NewNoOpRateLimiter()
+	}
 
 	return c
 }
 
 // Connect establishes an SSH connection using the provided configuration.
 //
-// Connect validates the configuration, sets up authentication and host key verification,
-// then establishes the SSH connection. The connection remains active until Close is called.
+// Connect validates the configuration, checks rate limiting, sets up authentication
+// and host key verification, then establishes the SSH connection. The connection
+// remains active until Close is called.
 //
 // Parameters:
 //   - ctx: context.Context for timeout and cancellation
@@ -96,6 +106,15 @@ func (c *client) Connect(ctx context.Context, config *Config) error {
 		return err
 	}
 	c.config = config
+
+	// Check rate limiting
+	allowed, err := c.rateLimiter.Allow(ctx, config.Host)
+	if err != nil {
+		return WrapError(ErrConnectionFailed, err)
+	}
+	if !allowed {
+		return NewError(ErrConnectionFailed, "connection rate limited for host: "+config.Host)
+	}
 
 	// Get host key callback
 	hostKeyCallback, err := c.hostKeyManager.GetHostKeyCallback(ctx, config)

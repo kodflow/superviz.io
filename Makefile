@@ -51,3 +51,7 @@ build: ## Build the Go application with GoReleaser
 
 run: ## Run the Go application
 	go run $(CURDIR)/cmd/svz/main.go $(ARGS)
+
+generate-copilot: fmt ## Generate copilot instructions from sectioned files
+	echo "🔧 Generating copilot instructions..."
+	./scripts/generate-copilot.sh

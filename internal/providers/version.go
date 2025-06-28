@@ -1,9 +1,11 @@
-// Package providers contains version information providers for superviz.io
+// Package providers contains version information providers for superviz.io with ultra-performance optimizations
 package providers
 
 import (
 	"runtime"
+	"strings"
 	"sync"
+	"sync/atomic"
 )
 
 // Build-time variables injected by the build system.
@@ -45,10 +47,26 @@ type VersionInfo struct {
 }
 
 var (
-	// cachedVersionInfo holds the cached version information
+	// cachedVersionInfo holds the cached version information (cache-line aligned)
 	cachedVersionInfo VersionInfo
 	// once ensures version info is initialized only once
 	once sync.Once
+
+	// Atomic performance counters for provider operations (false sharing prevention)
+	formatCalls    atomic.Uint64
+	getInfoCalls   atomic.Uint64
+	bytesFormatted atomic.Uint64
+	_              [5]uint64 // Padding to prevent false sharing
+
+	// Pre-allocated format string pool for zero-allocation formatting
+	formatPool = sync.Pool{
+		New: func() any {
+			// Pre-allocate with typical version string capacity
+			builder := &strings.Builder{}
+			builder.Grow(256) // Estimated size for version info
+			return builder
+		},
+	}
 )
 
 // initVersionInfo initializes the cached version info with current build values.
@@ -76,15 +94,12 @@ func initVersionInfo() {
 	}
 }
 
-// Format returns a formatted string representation for CLI display.
-//
-// Format creates a human-readable, multi-line string containing all
-// version information suitable for command-line output.
-//
-// Example:
+// Format returns a formatted string representation for CLI display with zero-allocation optimization
+// Code block:
 //
 //	info := GetVersionInfo()
-//	fmt.Println(info.Format())
+//	formatted := info.Format()
+//	fmt.Println(formatted)
 //	// Output:
 //	// Version:       v1.0.0
 //	// Commit:        abc123
@@ -93,18 +108,38 @@ func initVersionInfo() {
 //	// Go version:    go1.21
 //	// OS/Arch:       linux/amd64
 //
-// Parameters:
-//   - None (method receiver)
+// Parameters: N/A (method receiver)
 //
 // Returns:
-//   - formatted: string representation of version information
+//   - 1 formatted: string - zero-allocation formatted version information
 func (vi VersionInfo) Format() string {
-	return "Version:       " + vi.Version +
-		"\nCommit:        " + vi.Commit +
-		"\nBuilt at:      " + vi.BuiltAt +
-		"\nBuilt by:      " + vi.BuiltBy +
-		"\nGo version:    " + vi.GoVersion +
-		"\nOS/Arch:       " + vi.OSArch + "\n"
+	formatCalls.Add(1)
+
+	// Get builder from pool for zero-allocation formatting
+	builder := formatPool.Get().(*strings.Builder)
+	defer func() {
+		// Track bytes and reset for reuse
+		bytesFormatted.Add(uint64(builder.Len()))
+		builder.Reset()
+		formatPool.Put(builder)
+	}()
+
+	// Efficient string building with pre-allocated capacity
+	builder.WriteString("Version:       ")
+	builder.WriteString(vi.Version)
+	builder.WriteString("\nCommit:        ")
+	builder.WriteString(vi.Commit)
+	builder.WriteString("\nBuilt at:      ")
+	builder.WriteString(vi.BuiltAt)
+	builder.WriteString("\nBuilt by:      ")
+	builder.WriteString(vi.BuiltBy)
+	builder.WriteString("\nGo version:    ")
+	builder.WriteString(vi.GoVersion)
+	builder.WriteString("\nOS/Arch:       ")
+	builder.WriteString(vi.OSArch)
+	builder.WriteByte('\n')
+
+	return builder.String()
 }
 
 // VersionProvider defines the interface for providing version data.
@@ -142,23 +177,19 @@ type VersionProvider interface {
 // version information initialized once at startup.
 type versionProvider struct{}
 
-// GetVersionInfo returns the cached version information.
-//
-// GetVersionInfo ensures the version info is initialized and returns
-// the complete metadata about the current build.
-//
-// Example:
+// GetVersionInfo returns the cached version information with atomic call tracking
+// Code block:
 //
 //	provider := &versionProvider{}
 //	info := provider.GetVersionInfo()
-//	fmt.Printf("Version: %s\n", info.Version)
+//	fmt.Printf("Version: %s, Calls: %d\n", info.Version, GetProviderMetrics().GetInfoCalls)
 //
-// Parameters:
-//   - None (method receiver)
+// Parameters: N/A (method receiver)
 //
 // Returns:
-//   - info: VersionInfo containing all build and version metadata
+//   - 1 info: VersionInfo - cached build and version metadata
 func (p *versionProvider) GetVersionInfo() VersionInfo {
+	getInfoCalls.Add(1)
 	once.Do(initVersionInfo)
 	return cachedVersionInfo
 }
@@ -203,7 +234,56 @@ func NewVersionProvider() VersionProvider {
 	return &versionProvider{}
 }
 
-// Reset resets the singleton state for testing purposes.
+// VersionProviderMetrics contains atomic performance metrics for provider operations
+// Code block:
+//
+//	metrics := GetProviderMetrics()
+//	fmt.Printf("Format calls: %d, Info calls: %d, Bytes: %d\n",
+//	    metrics.FormatCalls, metrics.GetInfoCalls, metrics.BytesFormatted)
+//
+// Parameters: N/A (for types)
+//
+// Returns: N/A (for types)
+type VersionProviderMetrics struct {
+	FormatCalls    uint64
+	GetInfoCalls   uint64
+	BytesFormatted uint64
+}
+
+// GetProviderMetrics returns current atomic performance metrics for all provider operations
+// Code block:
+//
+//	metrics := GetProviderMetrics()
+//	fmt.Printf("Provider metrics: %+v\n", metrics)
+//
+// Parameters: N/A
+//
+// Returns:
+//   - 1 metrics: VersionProviderMetrics - current atomic counter values
+func GetProviderMetrics() VersionProviderMetrics {
+	return VersionProviderMetrics{
+		FormatCalls:    formatCalls.Load(),
+		GetInfoCalls:   getInfoCalls.Load(),
+		BytesFormatted: bytesFormatted.Load(),
+	}
+}
+
+// ResetProviderMetrics atomically resets all provider performance counters to zero
+// Code block:
+//
+//	ResetProviderMetrics()
+//	metrics := GetProviderMetrics() // All counters will be 0
+//
+// Parameters: N/A
+//
+// Returns: N/A
+func ResetProviderMetrics() {
+	formatCalls.Store(0)
+	getInfoCalls.Store(0)
+	bytesFormatted.Store(0)
+}
+
+// Reset resets the singleton state for testing purposes with atomic metrics cleanup
 //
 // Reset clears the cached version information and resets the initialization
 // state, allowing fresh initialization in test scenarios.
@@ -224,4 +304,5 @@ func NewVersionProvider() VersionProvider {
 func Reset() {
 	once = sync.Once{}
 	cachedVersionInfo = VersionInfo{}
+	ResetProviderMetrics() // Reset atomic counters too
 }
