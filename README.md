@@ -120,20 +120,61 @@ Combine multiple checks (TCP, HTTP, command) in `superviz.yaml`.
 
 ### Building from Source
 
+The project uses **Bazel** as the primary build system for fast, reproducible builds with advanced caching.
+
 ```bash
 # Clone the repository
 git clone https://github.com/kodflow/superviz.io.git
 cd superviz.io
 
-# Build with GoReleaser
+# Build cross-platform binaries for all supported targets
 make build
 
-# Run tests (linting + unit tests)
+# Available binaries in .dist/:
+# - svz_linux_amd64
+# - svz_linux_arm64
+# - svz_darwin_amd64
+# - svz_darwin_arm64
+# - svz_windows_amd64.exe
+# - svz_windows_arm64.exe
+
+# Run tests (all unit tests with Bazel)
 make test
 
-# Run basic functionality tests (no Docker required)
-make test-basic
+# Format code (Go, Terraform, YAML)
+make fmt
 ```
+
+#### Advanced Bazel Commands
+
+For more control over the build process:
+
+```bash
+# Build specific target
+bazel build //cmd/svz:svz_linux_amd64
+
+# Build all targets
+bazel build //cmd/svz:all
+
+# Run tests with detailed output
+bazel test //... --test_output=all
+
+# Query available targets
+bazel query //cmd/svz:all
+
+# Clean build cache
+bazel clean
+```
+
+#### Build Features
+
+- **Cross-compilation**: Native support for Linux, macOS, Windows (amd64/arm64)
+- **Static binaries**: CGO disabled for maximum portability
+- **Size optimization**: Stripped symbols (`-s -w` equivalent)
+- **Hermetic builds**: Reproducible with Bazel's sandboxing
+- **Build metadata**: Version, commit, timestamp injected automatically via Bazel stamping
+- **Dynamic injection**: Build metadata values are calculated at build time, not hardcoded
+- **Environment support**: Custom version/metadata via environment variables (e.g., `VERSION=1.2.3 make build`)
 
 ### Install Command Testing
 

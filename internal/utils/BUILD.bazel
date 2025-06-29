@@ -1,0 +1,28 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "utils",
+    srcs = [
+        "fmt.go",
+        "validation.go",
+    ],
+    importpath = "github.com/kodflow/superviz.io/internal/utils",
+    visibility = ["//:__subpackages__"],
+    deps = ["@com_github_spf13_cobra//:cobra"],
+)
+
+go_test(
+    name = "utils_test",
+    size = "small",
+    srcs = [
+        "fmt_test.go",
+        "validation_test.go",
+    ],
+    tags = ["unit"],
+    deps = [
+        ":utils",
+        "@com_github_spf13_cobra//:cobra",
+        "@com_github_stretchr_testify//assert",
+        "@com_github_stretchr_testify//require",
+    ],
+)

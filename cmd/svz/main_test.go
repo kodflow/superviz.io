@@ -41,13 +41,13 @@ func TestRun_KO(t *testing.T) {
 	assert.Equal(t, 1, exit)
 }
 
-func TestMain(t *testing.T) {
+func TestMainExecution(t *testing.T) {
 	if os.Getenv("TEST_MAIN") == "1" {
 		main() // Appelle os.Exit(0)
 		return
 	}
 
-	cmd := exec.Command(os.Args[0], "-test.run=^TestMain$")
+	cmd := exec.Command(os.Args[0], "-test.run=^TestMainExecution$")
 	cmd.Env = append(os.Environ(), "TEST_MAIN=1")
 	err := cmd.Run()
 

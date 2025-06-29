@@ -21,11 +21,21 @@ var (
 	date = "unknown"
 	// builtBy contains the build system identifier (set via ldflags)
 	builtBy = "unknown"
-	// goVersion contains the Go compiler version used for the build
-	goVersion = runtime.Version()
+	// goVersion contains the Go compiler version used for the build (cleaned from runtime.Version())
+	goVersion = cleanGoVersion(runtime.Version())
 	// osArch contains the target operating system and architecture
 	osArch = runtime.GOOS + "/" + runtime.GOARCH
 )
+
+// cleanGoVersion removes experimental flags and extra information from Go version string
+func cleanGoVersion(version string) string {
+	// Split by space to remove experimental flags like "X:nocoverageredesign"
+	parts := strings.Fields(version)
+	if len(parts) > 0 {
+		return parts[0] // Return only the main version part (e.g., "go1.24.3")
+	}
+	return version
+}
 
 // VersionInfo contains metadata about the compiled binary.
 //

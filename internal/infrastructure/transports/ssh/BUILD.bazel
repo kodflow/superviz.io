@@ -1,0 +1,44 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "ssh",
+    srcs = [
+        "auth.go",
+        "client.go",
+        "config.go",
+        "dialer.go",
+        "errors.go",
+        "hostkey.go",
+        "interfaces.go",
+        "ratelimit.go",
+    ],
+    importpath = "github.com/kodflow/superviz.io/internal/infrastructure/transports/ssh",
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "@org_golang_x_crypto//ssh",
+        "@org_golang_x_crypto//ssh/knownhosts",
+        "@org_golang_x_term//:term",
+    ],
+)
+
+go_test(
+    name = "ssh_test",
+    size = "small",
+    srcs = [
+        "auth_test.go",
+        "client_test.go",
+        "config_test.go",
+        "dialer_test.go",
+        "errors_test.go",
+        "hostkey_test.go",
+        "ratelimit_test.go",
+    ],
+    embed = [":ssh"],
+    tags = ["unit"],
+    deps = [
+        "@com_github_stretchr_testify//assert",
+        "@com_github_stretchr_testify//mock",
+        "@com_github_stretchr_testify//require",
+        "@org_golang_x_crypto//ssh",
+    ],
+)

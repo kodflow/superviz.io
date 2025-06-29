@@ -1,0 +1,39 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "services",
+    srcs = [
+        "detector.go",
+        "errors.go",
+        "install.go",
+        "interfaces.go",
+        "version.go",
+    ],
+    importpath = "github.com/kodflow/superviz.io/internal/services",
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//internal/infrastructure/transports/ssh",
+        "//internal/providers",
+        "//internal/services/repository",
+    ],
+)
+
+go_test(
+    name = "services_test",
+    size = "small",
+    srcs = [
+        "detector_test.go",
+        "errors_test.go",
+        "install_test.go",
+        "version_test.go",
+    ],
+    embed = [":services"],
+    tags = ["unit"],
+    deps = [
+        "//internal/infrastructure/transports/ssh",
+        "//internal/providers",
+        "@com_github_stretchr_testify//assert",
+        "@com_github_stretchr_testify//mock",
+        "@com_github_stretchr_testify//require",
+    ],
+)

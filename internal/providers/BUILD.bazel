@@ -1,0 +1,26 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "providers",
+    srcs = [
+        "install.go",
+        "version.go",
+    ],
+    importpath = "github.com/kodflow/superviz.io/internal/providers",
+    visibility = ["//:__subpackages__"],
+)
+
+go_test(
+    name = "providers_test",
+    size = "small",
+    srcs = [
+        "install_test.go",
+        "version_test.go",
+    ],
+    embed = [":providers"],
+    tags = ["unit"],
+    deps = [
+        "@com_github_stretchr_testify//assert",
+        "@com_github_stretchr_testify//require",
+    ],
+)

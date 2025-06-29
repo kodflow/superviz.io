@@ -1,0 +1,31 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "repository",
+    srcs = ["setup.go"],
+    importpath = "github.com/kodflow/superviz.io/internal/services/repository",
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//internal/infrastructure/transports/ssh",
+        "//internal/providers",
+        "//internal/services/repository/alpine",
+        "//internal/services/repository/arch",
+        "//internal/services/repository/debian",
+        "//internal/services/repository/rhel",
+    ],
+)
+
+go_test(
+    name = "repository_test",
+    size = "small",
+    srcs = ["setup_test.go"],
+    embed = [":repository"],
+    tags = ["unit"],
+    deps = [
+        "//internal/infrastructure/transports/ssh",
+        "//internal/providers",
+        "@com_github_stretchr_testify//assert",
+        "@com_github_stretchr_testify//mock",
+        "@com_github_stretchr_testify//require",
+    ],
+)

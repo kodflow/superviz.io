@@ -6,14 +6,13 @@
   "mounts": [
     "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
   ],
-  "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {
-      "moby": true,
-      "dockerDashComposeVersion": "v2"
-    }
-  },
-  "runArgs": ["--privileged"],
-  "postCreateCommand": "go mod tidy > /dev/null 2>&1 && sudo groupadd -f docker && sudo usermod -aG docker vscode",
+  "runArgs": [
+    "--privileged",
+    "--network=host",
+    "--cap-add=NET_ADMIN",
+    "--cap-add=SYS_ADMIN"
+  ],
+  "postCreateCommand": "go mod tidy > /dev/null 2>&1 && sudo groupadd -f docker && sudo usermod -aG docker vscode && sudo service docker start",
   "remoteUser": "vscode",
   "customizations": {
     "vscode": {
@@ -27,7 +26,8 @@
         "eamodio.gitlens",
         "steoates.autoimport",
         "visualstudioexptteam.vscodeintellicode",
-        "ms-azuretools.vscode-containers"
+        "ms-azuretools.vscode-containers",
+        "bazelbuild.vscode-bazel"
       ]
     }
   }

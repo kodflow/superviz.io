@@ -1,0 +1,28 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "install",
+    srcs = ["install.go"],
+    importpath = "github.com/kodflow/superviz.io/internal/cli/commands/install",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//internal/providers",
+        "//internal/services",
+        "//internal/utils",
+        "@com_github_spf13_cobra//:cobra",
+    ],
+)
+
+go_test(
+    name = "install_test",
+    size = "small",
+    srcs = ["install_test.go"],
+    tags = ["unit"],
+    deps = [
+        ":install",
+        "//internal/services",
+        "//internal/utils",
+        "@com_github_spf13_cobra//:cobra",
+        "@com_github_stretchr_testify//require",
+    ],
+)

@@ -1,0 +1,39 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "pkgmanager",
+    srcs = [
+        "apk.go",
+        "apt.go",
+        "dnf.go",
+        "emerge.go",
+        "manager.go",
+        "pacman.go",
+        "yum.go",
+        "zypper.go",
+    ],
+    importpath = "github.com/kodflow/superviz.io/internal/infrastructure/pkgmanager",
+    visibility = ["//:__subpackages__"],
+    deps = ["//internal/utils"],
+)
+
+go_test(
+    name = "pkgmanager_test",
+    size = "small",
+    srcs = [
+        "apk_test.go",
+        "apt_test.go",
+        "dnf_test.go",
+        "emerge_test.go",
+        "manager_test.go",
+        "pacman_test.go",
+        "yum_test.go",
+        "zypper_test.go",
+    ],
+    tags = ["unit"],
+    deps = [
+        ":pkgmanager",
+        "@com_github_stretchr_testify//assert",
+        "@com_github_stretchr_testify//require",
+    ],
+)

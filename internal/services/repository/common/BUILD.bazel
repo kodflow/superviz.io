@@ -1,0 +1,26 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "common",
+    srcs = [
+        "base_handler.go",
+        "helpers.go",
+    ],
+    importpath = "github.com/kodflow/superviz.io/internal/services/repository/common",
+    visibility = ["//:__subpackages__"],
+    deps = ["//internal/infrastructure/transports/ssh"],
+)
+
+go_test(
+    name = "common_test",
+    size = "small",
+    srcs = ["helpers_test.go"],
+    embed = [":common"],
+    tags = ["unit"],
+    deps = [
+        "//internal/infrastructure/transports/ssh",
+        "@com_github_stretchr_testify//assert",
+        "@com_github_stretchr_testify//mock",
+        "@com_github_stretchr_testify//require",
+    ],
+)

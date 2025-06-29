@@ -1,0 +1,21 @@
+load("@bazel_gazelle//:def.bzl", "gazelle")
+
+# Gazelle configuration
+# gazelle:prefix github.com/kodflow/superviz.io
+# gazelle:exclude test/e2e
+# gazelle:exclude .dist
+# gazelle:exclude .git
+# gazelle:exclude bazel-*
+
+gazelle(name = "gazelle")
+
+# Update Go dependencies from go.mod
+gazelle(
+    name = "gazelle-update-repos",
+    args = [
+        "-from_file=go.mod",
+        "-to_macro=deps.bzl%go_dependencies",
+        "-prune",
+    ],
+    command = "update-repos",
+)

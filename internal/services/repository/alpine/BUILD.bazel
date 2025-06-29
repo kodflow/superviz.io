@@ -1,0 +1,25 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "alpine",
+    srcs = ["handler.go"],
+    importpath = "github.com/kodflow/superviz.io/internal/services/repository/alpine",
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//internal/infrastructure/transports/ssh",
+        "//internal/services/repository/common",
+    ],
+)
+
+go_test(
+    name = "alpine_test",
+    size = "small",
+    srcs = ["handler_test.go"],
+    embed = [":alpine"],
+    tags = ["unit"],
+    deps = [
+        "//internal/infrastructure/transports/ssh",
+        "@com_github_stretchr_testify//assert",
+        "@com_github_stretchr_testify//mock",
+    ],
+)

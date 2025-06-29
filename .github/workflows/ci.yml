@@ -40,6 +40,18 @@ jobs:
           noNewCommitBehavior: current
           patchList: "vendor, update, fix, bugfix, perf, refactor, test, tests, chore, ci, docs, improve, style, build, revert, improvement, enhancement, coverage, clean"
 
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.24.x
+
+      - name: Setup Bazel
+        uses: bazel-contrib/setup-bazel@0.8.5
+        with:
+          bazelisk-cache: true
+          disk-cache: ${{ github.workflow }}
+          repository-cache: true
+
       - name: Install gotestsum
         run: |
           go install gotest.tools/gotestsum@latest
@@ -75,13 +87,20 @@ jobs:
         with:
           go-version: 1.24.x
 
+      - name: Setup Bazel
+        uses: bazel-contrib/setup-bazel@0.8.5
+        with:
+          bazelisk-cache: true
+          disk-cache: ${{ github.workflow }}
+          repository-cache: true
+
       - name: Set build metadata
         id: meta
         run: |
-          COMMIT=$(git rev-parse --short HEAD)
+          COMMIT=$(git rev-parse HEAD)
           DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-          BUILT_BY="ci"
-          VERSION="${{ needs.analyze.outputs.version }}-dev+${COMMIT}"
+          BUILT_BY="github-actions"
+          VERSION="${{ needs.analyze.outputs.version }}"
           GOVERSION=$(go version | awk '{print $3}')
 
           echo "version=$VERSION"     >> "$GITHUB_OUTPUT"
@@ -90,23 +109,18 @@ jobs:
           echo "builtBy=$BUILT_BY"    >> "$GITHUB_OUTPUT"
           echo "goVersion=$GOVERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Build with GoReleaser (snapshot)
-        uses: goreleaser/goreleaser-action@v6
-        with:
-          args: build --snapshot --clean
+      - name: Build cross-platform binaries with Bazel
+        run: |
+          # Build all cross-platform targets with Bazel
+          VERSION="${{ steps.meta.outputs.version }}" make build
         env:
-          GORELEASER_CURRENT_TAG: ${{ steps.meta.outputs.version }}
           VERSION: ${{ steps.meta.outputs.version }}
-          COMMIT: ${{ steps.meta.outputs.commit }}
-          DATE: ${{ steps.meta.outputs.date }}
-          BUILT_BY: ${{ steps.meta.outputs.builtBy }}
-          GOVERSION: ${{ steps.meta.outputs.goVersion }}
 
       - name: Upload binaries
         uses: actions/upload-artifact@v4
         with:
           name: svz-binaries
-          path: .dist/
+          path: .dist/bin/
           if-no-files-found: error
           include-hidden-files: true
 
@@ -121,6 +135,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup Bazel
+        uses: bazel-contrib/setup-bazel@0.8.5
+        with:
+          bazelisk-cache: true
+          disk-cache: ${{ github.workflow }}
+          repository-cache: true
+
       - name: Create Tag
         run: |
           git config user.name "github-actions"
@@ -132,14 +153,25 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: svz-binaries
-          path: .dist/
+          path: .dist/bin/
+
+      - name: Validate binaries
+        run: |
+          # Check that all expected binaries exist
+          ls -la .dist/bin/
+
+          # Test the main binary to ensure it was built correctly
+          ./.dist/bin/svz version
+
+          # Test a specific platform binary  
+          ./.dist/bin/svz-linux-amd64 version
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
           name: Superviz.io ${{ needs.analyze.outputs.version }}
           tag: ${{ needs.analyze.outputs.version }}
-          artifacts: .dist/bin/**
+          artifacts: .dist/bin/*
           makeLatest: true
           allowUpdates: true
           skipIfReleaseExists: true

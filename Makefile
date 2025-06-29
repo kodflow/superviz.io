@@ -8,20 +8,16 @@ ARCH      := $(shell uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
 # Ensure Go tools are in PATH
 export PATH := $(HOME)/go/bin:$(PATH)
 
-# Ensure GoReleaser is installed
 # Make args forwarding
 ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 $(eval $(ARGS):;@:)
 
-# Envs for GoReleaser
-ENV_EXPORTS := BUILT_BY=$(BUILT_BY) GOVERSION=$(GOVERSION) OS=$(OS) ARCH=$(ARCH)
-
-.PHONY: help fmt test build run go-build
+.PHONY: help fmt test build
 
 .DEFAULT_GOAL = help
 
 help: ## Display all commands available
-	$(eval PADDING=$(shell grep -x -E '^[a-zA-Z_-]+:.*?##[\s]?.*$$' Makefile | awk '{ print length($$1)-1 }' | sort -n | tail -n 1))
+	$(eval PADDING=$(shell grep -E '^[a-zA-Z_-]+:.*##.*$$' Makefile | awk '{ print length($$1)-1 }' | sort -n | tail -n 1))
 	clear
 	echo '╔──────────────────────────────────────────────────╗'
 	echo '║ ██╗  ██╗███████╗██╗     ██████╗ ███████╗██████╗  ║'
@@ -31,42 +27,66 @@ help: ## Display all commands available
 	echo '║ ██║  ██║███████╗███████╗██║     ███████╗██║  ██║ ║'
 	echo '║ ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝ ║'
 	echo '╟──────────────────────────────────────────────────╝'
-	grep -E '^[a-zA-Z_-]+:.*?##[\s]?.*$$' Makefile | awk 'BEGIN {FS = ":.*?##"}; {gsub(/(^ +| +$$)/, "", $$2);printf "╟─[ \033[36m%-$(PADDING)s\033[0m %s\n", $$1, "] "$$2}'
+	grep -E '^[a-zA-Z_-]+:.*##.*$$' Makefile | awk 'BEGIN {FS = ":.*##"}; {gsub(/(^ +| +$$)/, "", $$2);printf "╟─[ \033[36m%-$(PADDING)s\033[0m %s\n", $$1, "] "$$2}'
 	echo '╚──────────────────────────────────────────────────>'
 	echo ''
 
 fmt: ## Format all code: Go, Terraform, YAML, Bazel
 	echo "🔧 Formatting Go files..."
 	go fmt ./...
+	echo "🔧 Formatting Bazel BUILD files..."
+	bazel run //:gazelle
+	echo "🔧 Formatting Bazel files with buildifier..."
+	find . -name "*.bzl" -not -name "build_vars.bzl" -exec buildifier {} \;
+	find . -name "BUILD" -o -name "BUILD.bazel" -exec buildifier {} \;
 	echo "🔧 Formatting Terraform files..."
 	terraform fmt -recursive .
 	echo "🔧 Formatting YAML and JSON files..."
 	prettier --write "**/*.yml" "**/*.yaml" "**/*.json" "**/*.md"
 
-test: ## Run all tests (unit tests, linting, and E2E tests)
-	echo "🧪 Running linter..."
-	golangci-lint run ./...
+test: ## Run all tests (unit tests only)
+	echo "🧪 Running all tests..."
+	$(MAKE) test-unit
+
+test-unit: ## Run unit tests only
 	echo "🧪 Running unit tests..."
-	gotestsum --packages ./... -f github-actions -- -v -coverprofile=./coverage.out -covermode=atomic
-	echo "🧪 Running E2E tests..."
-	$(MAKE) _e2e-test
+	bazel test //... --test_output=errors --test_tag_filters=unit
 
-test-unit: ## Run only unit tests and linting (no Docker required)
-	echo "🧪 Running linter..."
-	golangci-lint run ./...
-	echo "🧪 Running unit tests..."
-	gotestsum --packages ./... -f github-actions -- -v -coverprofile=./coverage.out -covermode=atomic
+test-e2e: ## E2E tests have been removed (unit tests only)
+	@echo "ℹ️  E2E tests have been removed from this project"
+	@echo "ℹ️  Only unit tests are available - use 'make test-unit' or 'make test'"
 
-test-basic: ## Run basic functionality tests (no Docker required)
-	echo "🧪 Running basic functionality tests..."
-	go test ./... -v
+build: ## Build cross-platform binaries for all supported platforms
+	echo "🚀 Building cross-platform binaries..."
+	echo "📦 Creating .dist/bin directory..."
+	mkdir -p .dist/bin
+	echo "� Building all platforms with Bazel..."
+	bazel build //cmd/svz:svz_linux_amd64 //cmd/svz:svz_linux_arm64 //cmd/svz:svz_darwin_amd64 //cmd/svz:svz_darwin_arm64 //cmd/svz:svz_windows_amd64 //cmd/svz:svz_windows_arm64
+	echo "📋 Copying binaries to .dist/bin/..."
+	cp bazel-bin/cmd/svz/svz_linux_amd64_/svz_linux_amd64 .dist/bin/svz-linux-amd64
+	cp bazel-bin/cmd/svz/svz_linux_arm64_/svz_linux_arm64 .dist/bin/svz-linux-arm64
+	cp bazel-bin/cmd/svz/svz_darwin_amd64_/svz_darwin_amd64 .dist/bin/svz-darwin-amd64
+	cp bazel-bin/cmd/svz/svz_darwin_arm64_/svz_darwin_arm64 .dist/bin/svz-darwin-arm64
+	cp bazel-bin/cmd/svz/svz_windows_amd64_/svz_windows_amd64.exe .dist/bin/svz-windows-amd64.exe
+	cp bazel-bin/cmd/svz/svz_windows_arm64_/svz_windows_arm64.exe .dist/bin/svz-windows-arm64.exe
+	# Create a default 'svz' symlink to Linux AMD64 for convenience
+	ln -sf svz-linux-amd64 .dist/bin/svz
+	echo "✅ Cross-platform build completed!"
+	echo "📁 Binaries available in .dist/bin/:"
+	ls -la .dist/bin/
 
-build: ## Build the Go application with GoReleaser
-	echo "🚀 Building with GoReleaser..."
-	$(ENV_EXPORTS) goreleaser build --snapshot --clean
-
-run: ## Run the Go application
-	go run $(CURDIR)/cmd/svz/main.go $(ARGS)
+update: ## Update all dependencies (Go modules, Bazel, tools)
+	echo "🔄 Updating all dependencies and tools..."
+	echo "📦 Updating Go modules..."
+	go get -u ./...
+	go mod tidy
+	echo "🔧 Updating Bazel dependencies..."
+	bazel run //:gazelle-update-repos
+	echo "🛠️  Updating Go rules for Bazel..."
+	bazel run //:gazelle
+	echo "🎯 Running tests to verify updates..."
+	make test
+	echo "✅ All dependencies updated successfully!"
 
 generate-copilot: fmt ## Generate copilot instructions from sectioned files
 	echo "🔧 Generating copilot instructions..."
@@ -83,32 +103,3 @@ generate-copilot: fmt ## Generate copilot instructions from sectioned files
 		done; \
 		echo '````'; \
 	} > .github/copilot-instructions.md && echo "✅ Generated .github/copilot-instructions.md"
-
-# E2E test targets (internal - not shown in help)
-_e2e-setup:
-	echo "🐳 Setting up E2E test environment..."
-	cd test/e2e && docker-compose --profile test build --parallel
-
-_e2e-test:
-	echo "🧪 Running comprehensive E2E tests on all distributions..."
-	./test/e2e/e2e_test_orchestrator.sh
-
-_e2e-test-single:
-	echo "🧪 Running E2E test on $(or $(DISTRO),ubuntu)..."
-	cd test/e2e && SINGLE_DISTRO=$(or $(DISTRO),ubuntu) ./e2e_test_orchestrator.sh
-
-_e2e-clean:
-	echo "🧹 Cleaning up E2E test environment..."
-	cd test/e2e && docker-compose --profile test down --remove-orphans || true
-	cd test/e2e && docker-compose --profile test rm -f || true
-
-# E2E development targets (for manual testing)
-e2e-setup: _e2e-setup  ## Setup E2E test environment (for development)
-
-e2e-test-single: _e2e-test-single  ## Run E2E test on single distribution (usage: make e2e-test-single DISTRO=ubuntu)
-
-e2e-clean: _e2e-clean  ## Clean up E2E test environment
-
-e2e-test-parallel: ## Run E2E tests in parallel mode (for development)
-	echo "🚀 Running E2E tests in parallel..."
-	./test/e2e/e2e_test_orchestrator.sh

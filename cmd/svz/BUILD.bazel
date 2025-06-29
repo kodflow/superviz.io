@@ -1,0 +1,132 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
+
+go_library(
+    name = "svz_lib",
+    srcs = ["main.go"],
+    importpath = "github.com/kodflow/superviz.io/cmd/svz",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//internal/cli",
+        "//internal/cli/commands/install",
+        "//internal/cli/commands/version",
+        "@com_github_spf13_cobra//:cobra",
+    ],
+)
+
+# Default binary (for development)
+go_binary(
+    name = "svz",
+    embed = [":svz_lib"],
+    visibility = ["//visibility:public"],
+    x_defs = {
+        "github.com/kodflow/superviz.io/internal/providers.version": "{STABLE_BUILD_VERSION}",
+        "github.com/kodflow/superviz.io/internal/providers.commit": "{STABLE_BUILD_SCM_REVISION}",
+        "github.com/kodflow/superviz.io/internal/providers.date": "{STABLE_BUILD_TIMESTAMP}",
+        "github.com/kodflow/superviz.io/internal/providers.builtBy": "{BUILD_USER}",
+        "github.com/kodflow/superviz.io/internal/providers.osArch": "linux/amd64",
+    },
+)
+
+# Cross-platform binaries
+go_binary(
+    name = "svz_linux_amd64",
+    embed = [":svz_lib"],
+    goarch = "amd64",
+    goos = "linux",
+    visibility = ["//visibility:public"],
+    x_defs = {
+        "github.com/kodflow/superviz.io/internal/providers.version": "{STABLE_BUILD_VERSION}",
+        "github.com/kodflow/superviz.io/internal/providers.commit": "{STABLE_BUILD_SCM_REVISION}",
+        "github.com/kodflow/superviz.io/internal/providers.date": "{STABLE_BUILD_TIMESTAMP}",
+        "github.com/kodflow/superviz.io/internal/providers.builtBy": "{BUILD_USER}",
+        "github.com/kodflow/superviz.io/internal/providers.osArch": "linux/amd64",
+    },
+)
+
+go_binary(
+    name = "svz_linux_arm64",
+    embed = [":svz_lib"],
+    goarch = "arm64",
+    goos = "linux",
+    visibility = ["//visibility:public"],
+    x_defs = {
+        "github.com/kodflow/superviz.io/internal/providers.version": "{STABLE_BUILD_VERSION}",
+        "github.com/kodflow/superviz.io/internal/providers.commit": "{STABLE_BUILD_SCM_REVISION}",
+        "github.com/kodflow/superviz.io/internal/providers.date": "{STABLE_BUILD_TIMESTAMP}",
+        "github.com/kodflow/superviz.io/internal/providers.builtBy": "{BUILD_USER}",
+        "github.com/kodflow/superviz.io/internal/providers.osArch": "linux/arm64",
+    },
+)
+
+go_binary(
+    name = "svz_darwin_amd64",
+    embed = [":svz_lib"],
+    goarch = "amd64",
+    goos = "darwin",
+    visibility = ["//visibility:public"],
+    x_defs = {
+        "github.com/kodflow/superviz.io/internal/providers.version": "{STABLE_BUILD_VERSION}",
+        "github.com/kodflow/superviz.io/internal/providers.commit": "{STABLE_BUILD_SCM_REVISION}",
+        "github.com/kodflow/superviz.io/internal/providers.date": "{STABLE_BUILD_TIMESTAMP}",
+        "github.com/kodflow/superviz.io/internal/providers.builtBy": "{BUILD_USER}",
+        "github.com/kodflow/superviz.io/internal/providers.osArch": "darwin/amd64",
+    },
+)
+
+go_binary(
+    name = "svz_darwin_arm64",
+    embed = [":svz_lib"],
+    goarch = "arm64",
+    goos = "darwin",
+    visibility = ["//visibility:public"],
+    x_defs = {
+        "github.com/kodflow/superviz.io/internal/providers.version": "{STABLE_BUILD_VERSION}",
+        "github.com/kodflow/superviz.io/internal/providers.commit": "{STABLE_BUILD_SCM_REVISION}",
+        "github.com/kodflow/superviz.io/internal/providers.date": "{STABLE_BUILD_TIMESTAMP}",
+        "github.com/kodflow/superviz.io/internal/providers.builtBy": "{BUILD_USER}",
+        "github.com/kodflow/superviz.io/internal/providers.osArch": "darwin/arm64",
+    },
+)
+
+go_binary(
+    name = "svz_windows_amd64",
+    embed = [":svz_lib"],
+    goarch = "amd64",
+    goos = "windows",
+    visibility = ["//visibility:public"],
+    x_defs = {
+        "github.com/kodflow/superviz.io/internal/providers.version": "{STABLE_BUILD_VERSION}",
+        "github.com/kodflow/superviz.io/internal/providers.commit": "{STABLE_BUILD_SCM_REVISION}",
+        "github.com/kodflow/superviz.io/internal/providers.date": "{STABLE_BUILD_TIMESTAMP}",
+        "github.com/kodflow/superviz.io/internal/providers.builtBy": "{BUILD_USER}",
+        "github.com/kodflow/superviz.io/internal/providers.osArch": "windows/amd64",
+    },
+)
+
+go_binary(
+    name = "svz_windows_arm64",
+    embed = [":svz_lib"],
+    goarch = "arm64",
+    goos = "windows",
+    visibility = ["//visibility:public"],
+    x_defs = {
+        "github.com/kodflow/superviz.io/internal/providers.version": "{STABLE_BUILD_VERSION}",
+        "github.com/kodflow/superviz.io/internal/providers.commit": "{STABLE_BUILD_SCM_REVISION}",
+        "github.com/kodflow/superviz.io/internal/providers.date": "{STABLE_BUILD_TIMESTAMP}",
+        "github.com/kodflow/superviz.io/internal/providers.builtBy": "{BUILD_USER}",
+        "github.com/kodflow/superviz.io/internal/providers.osArch": "windows/arm64",
+    },
+)
+
+go_test(
+    name = "svz_test",
+    size = "small",
+    srcs = ["main_test.go"],
+    embed = [":svz_lib"],
+    tags = ["unit"],
+    deps = [
+        "@com_github_spf13_cobra//:cobra",
+        "@com_github_stretchr_testify//assert",
+        "@com_github_stretchr_testify//require",
+    ],
+)

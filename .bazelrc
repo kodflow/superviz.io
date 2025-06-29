@@ -1,0 +1,28 @@
+# General configuration
+build --enable_platform_specific_config
+build --incompatible_enable_cc_toolchain_resolution
+
+# Output options
+build --verbose_failures
+build --announce_rc
+
+# Performance optimizations
+build --jobs=auto
+
+# Test configuration
+test --test_output=errors
+test --test_summary=detailed
+test --test_timeout=300
+test --flaky_test_attempts=3
+
+# CI/CD configurations
+build:ci --keep_going
+build:ci --jobs=auto
+build:ci --show_progress_rate_limit=5
+build:ci --curses=no
+build:ci --color=no
+
+# Build stamping disabled - simplified build process
+
+# Import local configurations
+try-import %workspace%/.bazelrc.local
