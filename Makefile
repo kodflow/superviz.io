@@ -87,20 +87,20 @@ generate-copilot: fmt ## Generate copilot instructions from sectioned files
 # E2E test targets (internal - not shown in help)
 _e2e-setup:
 	echo "🐳 Setting up E2E test environment..."
-	cd test/e2e/docker && docker-compose build
+	cd test/e2e && docker-compose --profile test build --parallel
 
 _e2e-test:
 	echo "🧪 Running comprehensive E2E tests on all distributions..."
-	./test/e2e/final_e2e_test.sh
+	./test/e2e/e2e_test_orchestrator.sh
 
 _e2e-test-single:
 	echo "🧪 Running E2E test on $(or $(DISTRO),ubuntu)..."
-	./test/e2e/final_e2e_test.sh $(or $(DISTRO),ubuntu)
+	cd test/e2e && SINGLE_DISTRO=$(or $(DISTRO),ubuntu) ./e2e_test_orchestrator.sh
 
 _e2e-clean:
 	echo "🧹 Cleaning up E2E test environment..."
-	docker ps -aq --filter "name=svz-" | xargs -r docker rm -f || true
-	docker images --filter "reference=svz-test-*" -q | xargs -r docker rmi -f || true
+	cd test/e2e && docker-compose --profile test down --remove-orphans || true
+	cd test/e2e && docker-compose --profile test rm -f || true
 
 # E2E development targets (for manual testing)
 e2e-setup: _e2e-setup  ## Setup E2E test environment (for development)
@@ -108,3 +108,7 @@ e2e-setup: _e2e-setup  ## Setup E2E test environment (for development)
 e2e-test-single: _e2e-test-single  ## Run E2E test on single distribution (usage: make e2e-test-single DISTRO=ubuntu)
 
 e2e-clean: _e2e-clean  ## Clean up E2E test environment
+
+e2e-test-parallel: ## Run E2E tests in parallel mode (for development)
+	echo "🚀 Running E2E tests in parallel..."
+	./test/e2e/e2e_test_orchestrator.sh

@@ -1,0 +1,64 @@
+services:
+  # Ubuntu test environment
+  svz-test-ubuntu:
+    build:
+      context: .
+      dockerfile: docker/ubuntu.Dockerfile
+    image: svz-test-ubuntu
+    container_name: svz-test-ubuntu
+    profiles: ["test"]
+    command: sleep infinity
+
+  # Debian test environment  
+  svz-test-debian:
+    build:
+      context: .
+      dockerfile: docker/debian.Dockerfile
+    image: svz-test-debian
+    container_name: svz-test-debian
+    profiles: ["test"]
+    command: sleep infinity
+
+  # Alpine test environment
+  svz-test-alpine:
+    build:
+      context: .
+      dockerfile: docker/alpine.Dockerfile
+    image: svz-test-alpine
+    container_name: svz-test-alpine
+    profiles: ["test"]
+    command: sleep infinity
+
+  # CentOS test environment
+  svz-test-centos:
+    build:
+      context: .
+      dockerfile: docker/centos.Dockerfile
+    image: svz-test-centos
+    container_name: svz-test-centos
+    profiles: ["test"]
+    command: sleep infinity
+
+  # Fedora test environment
+  svz-test-fedora:
+    build:
+      context: .
+      dockerfile: docker/fedora.Dockerfile
+    image: svz-test-fedora
+    container_name: svz-test-fedora
+    profiles: ["test"]
+    command: sleep infinity
+
+  # Arch test environment
+  svz-test-arch:
+    build:
+      context: .
+      dockerfile: docker/arch.Dockerfile
+    image: svz-test-arch
+    container_name: svz-test-arch
+    profiles: ["test"]
+    command: sleep infinity
+
+networks:
+  default:
+    name: svz-test-network
