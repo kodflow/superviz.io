@@ -20,7 +20,7 @@ RUN mkdir /var/run/sshd && \
 
 # Create test user
 RUN useradd -m -s /bin/bash testuser && \
-    echo 'testuser:testpass' | chpasswd && \
+    echo 'testuser:testpass123' | chpasswd && \
     echo 'root:rootpass' | chpasswd && \
     usermod -aG wheel testuser
 

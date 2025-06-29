@@ -4,6 +4,10 @@ BUILT_BY  := local
 OS        := $(shell uname -s | tr '[:upper:]' '[:lower:]')
 ARCH      := $(shell uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
 .SILENT:
+
+# Ensure Go tools are in PATH
+export PATH := $(HOME)/go/bin:$(PATH)
+
 # Ensure GoReleaser is installed
 # Make args forwarding
 ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
@@ -39,15 +43,23 @@ fmt: ## Format all code: Go, Terraform, YAML, Bazel
 	echo "🔧 Formatting YAML and JSON files..."
 	prettier --write "**/*.yml" "**/*.yaml" "**/*.json" "**/*.md"
 
-test: ## Run all tests
+test: ## Run all tests (unit tests, linting, and E2E tests)
 	echo "🧪 Running linter..."
 	golangci-lint run ./...
-	echo "🧪 Running tests..."
+	echo "🧪 Running unit tests..."
+	gotestsum --packages ./... -f github-actions -- -v -coverprofile=./coverage.out -covermode=atomic
+	echo "🧪 Running E2E tests..."
+	$(MAKE) _e2e-test
+
+test-unit: ## Run only unit tests and linting (no Docker required)
+	echo "🧪 Running linter..."
+	golangci-lint run ./...
+	echo "🧪 Running unit tests..."
 	gotestsum --packages ./... -f github-actions -- -v -coverprofile=./coverage.out -covermode=atomic
 
 test-basic: ## Run basic functionality tests (no Docker required)
 	echo "🧪 Running basic functionality tests..."
-	./test/e2e/test_without_docker.sh
+	go test ./... -v
 
 build: ## Build the Go application with GoReleaser
 	echo "🚀 Building with GoReleaser..."
@@ -72,19 +84,27 @@ generate-copilot: fmt ## Generate copilot instructions from sectioned files
 		echo '````'; \
 	} > .github/copilot-instructions.md && echo "✅ Generated .github/copilot-instructions.md"
 
-e2e-setup: ## Setup E2E test environment (build containers)
+# E2E test targets (internal - not shown in help)
+_e2e-setup:
 	echo "🐳 Setting up E2E test environment..."
 	cd test/e2e/docker && docker-compose build
 
-e2e-test: ## Run E2E tests on all distributions
-	echo "🧪 Running E2E tests on all distributions..."
-	./test/e2e/run_e2e_tests.sh
+_e2e-test:
+	echo "🧪 Running comprehensive E2E tests on all distributions..."
+	./test/e2e/final_e2e_test.sh
 
-e2e-test-single: ## Run E2E test on single distribution (usage: make e2e-test-single DISTRO=ubuntu)
+_e2e-test-single:
 	echo "🧪 Running E2E test on $(or $(DISTRO),ubuntu)..."
-	./test/e2e/test_single_distro.sh $(or $(DISTRO),ubuntu)
+	./test/e2e/final_e2e_test.sh $(or $(DISTRO),ubuntu)
 
-e2e-clean: ## Clean up E2E test environment
+_e2e-clean:
 	echo "🧹 Cleaning up E2E test environment..."
-	cd test/e2e/docker && docker-compose down --remove-orphans --volumes
-	docker system prune -f --filter "label=com.docker.compose.project=docker"
+	docker ps -aq --filter "name=svz-" | xargs -r docker rm -f || true
+	docker images --filter "reference=svz-test-*" -q | xargs -r docker rmi -f || true
+
+# E2E development targets (for manual testing)
+e2e-setup: _e2e-setup  ## Setup E2E test environment (for development)
+
+e2e-test-single: _e2e-test-single  ## Run E2E test on single distribution (usage: make e2e-test-single DISTRO=ubuntu)
+
+e2e-clean: _e2e-clean  ## Clean up E2E test environment

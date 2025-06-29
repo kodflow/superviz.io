@@ -9,7 +9,8 @@ ENV GOVERSION=go1.24 \
     GOMODCACHE=/home/vscode/go/pkg/mod \
     ZSH="/home/vscode/.oh-my-zsh" \
     SHELL="/usr/bin/zsh" \
-    DEBIAN_FRONTEND=noninteractive
+    DEBIAN_FRONTEND=noninteractive \
+    PATH="/home/vscode/go/bin:$PATH"
 
 # Single RUN layer for all system setup to minimize layers
 RUN set -eux && \

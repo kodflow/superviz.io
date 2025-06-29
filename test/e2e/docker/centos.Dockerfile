@@ -3,13 +3,12 @@ FROM quay.io/centos/centos:stream9
 
 # Install SSH server and basic tools
 RUN dnf update -y && \
-    dnf install -y \
+    dnf install -y --allowerasing \
         openssh-server \
         sudo \
         curl \
         wget \
-        gnupg2 \
-        redhat-lsb-core && \
+        gnupg2 && \
     dnf clean all
 
 # Create SSH directory and configure SSH
@@ -20,7 +19,7 @@ RUN mkdir /var/run/sshd && \
 
 # Create test user
 RUN useradd -m -s /bin/bash testuser && \
-    echo 'testuser:testpass' | chpasswd && \
+    echo 'testuser:testpass123' | chpasswd && \
     echo 'root:rootpass' | chpasswd && \
     usermod -aG wheel testuser
 

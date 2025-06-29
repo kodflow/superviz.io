@@ -1,158 +1,191 @@
 # E2E Testing for superviz.io Install Command
 
-Ce dossier contient les tests end-to-end pour la commande `install` de superviz.io.
+This directory contains end-to-end tests for the `install` command of superviz.io.
 
 ## Architecture
 
-Le système de tests e2e utilise Docker pour créer des conteneurs de différentes distributions Linux avec SSH activé, puis teste la commande `install` sur chacune d'entre elles.
+The e2e test system uses Docker to create containers for different Linux distributions with SSH enabled, then tests the `install` command on each of them.
 
-### Distributions supportées
+### Supported Distributions
 
-- **Ubuntu 22.04** - Port SSH 2201
-- **Debian 12** - Port SSH 2202
-- **Alpine 3.18** - Port SSH 2203
-- **CentOS Stream 9** - Port SSH 2204
-- **Fedora 39** - Port SSH 2205
-- **Arch Linux** - Port SSH 2206
+- **Ubuntu 22.04** - SSH enabled with testuser
+- **Debian 12** - SSH enabled with testuser  
+- **Alpine 3.18** - SSH enabled with testuser
+- **CentOS Stream 9** - SSH enabled with testuser
+- **Fedora 39** - SSH enabled with testuser
+- **Arch Linux** - SSH enabled with testuser
 
-### Credentials par défaut
+### Default Credentials
 
 - **Username**: `testuser`
-- **Password**: `testpass`
+- **Password**: `testpass123`
 - **Root password**: `rootpass`
 
-L'utilisateur `testuser` a les privilèges sudo sans mot de passe pour l'automatisation.
+The `testuser` has sudo privileges without password for automation.
 
-## Prérequis
+## Prerequisites
 
-1. **Docker**: Doit être installé et accessible
-2. **Docker Compose**: Pour orchestrer les conteneurs
-3. **Devcontainer**: Le devcontainer doit être configuré avec Docker-in-Docker
+1. **Docker**: Must be installed and accessible
+2. **Static Binary**: A static Go binary must be built for cross-distribution compatibility
 
-## Utilisation
+## Usage
 
-### Via Makefile (recommandé)
+### Via Makefile (recommended)
 
 ```bash
-# Setup de l'environnement e2e (build des images)
+# Setup e2e environment (build images)
 make e2e-setup
 
-# Tests sur toutes les distributions
+# Tests on all distributions
 make e2e-test
 
-# Test sur une distribution spécifique
+# Test on a specific distribution
 make e2e-test-single DISTRO=ubuntu
 
-# Nettoyage
+# Cleanup
 make e2e-clean
 ```
 
-### Scripts directs
+### Direct script execution
 
 ```bash
-# Test sur toutes les distributions
-./test/e2e/run_e2e_tests.sh
+# Test on all distributions
+./test/e2e/final_e2e_test.sh
 
-# Test sur une distribution spécifique
-./test/e2e/test_single_distro.sh ubuntu
+# Test on a specific distribution
+./test/e2e/final_e2e_test.sh ubuntu
 ```
 
-## Configuration Docker
+## Docker Configuration
 
-### Conteneurs individuels
+### Individual Containers
 
-Chaque distribution a son propre Dockerfile dans `test/e2e/docker/`:
+Each distribution has its own Dockerfile in `test/e2e/docker/`:
 
-- `ubuntu.Dockerfile` - Ubuntu 22.04 avec SSH
-- `debian.Dockerfile` - Debian 12 avec SSH
-- `alpine.Dockerfile` - Alpine 3.18 avec SSH
-- `centos.Dockerfile` - CentOS Stream 9 avec SSH
-- `fedora.Dockerfile` - Fedora 39 avec SSH
-- `arch.Dockerfile` - Arch Linux avec SSH
+- `ubuntu.Dockerfile` - Ubuntu 22.04 with SSH
+- `debian.Dockerfile` - Debian 12 with SSH  
+- `alpine.Dockerfile` - Alpine 3.18 with SSH
+- `centos.Dockerfile` - CentOS Stream 9 with SSH
+- `fedora.Dockerfile` - Fedora 39 with SSH
+- `arch.Dockerfile` - Arch Linux with SSH
 
-### Orchestration
+### Container Execution Model
 
-Le fichier `docker-compose.yml` démarre tous les conteneurs avec:
+The tests use **docker exec** approach instead of external SSH connections:
 
-- SSH servers configurés
-- Utilisateurs de test créés
-- Ports mappés (2201-2206)
-- Health checks activés
+1. **Start** each distribution container individually
+2. **Wait** for SSH service initialization
+3. **Copy** the static binary to the container
+4. **Execute** tests inside the container via `docker exec`
+5. **Test** SSH authentication within the container
+6. **Cleanup** container after test completion
 
-## Tests effectués
+## Tests Performed
 
-Pour chaque distribution, le test:
+For each distribution, the test:
 
-1. **Build** le binaire superviz
-2. **Démarre** le conteneur Docker de la distribution
-3. **Attend** que le service SSH soit prêt
-4. **Execute** `superviz install --password=testpass --skip-host-key-check testuser@localhost`
-5. **Vérifie** que:
-   - La connexion SSH réussit
-   - La distribution est détectée correctement
-   - Le repository est configuré avec succès
-   - Les commandes d'installation sont affichées
+1. **Builds** the static superviz binary (if not exists)
+2. **Starts** the Docker container for the distribution
+3. **Waits** for the SSH service to be ready
+4. **Copies** the binary to `/tmp/svz` inside the container
+5. **Executes** tests via `docker exec`:
+   - SSH connection establishment
+   - Password authentication verification
+   - Sudo command execution
+   - Repository setup process (until external download)
 
-## Logs et Debug
+## Implementation Details
 
-Les logs de chaque test sont sauvegardés dans:
+### Binary Compatibility
 
-- `test_output_<distro>.log` - Sortie complète de la commande install
+- Uses **static binary** (`svz_linux_arm64_static`) for maximum compatibility
+- Compatible with both glibc (Ubuntu, Debian, CentOS, Fedora) and musl (Alpine)
+- No external dependencies required
 
-Pour deboguer un test qui échoue:
+### SSH Testing Strategy
+
+- **Ubuntu/Debian/Alpine/Arch**: Uses `sshpass` for password authentication testing
+- **CentOS/Fedora**: Uses `su - testuser` approach (sshpass not available)
+- Tests validate:
+  - SSH service availability
+  - Password authentication
+  - User environment setup
+  - Sudo privilege escalation
+
+### Error Handling
+
+- Robust error detection and reporting
+- Automatic container cleanup on test failure
+- Detailed logging for debugging
+- Graceful handling of distribution-specific differences
+
+## Logs and Debug
+
+Test output is displayed in real-time during execution. For debugging specific issues:
 
 ```bash
-# Démarrer manuellement un conteneur
-cd test/e2e/docker
-docker-compose up -d ubuntu-test
+# Run with verbose output (built into the script)
+./test/e2e/final_e2e_test.sh ubuntu
 
-# Se connecter manuellement pour debug
-ssh -p 2201 -o StrictHostKeyChecking=no testuser@localhost
-# (password: testpass)
-
-# Tester manuellement
-./test/e2e/test_single_distro.sh ubuntu
+# Manual container debugging
+docker run -d --name debug-ubuntu svz-test-ubuntu
+docker exec -it debug-ubuntu /bin/bash
 ```
 
-## Authentification
+## Authentication
 
-Le système supporte deux modes d'authentification:
+The system currently tests password-based authentication within the containers:
 
-### 1. Par mot de passe (utilisé dans les tests)
+### Password Authentication (used in tests)
 
-```bash
-superviz install --password=testpass testuser@host
-```
+Within each container, the test validates:
 
-### 2. Par clé SSH
+- SSH service availability
+- Password authentication with `testuser:testpass123`
+- Sudo privileges for repository configuration
 
-```bash
-superviz install --ssh-key=~/.ssh/id_rsa testuser@host
-```
+## Current Implementation Status
 
-## Limitations actuelles
+✅ **Completed Features:**
 
-1. **Docker requis**: Les tests nécessitent Docker-in-Docker dans le devcontainer
-2. **Ports fixes**: Les ports SSH sont fixes (2201-2206)
-3. **Credentials fixes**: Username/password sont codés en dur
-4. **Réseau local**: Tests uniquement sur localhost
+- Multi-distribution Docker testing (6 distributions)
+- Static binary compilation for cross-platform compatibility
+- Automated SSH service testing within containers
+- Repository setup validation (until external download)
+- Robust error handling and cleanup
+- Makefile integration
+- Comprehensive logging
 
-## Ajout d'une nouvelle distribution
+🔄 **Test Coverage:**
 
-Pour ajouter une nouvelle distribution:
+- SSH connection establishment ✅
+- Password authentication ✅  
+- User environment setup ✅
+- Sudo privilege escalation ✅
+- Package manager detection ✅
+- Repository configuration ✅
+- Package installation (partial - until external download)
 
-1. **Créer** un nouveau Dockerfile dans `test/e2e/docker/`
-2. **Ajouter** le service dans `docker-compose.yml`
-3. **Mettre à jour** les configurations dans les scripts
-4. **Ajouter** le handler de distribution si nécessaire
+## Adding a New Distribution
 
-## Sécurité
+To add a new distribution:
 
-⚠️ **Important**: Ces configurations sont uniquement pour les tests e2e:
+1. **Create** a new Dockerfile in `test/e2e/docker/`
+2. **Follow** the existing pattern with SSH setup and testuser creation
+3. **Add** the distribution to the `DISTRIBUTIONS` array in `final_e2e_test.sh`
+4. **Test** the new distribution: `./test/e2e/final_e2e_test.sh newdistro`
 
-- SSH avec mot de passe activé
-- Host key verification désactivée
-- Privilèges sudo sans mot de passe
-- Credentials en dur
+## Security
 
-**Ne jamais utiliser en production !**
+⚠️ **Important**: These configurations are for testing purposes only:
+
+- SSH with password authentication enabled
+- Host key verification disabled in tests
+- Sudo privileges without password
+- Hardcoded credentials
+
+**Never use in production!**
+
+## Archive
+
+Old development scripts have been moved to `archive/` directory for reference. The current production script is `final_e2e_test.sh`.

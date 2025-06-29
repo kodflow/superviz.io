@@ -17,7 +17,7 @@ RUN apk add --no-cache \
 
 # Create test user
 RUN adduser -D -s /bin/bash testuser && \
-    echo 'testuser:testpass' | chpasswd && \
+    echo 'testuser:testpass123' | chpasswd && \
     echo 'root:rootpass' | chpasswd && \
     adduser testuser wheel
 

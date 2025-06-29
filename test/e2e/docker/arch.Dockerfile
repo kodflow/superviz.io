@@ -1,5 +1,5 @@
 # Arch Linux test container with SSH server
-FROM archlinux:latest
+FROM lopsided/archlinux:latest
 
 # Install SSH server and basic tools
 RUN pacman -Syu --noconfirm && \
@@ -20,7 +20,7 @@ RUN mkdir /var/run/sshd && \
 
 # Create test user
 RUN useradd -m -s /bin/bash testuser && \
-    echo 'testuser:testpass' | chpasswd && \
+    echo 'testuser:testpass123' | chpasswd && \
     echo 'root:rootpass' | chpasswd && \
     usermod -aG wheel testuser
 
