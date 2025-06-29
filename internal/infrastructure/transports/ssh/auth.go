@@ -93,11 +93,20 @@ func (a *defaultAuthenticator) GetAuthMethods(ctx context.Context, config *Confi
 		return []ssh.AuthMethod{ssh.PublicKeys(signer)}, nil
 	}
 
-	// Fallback: password authentication
-	password, err := a.passwordReader.ReadPassword(
-		fmt.Sprintf("Password for %s@%s: ", config.User, config.Host))
-	if err != nil {
-		return nil, WrapError(ErrAuthFailed, err)
+	// Password authentication (direct or prompted)
+	var password string
+	var err error
+
+	if config.Password != "" {
+		// Use password from configuration (for automation/testing)
+		password = config.Password
+	} else {
+		// Prompt for password (interactive mode)
+		password, err = a.passwordReader.ReadPassword(
+			fmt.Sprintf("Password for %s@%s: ", config.User, config.Host))
+		if err != nil {
+			return nil, WrapError(ErrAuthFailed, err)
+		}
 	}
 
 	return []ssh.AuthMethod{ssh.Password(password)}, nil

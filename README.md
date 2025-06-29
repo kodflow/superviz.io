@@ -116,7 +116,61 @@ Example metrics: CPU/RAM per service • uptime • crash loops.
 
 Combine multiple checks (TCP, HTTP, command) in `superviz.yaml`.
 
-## 📝 Logs
+## �️ Development & Testing
+
+### Building from Source
+
+```bash
+# Clone the repository
+git clone https://github.com/kodflow/superviz.io.git
+cd superviz.io
+
+# Build with GoReleaser
+make build
+
+# Run tests (linting + unit tests)
+make test
+
+# Run basic functionality tests (no Docker required)
+make test-basic
+```
+
+### Install Command Testing
+
+The `svz install` command supports SSH-based repository installation on remote systems:
+
+```bash
+# Install with SSH key authentication
+svz install user@hostname -i ~/.ssh/id_rsa
+
+# Install with password authentication (for automation)
+svz install user@hostname --password mypassword
+
+# Install with custom SSH port
+svz install user@hostname -p 2222 --skip-host-key-check
+```
+
+### E2E Testing with Docker
+
+Full end-to-end testing across multiple Linux distributions:
+
+```bash
+# Setup test containers (requires Docker)
+make e2e-setup
+
+# Run tests on all distributions (Ubuntu, Debian, Alpine, CentOS, Fedora, Arch)
+make e2e-test
+
+# Test single distribution
+make e2e-test-single DISTRO=ubuntu
+
+# Cleanup test environment
+make e2e-clean
+```
+
+For more details on E2E testing, see [test/e2e/README.md](./test/e2e/README.md).
+
+## �📝 Logs
 
 Structured logs with:
 

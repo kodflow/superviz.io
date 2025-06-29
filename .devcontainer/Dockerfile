@@ -18,7 +18,14 @@ RUN set -eux && \
     # Install core system dependencies in one go
     apt-get install -y --no-install-recommends \
         make curl git unzip jq ca-certificates gnupg zsh \
-        software-properties-common lsb-release && \
+        software-properties-common lsb-release sudo && \
+    # Install Docker CLI and Docker Compose
+    curl -fsSL https://download.docker.com/linux/debian/gpg \
+        | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && \
+    echo "deb [arch=arm64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" \
+        > /etc/apt/sources.list.d/docker.list && \
+    apt-get update && \
+    apt-get install -y docker-ce-cli docker-compose-plugin && \
     # Install Node.js LTS
     curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
     apt-get install -y nodejs && \
@@ -63,6 +70,8 @@ RUN set -eux && \
     fi && \
     chsh -s /usr/bin/zsh vscode && \
     chsh -s /usr/bin/zsh root && \
+    # Add vscode user to docker group (will be created by docker feature)
+    usermod -aG docker vscode || true && \
     # Set ownership
     chown -R vscode:vscode /home/vscode/.oh-my-zsh /home/vscode/go && \
     apt-get clean && \

@@ -20,6 +20,8 @@ type Config struct {
 	Port int
 	// KeyPath is the file path to the SSH private key for authentication
 	KeyPath string
+	// Password is the password for SSH authentication (alternative to KeyPath)
+	Password string
 	// Timeout is the maximum duration to wait for connection establishment
 	Timeout time.Duration
 	// SkipHostKeyCheck bypasses host key verification (insecure)

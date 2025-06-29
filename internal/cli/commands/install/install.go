@@ -103,6 +103,7 @@ func createInstallCommand(service *services.InstallService) *cobra.Command {
 
 	// Configure command flags for SSH connection and installation options
 	cmd.Flags().StringVarP(&opts.KeyPath, "ssh-key", "i", "", "Path to SSH private key file")
+	cmd.Flags().StringVarP(&opts.Password, "password", "", "", "SSH password (alternative to key-based auth)")
 	cmd.Flags().IntVarP(&opts.Port, "ssh-port", "p", 22, "SSH port")
 	cmd.Flags().DurationVarP(&opts.Timeout, "timeout", "t", 300*time.Second, "Connection timeout (e.g. 30s, 5m)")
 	cmd.Flags().BoolVarP(&opts.Force, "force", "f", false, "Force installation even if components already exist")

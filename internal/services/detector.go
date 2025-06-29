@@ -85,7 +85,6 @@ var (
 	detectionAttempts  atomic.Uint64 // Total detection attempts
 	detectionSuccesses atomic.Uint64 // Successful detections
 	detectionFailures  atomic.Uint64 // Failed detections
-	cacheHits          atomic.Uint64 // Cache hits for performance
 )
 
 // Pre-compiled detection commands for ultra-performance with zero allocations

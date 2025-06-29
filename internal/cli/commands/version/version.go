@@ -273,7 +273,12 @@ func outputYAML(cmd *cobra.Command, info providers.VersionInfo) error {
 	}
 
 	encoder := yaml.NewEncoder(cmd.OutOrStdout())
-	defer encoder.Close()
+	defer func() {
+		if err := encoder.Close(); err != nil {
+			// Log the error but don't fail the command
+			_, _ = fmt.Fprintf(cmd.ErrOrStderr(), "Warning: failed to close encoder: %v\n", err)
+		}
+	}()
 	return encoder.Encode(output)
 }
 

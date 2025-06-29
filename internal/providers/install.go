@@ -19,6 +19,8 @@ type InstallConfig struct {
 	Port int
 	// KeyPath is the file path to the SSH private key
 	KeyPath string
+	// Password is the SSH password (alternative to key-based authentication)
+	Password string
 	// Timeout is the maximum duration for installation operations
 	Timeout time.Duration
 	// Force bypasses confirmation prompts and overwrites existing installations

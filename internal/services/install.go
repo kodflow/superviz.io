@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"strings"
-	"sync"
 	"sync/atomic"
 
 	"github.com/kodflow/superviz.io/internal/infrastructure/transports/ssh"
@@ -40,15 +39,6 @@ var installCommands = map[string]string{
 	"arch":   "  sudo pacman -S superviz\n",
 	"suse":   "  sudo zypper install superviz\n",
 	"gentoo": "  sudo emerge superviz\n",
-}
-
-// Global pool for buffered writers to reduce allocations
-var bufferedWriterPool = sync.Pool{
-	New: func() any {
-		return &bufferedWriter{
-			Writer: bufio.NewWriterSize(nil, 4096), // 4KB buffer for optimal performance
-		}
-	},
 }
 
 // Performance metrics using atomic operations
@@ -391,6 +381,7 @@ func (s *InstallService) createSSHConfig(config *providers.InstallConfig) *ssh.C
 		User:             config.User,
 		Port:             config.Port,
 		KeyPath:          config.KeyPath,
+		Password:         config.Password,
 		Timeout:          config.Timeout,
 		SkipHostKeyCheck: config.SkipHostKeyCheck,
 		AcceptNewHostKey: config.SkipHostKeyCheck, // Backward compatibility
@@ -420,51 +411,6 @@ func (s *InstallService) getInstallCommand(distro string) string {
 // GetInstallInfo retrieves installation information
 func (s *InstallService) GetInstallInfo() providers.InstallInfo {
 	return s.provider.GetInstallInfo()
-}
-
-// getBufferedWriter retrieves a buffered writer from the pool with atomic metrics.
-//
-// getBufferedWriter provides zero-allocation buffered writer retrieval
-// using object pooling for maximum memory efficiency and performance.
-//
-// Code block:
-//
-//	bw := getBufferedWriter(outputWriter)
-//	defer putBufferedWriter(bw)
-//	bw.Printf("High-performance output: %d\n", value)
-//
-// Parameters:
-//   - 1 w: io.Writer - underlying writer for the buffered writer
-//
-// Returns:
-//   - 1 bw: *bufferedWriter - pooled buffered writer ready for use
-func getBufferedWriter(w io.Writer) *bufferedWriter {
-	bw := bufferedWriterPool.Get().(*bufferedWriter)
-	bw.Writer.Reset(w)
-	bw.err.Store((*error)(nil)) // Reset atomic error state
-	bw.bytesWritten.Store(0)    // Reset byte counter
-	return bw
-}
-
-// putBufferedWriter returns a buffered writer to the pool for reuse.
-//
-// putBufferedWriter performs cleanup and returns the writer to the pool
-// for efficient memory reuse with zero-allocation patterns.
-//
-// Code block:
-//
-//	bw := getBufferedWriter(writer)
-//	defer putBufferedWriter(bw)
-//	// Use bw...
-//
-// Parameters:
-//   - 1 bw: *bufferedWriter - buffered writer to return to pool
-//
-// Returns: N/A (void function)
-func putBufferedWriter(bw *bufferedWriter) {
-	// Ensure buffer is flushed before returning to pool
-	bw.Writer.Flush()
-	bufferedWriterPool.Put(bw)
 }
 
 // GetInstallMetrics returns atomic performance metrics for installation operations.

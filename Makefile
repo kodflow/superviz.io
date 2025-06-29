@@ -45,6 +45,10 @@ test: ## Run all tests
 	echo "🧪 Running tests..."
 	gotestsum --packages ./... -f github-actions -- -v -coverprofile=./coverage.out -covermode=atomic
 
+test-basic: ## Run basic functionality tests (no Docker required)
+	echo "🧪 Running basic functionality tests..."
+	./test/e2e/test_without_docker.sh
+
 build: ## Build the Go application with GoReleaser
 	echo "🚀 Building with GoReleaser..."
 	$(ENV_EXPORTS) goreleaser build --snapshot --clean
@@ -67,3 +71,20 @@ generate-copilot: fmt ## Generate copilot instructions from sectioned files
 		done; \
 		echo '````'; \
 	} > .github/copilot-instructions.md && echo "✅ Generated .github/copilot-instructions.md"
+
+e2e-setup: ## Setup E2E test environment (build containers)
+	echo "🐳 Setting up E2E test environment..."
+	cd test/e2e/docker && docker-compose build
+
+e2e-test: ## Run E2E tests on all distributions
+	echo "🧪 Running E2E tests on all distributions..."
+	./test/e2e/run_e2e_tests.sh
+
+e2e-test-single: ## Run E2E test on single distribution (usage: make e2e-test-single DISTRO=ubuntu)
+	echo "🧪 Running E2E test on $(or $(DISTRO),ubuntu)..."
+	./test/e2e/test_single_distro.sh $(or $(DISTRO),ubuntu)
+
+e2e-clean: ## Clean up E2E test environment
+	echo "🧹 Cleaning up E2E test environment..."
+	cd test/e2e/docker && docker-compose down --remove-orphans --volumes
+	docker system prune -f --filter "label=com.docker.compose.project=docker"
