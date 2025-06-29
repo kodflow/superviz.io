@@ -21,35 +21,58 @@
 
 ### Build and Test File Management
 
-- **ALL build artifacts for testing** must be placed in `.tmp/` folder at project root
-- **Test builds, prototypes, experiments** go in `.tmp/`
-- **Never pollute main directories** with temporary build files
-- **Clean `.tmp/` regularly** - it's meant to be disposable
+- **ALL automation scripts created by AI** go in `.tmp/` folder at project root
+- **These are helper scripts** for automation, not part of final deliverable
+- **Use existing Makefile commands** - never recreate build logic
+- **Clean temporary files** after creation - only keep requested files
+- **Never create build artifacts** in `.tmp/` - those belong in standard locations
 
-#### .tmp Directory Structure
+#### .tmp Usage Rules
 
 ```
 project-root/
-├── .tmp/           # All temporary builds and test files
-│   ├── builds/     # Test builds
-│   ├── tests/      # Test artifacts
-│   └── experiments/ # Prototype files
-├── src/            # Source code (keep clean)
-└── dist/           # Production builds only
+├── .tmp/           # AI-created automation scripts only
+│   ├── test-runner.sh    # Any test automation script
+│   ├── deploy-helper.py  # Any deployment script
+│   ├── setup-env.sh      # Any environment setup
+│   └── batch-process.js  # Any processing automation
+├── Makefile        # Use existing targets
+└── dist/           # Build artifacts (standard location)
 ```
 
-#### Implementation Pattern for .tmp Usage
+#### What Goes in .tmp/
+
+- **Scripts created to automate tasks** (testing, deployment, processing)
+- **Helper utilities** that aren't part of the project deliverable
+- **Temporary automation tools** that could be deleted without affecting the project
+
+#### What NEVER Goes in .tmp/
+
+- **Project source code**
+- **Build artifacts** (binaries, dist files, compiled assets)
+- **Configuration files** needed by the application
+- **Documentation** or files requested as deliverables
+
+#### Automation Pattern
 
 ```bash
-# Always create .tmp if it doesn't exist
-mkdir -p .tmp/builds
+# Create automation script in .tmp
+cat > .tmp/run-tests.sh << 'EOF'
+#!/bin/bash
+make test  # Use existing Makefile targets
+EOF
+chmod +x .tmp/run-tests.sh
+
+# Execute and clean up if temporary
+./.tmp/run-tests.sh
+# rm .tmp/run-tests.sh  # Only if not requested to keep
 ```
 
-```python
-# Python - use .tmp for temporary outputs
-import os
-os.makedirs('.tmp/tests', exist_ok=True)
-```
+#### Integration with Existing Build System
+
+- **ALWAYS check for Makefile** before creating custom logic
+- **Use `make test`, `make build`, `make deploy`** instead of custom commands
+- **Extend Makefile** if new targets needed, don't bypass it
 
 ### Universal Error Handling Pattern
 
