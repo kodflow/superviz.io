@@ -17,6 +17,9 @@ yarn-error.log
 .yarn/
 .pnp.*
 
+# Copilot generation temporary files
+.github/copilot-instructions.tmp
+
 # Build directories
 .dist/
 build/

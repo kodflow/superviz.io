@@ -99,8 +99,9 @@ func TestBufferedWriter_Write_WithPreviousError(t *testing.T) {
 	var buf bytes.Buffer
 	bw := &bufferedWriter{
 		Writer: bufio.NewWriter(&buf),
-		err:    errors.New("previous error"),
 	}
+	// Set atomic error
+	bw.err.Store(errors.New("previous error"))
 
 	data := []byte("test data")
 	n, err := bw.Write(data)
@@ -124,8 +125,9 @@ func TestBufferedWriter_Printf_WithPreviousError(t *testing.T) {
 	var buf bytes.Buffer
 	bw := &bufferedWriter{
 		Writer: bufio.NewWriter(&buf),
-		err:    errors.New("previous error"),
 	}
+	// Set atomic error
+	bw.err.Store(errors.New("previous error"))
 
 	bw.Printf("Hello %s", "world")
 
@@ -141,8 +143,8 @@ func TestBufferedWriter_Error(t *testing.T) {
 	// No error initially
 	assert.NoError(t, bw.Error())
 
-	// Set error
-	bw.err = errors.New("test error")
+	// Set atomic error
+	bw.err.Store(errors.New("test error"))
 	assert.Error(t, bw.Error())
 	assert.Contains(t, bw.Error().Error(), "test error")
 }
@@ -153,8 +155,8 @@ func TestBufferedWriter_WriteError(t *testing.T) {
 	var buf bytes.Buffer
 	bw := &bufferedWriter{Writer: bufio.NewWriter(&buf)}
 
-	// Simulate a write error by setting an existing error
-	bw.err = errors.New("write failed")
+	// Simulate a write error by setting an atomic error
+	bw.err.Store(errors.New("write failed"))
 
 	// Write should return the existing error without writing
 	n, err := bw.Write([]byte("test"))
@@ -170,8 +172,8 @@ func TestBufferedWriter_FlushError(t *testing.T) {
 	var buf bytes.Buffer
 	bw := &bufferedWriter{Writer: bufio.NewWriter(&buf)}
 
-	// Set an error state
-	bw.err = errors.New("flush error")
+	// Set an atomic error state
+	bw.err.Store(errors.New("flush error"))
 
 	// Flush should return the existing error
 	err := bw.Flush()
