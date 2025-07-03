@@ -130,3 +130,22 @@ go_test(
         "@com_github_stretchr_testify//require",
     ],
 )
+
+go_test(
+    name = "svz_e2e_test",
+    size = "large",
+    srcs = [
+        "main_e2e_helpers.go",
+        "main_e2e_install_test.go",
+        "main_e2e_version_test.go",
+    ],
+    data = [":svz"],
+    embed = [":svz_lib"],
+    gotags = ["e2e"],
+    tags = ["e2e"],
+    deps = [
+        "@com_github_stretchr_testify//assert",
+        "@com_github_stretchr_testify//require",
+        "@in_gopkg_yaml_v3//:yaml_v3",
+    ],
+)

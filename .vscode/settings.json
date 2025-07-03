@@ -6,6 +6,7 @@
   "files.exclude": {
     ".github": false,
     "vendor": true,
+    "bazel-*": true,
     "*.test.go": false,
     ".vscode": false
   },
