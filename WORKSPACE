@@ -2,6 +2,31 @@ workspace(name = "superviz_io")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
+# Rules Python - required by Bazel 8.3.1
+http_archive(
+    name = "rules_python",
+    sha256 = "7b9039c31e909cf59eeaea8ccbdc54f09f7ebaeb9609b94371c7de45e802977c",
+    strip_prefix = "rules_python-1.5.0",
+    url = "https://github.com/bazel-contrib/rules_python/releases/download/1.5.0/rules_python-1.5.0.tar.gz",
+)
+
+load("@rules_python//python:repositories.bzl", "py_repositories")
+
+py_repositories()
+
+# Rules PKG - required by protobuf
+http_archive(
+    name = "rules_pkg",
+    sha256 = "b7215c636f22c1849f1c3142c72f4b954bb12bb8dcf3cbe229ae6e69cc6479db",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_pkg/releases/download/1.1.0/rules_pkg-1.1.0.tar.gz",
+        "https://github.com/bazelbuild/rules_pkg/releases/download/1.1.0/rules_pkg-1.1.0.tar.gz",
+    ],
+)
+
+load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
+rules_pkg_dependencies()
+
 # Go rules - version compatible with Go 1.24.3
 http_archive(
     name = "io_bazel_rules_go",

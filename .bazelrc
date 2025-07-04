@@ -1,28 +1,322 @@
-# General configuration
+# =============================================================================
+# Bazel Configuration for Superviz.io (Bazel 8.3.1)
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# General Configuration
+# -----------------------------------------------------------------------------
+# Enable platform-specific configurations
 build --enable_platform_specific_config
+
+# Enable modern toolchain resolution
 build --incompatible_enable_cc_toolchain_resolution
 
-# Output options
-build --verbose_failures
-build --announce_rc
+# Disable Bzlmod and use WORKSPACE (required for legacy projects)
+common --noenable_bzlmod
+common --enable_workspace
 
-# Performance optimizations
+# Enable repository cache for faster builds
+build --repository_cache=~/.cache/bazel/repository_cache
+
+# Enable disk cache for build artifacts
+build --disk_cache=~/.cache/bazel/disk_cache
+
+# -----------------------------------------------------------------------------
+# Performance Optimizations
+# -----------------------------------------------------------------------------
+# Use all available CPU cores
 build --jobs=auto
 
-# Test configuration
+# Limit memory usage (modern syntax)
+build --local_resources=memory=HOST_RAM*0.75
+
+# -----------------------------------------------------------------------------
+# JVM Optimization
+# -----------------------------------------------------------------------------
+# Optimize garbage collection
+startup --host_jvm_args=-XX:+UseG1GC
+startup --host_jvm_args=-XX:+UseStringDeduplication
+startup --host_jvm_args=-XX:MaxHeapSize=4g
+
+# -----------------------------------------------------------------------------
+# Output and Logging
+# -----------------------------------------------------------------------------
+# Verbose failures for debugging
+build --verbose_failures
+
+# Show build progress
+build --show_progress
+
+# Announce effective configuration
+build --announce_rc
+
+# Use colors in output
+build --color=yes
+
+# -----------------------------------------------------------------------------
+# Test Configuration
+# -----------------------------------------------------------------------------
+# Test output configuration
 test --test_output=errors
 test --test_summary=detailed
-test --test_timeout=300
+
+# Test timeouts (short, moderate, long, eternal)
+test --test_timeout=300,900,2700,7200
+
+# Retry flaky tests
 test --flaky_test_attempts=3
 
-# CI/CD configurations
+# Run tests in parallel
+test --local_test_jobs=auto
+
+# -----------------------------------------------------------------------------
+# Advanced Test Optimizations
+# -----------------------------------------------------------------------------
+# Enable test result caching
+test --cache_test_results=yes
+
+# Test sharding for parallel execution
+test --test_strategy=exclusive
+
+# Test output optimization
+test --test_verbose_timeout_warnings
+
+# Test environment isolation
+test --test_env=GO111MODULE=on
+test --test_env=GOPROXY=https://proxy.golang.org,direct
+test --test_env=GOSUMDB=sum.golang.org
+
+# Coverage optimizations
+coverage --combined_report=lcov
+
+# -----------------------------------------------------------------------------
+# CI/CD Configurations
+# -----------------------------------------------------------------------------
+# CI build configuration
 build:ci --keep_going
 build:ci --jobs=auto
 build:ci --show_progress_rate_limit=5
 build:ci --curses=no
 build:ci --color=no
+build:ci --noshow_progress
 
-# Build stamping disabled - simplified build process
+# CI test configuration
+test:ci --test_output=all
+test:ci --test_summary=detailed
+test:ci --flaky_test_attempts=1
 
-# Import local configurations
+# -----------------------------------------------------------------------------
+# Debug Configuration
+# -----------------------------------------------------------------------------
+# Debug build settings
+build:debug --compilation_mode=dbg
+build:debug --strip=never
+build:debug --copt=-g
+build:debug --copt=-O0
+
+# -----------------------------------------------------------------------------
+# Release Configuration
+# -----------------------------------------------------------------------------
+# Optimized release builds
+build:release --compilation_mode=opt
+build:release --strip=always
+build:release --define=release=true
+
+# Dead code elimination for smaller binaries
+build:release --copt=-ffunction-sections
+build:release --copt=-fdata-sections
+build:release --linkopt=-Wl,--gc-sections
+
+# -----------------------------------------------------------------------------
+# Platform-specific Configuration
+# -----------------------------------------------------------------------------
+# Linux optimizations (use native CPU features)
+build:linux --copt=-march=native
+build:linux --host_copt=-march=native
+
+# macOS optimizations
+build:macos --copt=-march=native
+build:macos --host_copt=-march=native
+
+# Windows optimizations
+build:windows --enable_runfiles=yes
+
+# -----------------------------------------------------------------------------
+# Language-specific Features
+# -----------------------------------------------------------------------------
+# Enable modern C++ features
+build --cxxopt=-std=c++17
+build --host_cxxopt=-std=c++17
+
+# -----------------------------------------------------------------------------
+# Security and Safety
+# -----------------------------------------------------------------------------
+# Enable strict action environment
+build --incompatible_strict_action_env
+
+# Use sandboxing for security
+build --spawn_strategy=sandboxed
+build --genrule_strategy=sandboxed
+
+# -----------------------------------------------------------------------------
+# Import Local and User Configurations
+# -----------------------------------------------------------------------------
+# Import user-specific configuration
 try-import %workspace%/.bazelrc.local
+try-import %workspace%/.bazelrc.user
+
+# Import machine-specific configuration
+try-import ~/.bazelrc
+
+# -----------------------------------------------------------------------------
+# Advanced Cache Optimizations
+# -----------------------------------------------------------------------------
+# Build metadata optimization
+build --stamp
+
+# -----------------------------------------------------------------------------
+# Go-specific Optimizations
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# Memory and Resource Fine-tuning
+# -----------------------------------------------------------------------------
+# More granular resource control (using modern syntax)
+build --local_resources=cpu=HOST_CPUS
+build --local_resources=memory=HOST_RAM*0.8
+
+# -----------------------------------------------------------------------------
+# Test Size and Speed Configurations
+# -----------------------------------------------------------------------------
+# Fast tests only (for quick feedback during development)
+test:fast --test_tag_filters=fast,unit,-slow,-integration
+
+# Unit tests only
+test:unit --test_tag_filters=unit,-integration,-e2e
+
+# Integration tests
+test:integration --test_tag_filters=integration
+test:integration --test_timeout=600,1200,3600,7200
+
+# E2E tests with longer timeouts
+test:e2e --test_tag_filters=e2e
+test:e2e --test_timeout=1200,2400,7200,14400
+
+# All tests including slow ones
+test:all --test_tag_filters=-manual
+
+# Smoke tests (critical path only)
+test:smoke --test_tag_filters=smoke,critical
+
+# -----------------------------------------------------------------------------
+# Performance Testing Configurations  
+# -----------------------------------------------------------------------------
+# Benchmark configuration
+build:benchmark --compilation_mode=opt
+test:benchmark --test_tag_filters=benchmark
+test:benchmark --test_timeout=3600,7200,14400,28800
+
+# Memory profiling
+test:memprof --test_env=GOMEMPROF=1
+test:memprof --test_arg=-test.memprofile=/tmp/mem.prof
+
+# CPU profiling  
+test:cpuprof --test_env=GOCPUPROF=1
+test:cpuprof --test_arg=-test.cpuprofile=/tmp/cpu.prof
+
+# -----------------------------------------------------------------------------
+# Makefile Integration Configurations
+# -----------------------------------------------------------------------------
+# Unit tests - standard mode (errors only)
+test:unit-std --test_tag_filters=unit
+test:unit-std --test_output=errors
+test:unit-std --cache_test_results=yes
+
+# Unit tests - verbose mode (all details)
+test:unit-verbose --test_tag_filters=unit
+test:unit-verbose --test_output=all
+test:unit-verbose --test_summary=detailed
+test:unit-verbose --nocache_test_results
+test:unit-verbose --test_arg=-test.v
+test:unit-verbose --verbose_failures
+test:unit-verbose --test_verbose_timeout_warnings
+
+# Unit tests with coverage - standard mode
+coverage:unit-std --test_tag_filters=unit
+coverage:unit-std --test_output=errors
+coverage:unit-std --combined_report=lcov
+
+# Unit tests with coverage - verbose mode
+coverage:unit-verbose --test_tag_filters=unit
+coverage:unit-verbose --test_output=all
+coverage:unit-verbose --test_summary=detailed
+coverage:unit-verbose --nocache_test_results
+coverage:unit-verbose --test_arg=-test.v
+coverage:unit-verbose --verbose_failures
+coverage:unit-verbose --test_verbose_timeout_warnings
+coverage:unit-verbose --combined_report=lcov
+
+# E2E tests - standard mode
+test:e2e-std --test_tag_filters=e2e
+test:e2e-std --test_output=errors
+test:e2e-std --test_timeout=600
+test:e2e-std --verbose_failures
+test:e2e-std --test_verbose_timeout_warnings
+
+# E2E tests - verbose mode
+test:e2e-verbose --test_tag_filters=e2e
+test:e2e-verbose --test_output=all
+test:e2e-verbose --test_summary=detailed
+test:e2e-verbose --test_timeout=600
+test:e2e-verbose --nocache_test_results
+test:e2e-verbose --test_arg=-test.v
+test:e2e-verbose --verbose_failures
+test:e2e-verbose --test_verbose_timeout_warnings
+
+# Complete test suite configurations
+test:full-std --test_output=errors
+test:full-std --test_summary=detailed
+test:full-std --cache_test_results=yes
+
+test:full-verbose --test_output=all
+test:full-verbose --test_summary=detailed
+test:full-verbose --nocache_test_results
+test:full-verbose --test_arg=-test.v
+test:full-verbose --verbose_failures
+test:full-verbose --test_verbose_timeout_warnings
+
+# Quick development configurations
+test:dev --test_tag_filters=unit,fast,-slow
+test:dev --test_output=errors
+test:dev --cache_test_results=yes
+test:dev --test_summary=short
+
+# Pipeline configurations (for CI overrides if needed)
+test:pipeline --test_output=all
+test:pipeline --test_summary=detailed
+test:pipeline --flaky_test_attempts=1
+test:pipeline --cache_test_results=no
+
+# -----------------------------------------------------------------------------
+# Build Configurations for Makefile Integration
+# -----------------------------------------------------------------------------
+# Cross-platform build configuration
+build:cross-platform --compilation_mode=opt
+build:cross-platform --strip=always
+build:cross-platform --copt=-Os
+build:cross-platform --linkopt=-s
+
+# Production build configuration  
+build:production --config=release
+build:production --stamp
+build:production --workspace_status_command="echo BUILD_USER $USER && echo BUILD_HOST $HOSTNAME && date +'BUILD_TIMESTAMP %s'"
+
+# Development build configuration (faster builds)
+build:dev-build --compilation_mode=fastbuild
+build:dev-build --strip=never
+
+# -----------------------------------------------------------------------------
+# Format Configuration
+# -----------------------------------------------------------------------------
+run:gazelle --incompatible_enable_cc_toolchain_resolution=false
+run:format --verbose_failures

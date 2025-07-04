@@ -1,0 +1,44 @@
+# Local Bazel Configuration Example
+# =====================================
+# 
+# USAGE:
+#   1. Copy this file: cp .bazelrc.local.example .bazelrc.local
+#   2. Uncomment and customize the options you need
+#   3. .bazelrc.local is git-ignored for per-developer customization
+#
+# This allows you to override default settings without affecting the team
+
+# Example: Local cache directories (uncomment and customize paths)
+# build --repository_cache=/path/to/your/local/repository_cache
+# build --disk_cache=/path/to/your/local/disk_cache
+
+# Example: Local resource limits (uncomment and adjust)
+# build --local_ram_resources=8192
+# build --jobs=8
+
+# Example: Local remote cache (uncomment and configure)
+# build --remote_cache=grpc://localhost:9092
+
+# Example: Local build event service (uncomment and configure)
+# build --bes_backend=grpc://localhost:8080
+# build --bes_results_url=http://localhost:8080/invocation/
+
+# Example: Enable specific debugging features
+# build --sandbox_debug
+# build --verbose_explanations
+
+# Example: Platform-specific optimizations for your machine
+# build --copt=-march=native
+# build --host_copt=-march=native
+
+# Example: Developer-specific test configuration
+# test --test_env=GO_TEST_TIMEOUT_SCALE=2
+# test --test_env=GOMAXPROCS=4
+
+# Example: Coverage settings for local development
+# coverage --instrument_test_targets
+# coverage --experimental_cc_coverage
+
+# Example: Performance profiling
+# build --experimental_profile_cpu_usage
+# build --experimental_record_metrics_for_all_mnemonics

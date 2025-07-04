@@ -10,5 +10,26 @@
     "*.test.go": false,
     ".vscode": false
   },
-  "cmake.ignoreCMakeListsMissing": true
+  "cmake.ignoreCMakeListsMissing": true,
+
+  // Bazel optimizations
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/*/**": true,
+    "**/bazel-*/**": true,
+    "**/.cache/**": true
+  },
+
+  // Search optimizations
+  "search.exclude": {
+    "**/bazel-*": true,
+    "**/.cache": true,
+    "**/coverage.out": true,
+    "**/coverage.html": true
+  },
+
+  // Bazel language support
+  "bazel.enableCodeLens": true,
+  "bazel.buildifierFixOnFormat": true
 }
